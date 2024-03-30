@@ -1,23 +1,59 @@
 <template><div><h1 id="с-чего-начать" tabindex="-1"><a class="header-anchor" href="#с-чего-начать"><span>С чего начать</span></a></h1>
-<p>Stormbpmn  - это</p>
-<h2 id="pages" tabindex="-1"><a class="header-anchor" href="#pages"><span>Pages</span></a></h2>
-<p>You can add markdown files in your vuepress directory, every markdown file will be converted to a page in your site.</p>
-<p>See <a href="https://vuejs.press/guide/page.html#routing" target="_blank" rel="noopener noreferrer">routing<ExternalLinkIcon/></a> for more details.</p>
-<h2 id="content" tabindex="-1"><a class="header-anchor" href="#content"><span>Content</span></a></h2>
-<p>Every markdown file <a href="https://vuejs.press/guide/page.html#content" target="_blank" rel="noopener noreferrer">will be rendered to HTML, then converted to a Vue SFC<ExternalLinkIcon/></a>.</p>
-<p>VuePress support basic markdown syntax and <a href="https://vuejs.press/guide/markdown.html#syntax-extensions" target="_blank" rel="noopener noreferrer">some extensions<ExternalLinkIcon/></a>, you can also <a href="https://vuejs.press/guide/markdown.html#using-vue-in-markdown" target="_blank" rel="noopener noreferrer">use Vue features<ExternalLinkIcon/></a> in it.</p>
-<h2 id="configuration" tabindex="-1"><a class="header-anchor" href="#configuration"><span>Configuration</span></a></h2>
-<p>VuePress use a <code v-pre>.vuepress/config.js</code>(or .ts) file as <a href="https://vuejs.press/guide/configuration.html#client-config-file" target="_blank" rel="noopener noreferrer">site configuration<ExternalLinkIcon/></a>, you can use it to config your site.</p>
-<p>For <a href="https://vuejs.press/guide/configuration.html#client-config-file" target="_blank" rel="noopener noreferrer">client side configuration<ExternalLinkIcon/></a>, you can create <code v-pre>.vuepress/client.js</code>(or .ts).</p>
-<p>Meanwhile, you can also add configuration per page with <a href="https://vuejs.press/guide/page.html#frontmatter" target="_blank" rel="noopener noreferrer">frontmatter<ExternalLinkIcon/></a>.</p>
-<h2 id="layouts-and-customization" tabindex="-1"><a class="header-anchor" href="#layouts-and-customization"><span>Layouts and customization</span></a></h2>
-<p>Here are common configuration controlling layout of <code v-pre>@vuepress/theme-default</code>:</p>
+<p>Stormbpmn  - это лучший веб-сервис для <strong>полноценного</strong> моделирования бизнес-процессов с использованием BPMN. В отличии от прочих сервисов, в Storm можно описывать все аспекты процессов:</p>
 <ul>
-<li><a href="https://vuejs.press/reference/default-theme/config.html#navbar" target="_blank" rel="noopener noreferrer">navbar<ExternalLinkIcon/></a></li>
-<li><a href="https://vuejs.press/reference/default-theme/config.html#sidebar" target="_blank" rel="noopener noreferrer">sidebar<ExternalLinkIcon/></a></li>
+<li>Cхему взаимодействия участников в BPMN;</li>
+<li>Задачи участников;</li>
+<li>Самих участников, как в виде ролей, так и на оргструктуре;</li>
+<li>Длительность выполнения задач;</li>
+<li>Использование систем, документов в бизнес-процессах;</li>
+<li>Связь процессов друг с другом;</li>
 </ul>
-<p>Check <a href="https://vuejs.press/reference/default-theme/" target="_blank" rel="noopener noreferrer">default theme docs<ExternalLinkIcon/></a> for full reference.</p>
-<p>You can <a href="https://vuejs.press/reference/default-theme/styles.html#style-file" target="_blank" rel="noopener noreferrer">add extra style<ExternalLinkIcon/></a> with <code v-pre>.vuepress/styles/index.scss</code> file.</p>
+<div class="custom-container tip"><p class="custom-container-title">TIP</p>
+<p>Наш главный приоритет  - скорость и удобство работы команд бизнес-аналитиков и их коллег.</p>
+</div>
+<h2 id="какие-задачи-решает-stormbpmn" tabindex="-1"><a class="header-anchor" href="#какие-задачи-решает-stormbpmn"><span>Какие задачи решает Stormbpmn</span></a></h2>
+<p>Система идеально подойдет, если вы:</p>
+<ul>
+<li>Хотите описать сложное взаимодействие группы людей и систем;</li>
+<li>Спроектировать большие изменения вашей бизнес и ИТ-архитектуры;</li>
+<li>Сфомировать ТЗ на автоматизацию бизнес-процессов;</li>
+<li>Обеспечить быструю и качественную адаптацию новых сотрудников;</li>
+</ul>
+<p>Смотрите <RouteLink to="/real-life-scenarios/">примеры из реальной жизни</RouteLink>, чтобы узнать больше.</p>
+<h2 id="ваш-первыи-процесс-от-идеи-до-заказчика-за-5-минут" tabindex="-1"><a class="header-anchor" href="#ваш-первыи-процесс-от-идеи-до-заказчика-за-5-минут"><span>Ваш первый процесс от идеи до заказчика за 5 минут</span></a></h2>
+<ol>
+<li>
+<p>Зарегистрируйтесь в <a href="https://stormbpmn.com/app/signup" target="_blank" rel="noopener noreferrer">системе<ExternalLinkIcon/></a>:
+<img src="@source/sign-in.png" alt="image"></p>
+</li>
+<li>
+<p>Создайте процесс:
+<img src="@source/create-process.png" alt="image"></p>
+</li>
+<li>
+<p>Используйте <RouteLink to="//docs/bpmn/">BPMN</RouteLink>:
+<img src="@source/model-process.png" alt="image"></p>
+</li>
+<li>
+<p>Сохраните процесс:
+<img src="@source/save-process.png" alt="image"></p>
+</li>
+<li>
+<p>Укажите имя:
+<img src="@source/enter-name.png" alt="image"></p>
+</li>
+<li>
+<p>Поделись ссылкой:
+<img src="@source/share-process.png" alt="image"></p>
+</li>
+<li>
+<p>Укажите анонимный доступ:
+<img src="@source/anon-share.png" alt="image"></p>
+</li>
+</ol>
+<div class="custom-container tip"><p class="custom-container-title">TIP</p>
+<p><strong>Отправьте ссылку коллеге, она уже в буфере обмена. Вы великолепны 🎉!</strong></p>
+</div>
 </div></template>
 
 

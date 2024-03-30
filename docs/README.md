@@ -6,9 +6,6 @@ actions:
     link: /get-started.html
     type: primary
 
-  - text: Оглавление
-    link: https://vuejs.press/guide/introduction.html
-    type: secondary
 
 features:
   - title: Полная поддержка BPMN 2.0

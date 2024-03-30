@@ -1,47 +1,56 @@
 
 # С чего начать
 
-Stormbpmn  - это 
+Stormbpmn  - это лучший веб-сервис для **полноценного** моделирования бизнес-процессов с использованием BPMN. В отличии от прочих сервисов, в Storm можно описывать все аспекты процессов:
 
-## Pages
+- Cхему взаимодействия участников в BPMN;
+- Задачи участников;
+- Самих участников, как в виде ролей, так и на оргструктуре;
+- Длительность выполнения задач;
+- Использование систем, документов в бизнес-процессах;
+- Связь процессов друг с другом;
 
-You can add markdown files in your vuepress directory, every markdown file will be converted to a page in your site.
+:::tip 
+Наш главный приоритет  - скорость и удобство работы команд бизнес-аналитиков и их коллег.
+:::
 
-See [routing][] for more details.
+## Какие задачи решает Stormbpmn
 
-## Content
+Система идеально подойдет, если вы:
+- Хотите описать сложное взаимодействие группы людей и систем;
+- Спроектировать большие изменения вашей бизнес и ИТ-архитектуры;
+- Сфомировать ТЗ на автоматизацию бизнес-процессов;
+- Обеспечить быструю и качественную адаптацию новых сотрудников;
 
-Every markdown file [will be rendered to HTML, then converted to a Vue SFC][content].
+Смотрите [примеры из реальной жизни](./real-life-scenarios/index.md), чтобы узнать больше.
 
-VuePress support basic markdown syntax and [some extensions][synatex-extensions], you can also [use Vue features][vue-feature] in it.
 
-## Configuration
 
-VuePress use a `.vuepress/config.js`(or .ts) file as [site configuration][config], you can use it to config your site.
+## Ваш первый процесс от идеи до заказчика за 5 минут
 
-For [client side configuration][client-config], you can create `.vuepress/client.js`(or .ts).
+1. Зарегистрируйтесь в [системе](https://stormbpmn.com/app/signup):
+![image](sign-in.png)
 
-Meanwhile, you can also add configuration per page with [frontmatter][].
+2. Создайте процесс:
+![image](create-process.png)
 
-## Layouts and customization
+3. Используйте [BPMN](/docs/bpmn/):
+![image](model-process.png)
 
-Here are common configuration controlling layout of `@vuepress/theme-default`:
+4. Сохраните процесс:
+![image](save-process.png)
 
-- [navbar][]
-- [sidebar][]
+4. Укажите имя:
+![image](enter-name.png)
 
-Check [default theme docs][default-theme] for full reference.
+5. Поделись ссылкой:
+![image](share-process.png)
 
-You can [add extra style][style] with `.vuepress/styles/index.scss` file.
+6. Укажите анонимный доступ:
+![image](anon-share.png)
 
-[routing]: https://vuejs.press/guide/page.html#routing
-[content]: https://vuejs.press/guide/page.html#content
-[synatex-extensions]: https://vuejs.press/guide/markdown.html#syntax-extensions
-[vue-feature]: https://vuejs.press/guide/markdown.html#using-vue-in-markdown
-[config]: https://vuejs.press/guide/configuration.html#client-config-file
-[client-config]: https://vuejs.press/guide/configuration.html#client-config-file
-[frontmatter]: https://vuejs.press/guide/page.html#frontmatter
-[navbar]: https://vuejs.press/reference/default-theme/config.html#navbar
-[sidebar]: https://vuejs.press/reference/default-theme/config.html#sidebar
-[default-theme]: https://vuejs.press/reference/default-theme/
-[style]: https://vuejs.press/reference/default-theme/styles.html#style-file
+:::tip
+__Отправьте ссылку коллеге, она уже в буфере обмена. Вы великолепны :tada:!__
+:::
+
+
