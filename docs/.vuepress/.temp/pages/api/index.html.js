@@ -1,5 +1,5 @@
 import comp from "C:/Users/kotov/stormbpmn-documentation/docs/.vuepress/.temp/pages/api/index.html.vue"
-const data = JSON.parse("{\"path\":\"/api/\",\"title\":\"API\",\"lang\":\"ru-RU\",\"frontmatter\":{},\"headers\":[],\"git\":{\"updatedTime\":null,\"contributors\":[]},\"filePathRelative\":\"api/index.md\"}")
+const data = JSON.parse("{\"path\":\"/api/\",\"title\":\"API\",\"lang\":\"ru-RU\",\"frontmatter\":{},\"headers\":[],\"git\":{\"updatedTime\":1711789490000,\"contributors\":[{\"name\":\"Denis Kotov\",\"email\":\"31292696+KotskinKotskin@users.noreply.github.com\",\"commits\":1}]},\"filePathRelative\":\"api/index.md\"}")
 export { comp, data }
 
 if (import.meta.webpackHot) {
