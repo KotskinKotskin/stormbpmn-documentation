@@ -5,14 +5,13 @@ export const routes = Object.fromEntries([
   ["/", { loader: () => import(/* webpackChunkName: "index.html" */"C:/Users/kotov/stormbpmn-documentation/docs/.vuepress/.temp/pages/index.html.js"), meta: {"title":"Главная страница"} }],
   ["/api/", { loader: () => import(/* webpackChunkName: "index.html" */"C:/Users/kotov/stormbpmn-documentation/docs/.vuepress/.temp/pages/api/index.html.js"), meta: {"title":"API"} }],
   ["/bpmn/", { loader: () => import(/* webpackChunkName: "index.html" */"C:/Users/kotov/stormbpmn-documentation/docs/.vuepress/.temp/pages/bpmn/index.html.js"), meta: {"title":"Что такое BPMN"} }],
-  ["/enterprise/", { loader: () => import(/* webpackChunkName: "index.html" */"C:/Users/kotov/stormbpmn-documentation/docs/.vuepress/.temp/pages/enterprise/index.html.js"), meta: {"title":"Enterprise-версия"} }],
   ["/examples/", { loader: () => import(/* webpackChunkName: "index.html" */"C:/Users/kotov/stormbpmn-documentation/docs/.vuepress/.temp/pages/examples/index.html.js"), meta: {"title":"Примеры процессов в BPMN"} }],
   ["/features/", { loader: () => import(/* webpackChunkName: "index.html" */"C:/Users/kotov/stormbpmn-documentation/docs/.vuepress/.temp/pages/features/index.html.js"), meta: {"title":"Описание функций"} }],
-  ["/guide/", { loader: () => import(/* webpackChunkName: "index.html" */"C:/Users/kotov/stormbpmn-documentation/docs/.vuepress/.temp/pages/guide/index.html.js"), meta: {"title":"h1 Heading 😎"} }],
-  ["/how-to/", { loader: () => import(/* webpackChunkName: "index.html" */"C:/Users/kotov/stormbpmn-documentation/docs/.vuepress/.temp/pages/how-to/index.html.js"), meta: {"title":"Как ... ?"} }],
-  ["/team-work/", { loader: () => import(/* webpackChunkName: "index.html" */"C:/Users/kotov/stormbpmn-documentation/docs/.vuepress/.temp/pages/team-work/index.html.js"), meta: {"title":"Совместная работа"} }],
   ["/real-life-scenarios/", { loader: () => import(/* webpackChunkName: "index.html" */"C:/Users/kotov/stormbpmn-documentation/docs/.vuepress/.temp/pages/real-life-scenarios/index.html.js"), meta: {"title":"В реальной жизни"} }],
+  ["/enterprise/", { loader: () => import(/* webpackChunkName: "index.html" */"C:/Users/kotov/stormbpmn-documentation/docs/.vuepress/.temp/pages/enterprise/index.html.js"), meta: {"title":"Enterprise-версия"} }],
+  ["/how-to/", { loader: () => import(/* webpackChunkName: "index.html" */"C:/Users/kotov/stormbpmn-documentation/docs/.vuepress/.temp/pages/how-to/index.html.js"), meta: {"title":"Как ... ?"} }],
   ["/usefull-link/", { loader: () => import(/* webpackChunkName: "index.html" */"C:/Users/kotov/stormbpmn-documentation/docs/.vuepress/.temp/pages/usefull-link/index.html.js"), meta: {"title":"Полезные ссылки"} }],
+  ["/team-work/", { loader: () => import(/* webpackChunkName: "index.html" */"C:/Users/kotov/stormbpmn-documentation/docs/.vuepress/.temp/pages/team-work/index.html.js"), meta: {"title":"Совместная работа"} }],
   ["/404.html", { loader: () => import(/* webpackChunkName: "404.html" */"C:/Users/kotov/stormbpmn-documentation/docs/.vuepress/.temp/pages/404.html.js"), meta: {"title":""} }],
 ]);
 

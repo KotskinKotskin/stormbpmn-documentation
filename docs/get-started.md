@@ -28,25 +28,25 @@ Stormbpmn  - это лучший веб-сервис для **полноценн
 
 ## Ваш первый процесс от идеи до заказчика за 5 минут
 
-1. Зарегистрируйтесь в [системе](https://stormbpmn.com/app/signup):
+1. Зарегистрируйтесь в [системе](https://stormbpmn.com/app/signup):  
 ![image](sign-in.png)
 
-2. Создайте процесс:
+2. Создайте процесс:  
 ![image](create-process.png)
 
-3. Используйте [BPMN](/docs/bpmn/):
+3. Используйте [BPMN](/bpmn/):  
 ![image](model-process.png)
 
-4. Сохраните процесс:
+4. Сохраните процесс:  
 ![image](save-process.png)
 
-4. Укажите имя:
+4. Укажите имя:  
 ![image](enter-name.png)
 
-5. Поделись ссылкой:
+5. Поделись ссылкой:  
 ![image](share-process.png)
 
-6. Укажите анонимный доступ:
+6. Укажите анонимный доступ:  
 ![image](anon-share.png)
 
 :::tip Вот и все

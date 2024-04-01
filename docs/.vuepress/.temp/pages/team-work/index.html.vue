@@ -1,4 +1,7 @@
 <template><div><h1 id="совместная-работа" tabindex="-1"><a class="header-anchor" href="#совместная-работа"><span>Совместная работа</span></a></h1>
+<div class="custom-container danger"><p class="custom-container-title">DANGER</p>
+<p>Раздел в разработке</p>
+</div>
 <h2 id="управление-командои" tabindex="-1"><a class="header-anchor" href="#управление-командои"><span>Управление командой</span></a></h2>
 <h3 id="cоздание-команды" tabindex="-1"><a class="header-anchor" href="#cоздание-команды"><span>Cоздание команды</span></a></h3>
 <h3 id="приглашение-в-команду" tabindex="-1"><a class="header-anchor" href="#приглашение-в-команду"><span>Приглашение в команду</span></a></h3>

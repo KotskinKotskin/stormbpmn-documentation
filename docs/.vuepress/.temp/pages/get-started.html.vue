@@ -23,31 +23,31 @@
 <h2 id="ваш-первыи-процесс-от-идеи-до-заказчика-за-5-минут" tabindex="-1"><a class="header-anchor" href="#ваш-первыи-процесс-от-идеи-до-заказчика-за-5-минут"><span>Ваш первый процесс от идеи до заказчика за 5 минут</span></a></h2>
 <ol>
 <li>
-<p>Зарегистрируйтесь в <a href="https://stormbpmn.com/app/signup" target="_blank" rel="noopener noreferrer">системе<ExternalLinkIcon/></a>:
+<p>Зарегистрируйтесь в <a href="https://stormbpmn.com/app/signup" target="_blank" rel="noopener noreferrer">системе<ExternalLinkIcon/></a>:<br>
 <img src="@source/sign-in.png" alt="image"></p>
 </li>
 <li>
-<p>Создайте процесс:
+<p>Создайте процесс:<br>
 <img src="@source/create-process.png" alt="image"></p>
 </li>
 <li>
-<p>Используйте <RouteLink to="//docs/bpmn/">BPMN</RouteLink>:
+<p>Используйте <RouteLink to="//bpmn/">BPMN</RouteLink>:<br>
 <img src="@source/model-process.png" alt="image"></p>
 </li>
 <li>
-<p>Сохраните процесс:
+<p>Сохраните процесс:<br>
 <img src="@source/save-process.png" alt="image"></p>
 </li>
 <li>
-<p>Укажите имя:
+<p>Укажите имя:<br>
 <img src="@source/enter-name.png" alt="image"></p>
 </li>
 <li>
-<p>Поделись ссылкой:
+<p>Поделись ссылкой:<br>
 <img src="@source/share-process.png" alt="image"></p>
 </li>
 <li>
-<p>Укажите анонимный доступ:
+<p>Укажите анонимный доступ:<br>
 <img src="@source/anon-share.png" alt="image"></p>
 </li>
 </ol>
