@@ -29,13 +29,6 @@ export const searchIndex = [
     "extraFields": []
   },
   {
-    "title": "API",
-    "headers": [],
-    "path": "/api/",
-    "pathLocale": "/",
-    "extraFields": []
-  },
-  {
     "title": "Что такое BPMN",
     "headers": [],
     "path": "/bpmn/",
@@ -43,17 +36,38 @@ export const searchIndex = [
     "extraFields": []
   },
   {
-    "title": "Примеры процессов в BPMN",
+    "title": "API",
+    "headers": [],
+    "path": "/api/",
+    "pathLocale": "/",
+    "extraFields": []
+  },
+  {
+    "title": "Enterprise-версия",
     "headers": [
       {
         "level": 2,
-        "title": "1 пример",
-        "slug": "_1-пример",
-        "link": "#_1-пример",
+        "title": "Архитектура",
+        "slug": "архитектура",
+        "link": "#архитектура",
+        "children": []
+      },
+      {
+        "level": 2,
+        "title": "Инструкция по установке",
+        "slug": "инструкция-по-установке",
+        "link": "#инструкция-по-установке",
+        "children": []
+      },
+      {
+        "level": 2,
+        "title": "Админинистративный интерфейс",
+        "slug": "админинистративныи-интерфеис",
+        "link": "#админинистративныи-интерфеис",
         "children": []
       }
     ],
-    "path": "/examples/",
+    "path": "/enterprise/",
     "pathLocale": "/",
     "extraFields": []
   },
@@ -294,6 +308,28 @@ export const searchIndex = [
     "extraFields": []
   },
   {
+    "title": "Примеры процессов в BPMN",
+    "headers": [
+      {
+        "level": 2,
+        "title": "1 пример",
+        "slug": "_1-пример",
+        "link": "#_1-пример",
+        "children": []
+      }
+    ],
+    "path": "/examples/",
+    "pathLocale": "/",
+    "extraFields": []
+  },
+  {
+    "title": "Как ... ?",
+    "headers": [],
+    "path": "/how-to/",
+    "pathLocale": "/",
+    "extraFields": []
+  },
+  {
     "title": "В реальной жизни",
     "headers": [
       {
@@ -333,49 +369,6 @@ export const searchIndex = [
       }
     ],
     "path": "/real-life-scenarios/",
-    "pathLocale": "/",
-    "extraFields": []
-  },
-  {
-    "title": "Enterprise-версия",
-    "headers": [
-      {
-        "level": 2,
-        "title": "Архитектура",
-        "slug": "архитектура",
-        "link": "#архитектура",
-        "children": []
-      },
-      {
-        "level": 2,
-        "title": "Инструкция по установке",
-        "slug": "инструкция-по-установке",
-        "link": "#инструкция-по-установке",
-        "children": []
-      },
-      {
-        "level": 2,
-        "title": "Админинистративный интерфейс",
-        "slug": "админинистративныи-интерфеис",
-        "link": "#админинистративныи-интерфеис",
-        "children": []
-      }
-    ],
-    "path": "/enterprise/",
-    "pathLocale": "/",
-    "extraFields": []
-  },
-  {
-    "title": "Как ... ?",
-    "headers": [],
-    "path": "/how-to/",
-    "pathLocale": "/",
-    "extraFields": []
-  },
-  {
-    "title": "Полезные ссылки",
-    "headers": [],
-    "path": "/usefull-link/",
     "pathLocale": "/",
     "extraFields": []
   },
@@ -445,6 +438,13 @@ export const searchIndex = [
     "extraFields": []
   },
   {
+    "title": "Полезные ссылки",
+    "headers": [],
+    "path": "/usefull-link/",
+    "pathLocale": "/",
+    "extraFields": []
+  },
+  {
     "title": "",
     "headers": [],
     "path": "/404.html",
@@ -452,16 +452,3 @@ export const searchIndex = [
     "extraFields": []
   }
 ]
-
-if (import.meta.webpackHot) {
-  import.meta.webpackHot.accept()
-  if (__VUE_HMR_RUNTIME__.updateSearchIndex) {
-    __VUE_HMR_RUNTIME__.updateSearchIndex(searchIndex)
-  }
-}
-
-if (import.meta.hot) {
-  import.meta.hot.accept(({ searchIndex }) => {
-    __VUE_HMR_RUNTIME__.updateSearchIndex(searchIndex)
-  })
-}
