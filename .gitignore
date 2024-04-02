@@ -4,3 +4,5 @@ node/
 node_modules/
 npm-debug.log
 target
+docs/.vuepress/.cache/
+docs/.vuepress/.temp/

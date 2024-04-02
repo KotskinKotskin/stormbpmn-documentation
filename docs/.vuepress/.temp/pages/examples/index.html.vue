@@ -2,6 +2,7 @@
 <div class="custom-container danger"><p class="custom-container-title">DANGER</p>
 <p>Раздел в разработке</p>
 </div>
+<p>HELLO</p>
 <h2 id="_1-пример" tabindex="-1"><a class="header-anchor" href="#_1-пример"><span>1 пример</span></a></h2>
 </div></template>
 

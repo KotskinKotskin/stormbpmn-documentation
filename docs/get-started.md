@@ -34,7 +34,7 @@ Stormbpmn  - это лучший веб-сервис для **полноценн
 2. Создайте процесс:  
 ![image](create-process.png)
 
-3. Используйте [BPMN](/bpmn/):  
+3. Используйте [BPMN](./bpmn/):  
 ![image](model-process.png)
 
 4. Сохраните процесс:  

@@ -8,7 +8,7 @@ export default defineUserConfig({
   lastUpdated: true,
   lang: "ru-RU",
 
-  title: "База знаний ",
+  title: "База знаний",
   description:
     "Подробная документация о том, как решать ваши задачи с помощью Stormbpmn",
   head: [["link", { rel: "icon", href: "favicon.svg", type: "image/svg+xml" }]],
@@ -48,7 +48,7 @@ export default defineUserConfig({
     ],
     logo: "https://stormbpmn.com/static/img/bpmnstorm_small.png",
 
-    navbar: ["/", "/get-started"],
+    navbar: ["/", "/get-started", { text: 'Вернуться на сервис', link: 'https://stormbpmn.com', target:'_self', rel:false }],
   }),
   plugins: [
     searchPlugin({
