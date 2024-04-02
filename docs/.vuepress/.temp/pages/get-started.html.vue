@@ -31,7 +31,7 @@
 <img src="@source/create-process.png" alt="image"></p>
 </li>
 <li>
-<p>Используйте <RouteLink to="//bpmn/">BPMN</RouteLink>:<br>
+<p>Используйте <RouteLink to="/bpmn/">BPMN</RouteLink>:<br>
 <img src="@source/model-process.png" alt="image"></p>
 </li>
 <li>
