@@ -66,7 +66,6 @@
 <h4 id="as-is-и-to-be" tabindex="-1"><a class="header-anchor" href="#as-is-и-to-be"><span>AS-IS и TO-BE</span></a></h4>
 <p>Если в <a href="#%D0%BC%D0%B5%D0%BD%D1%8E-%D1%81%D0%BE%D1%85%D1%80%D0%B0%D0%BD%D0%B5%D0%BD%D0%B8%D1%8F">меню сохранения</a> вы указали тип процесса и связанный процесс, то появится возможность быстро перемещаться между версиями AS-IS и TO-BE, а так же визуально сравнить их.
 <img src="@source/features/as-is-to-be.png" alt="image"></p>
-<p><img src="@source/features/as-is-to-be-2.gif" alt="image"></p>
 <h3 id="верхнее-меню" tabindex="-1"><a class="header-anchor" href="#верхнее-меню"><span>Верхнее меню</span></a></h3>
 <h3 id="контекстное-меню" tabindex="-1"><a class="header-anchor" href="#контекстное-меню"><span>Контекстное меню</span></a></h3>
 <h3 id="меню-оверлеев" tabindex="-1"><a class="header-anchor" href="#меню-оверлеев"><span>Меню оверлеев</span></a></h3>
