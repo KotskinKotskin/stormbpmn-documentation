@@ -29,16 +29,89 @@ export const searchIndex = [
     "extraFields": []
   },
   {
-    "title": "API",
+    "title": "Что такое BPMN",
     "headers": [],
+    "path": "/bpmn/",
+    "pathLocale": "/",
+    "extraFields": []
+  },
+  {
+    "title": "API",
+    "headers": [
+      {
+        "level": 2,
+        "title": "Авторизация",
+        "slug": "авторизация",
+        "link": "#авторизация",
+        "children": []
+      }
+    ],
     "path": "/api/",
     "pathLocale": "/",
     "extraFields": []
   },
   {
-    "title": "Что такое BPMN",
-    "headers": [],
-    "path": "/bpmn/",
+    "title": "Enterprise-версия",
+    "headers": [
+      {
+        "level": 2,
+        "title": "Архитектура",
+        "slug": "архитектура",
+        "link": "#архитектура",
+        "children": []
+      },
+      {
+        "level": 2,
+        "title": "Админинистративный интерфейс",
+        "slug": "админинистративныи-интерфеис",
+        "link": "#админинистративныи-интерфеис",
+        "children": [
+          {
+            "level": 3,
+            "title": "Управление пользователями",
+            "slug": "управление-пользователями",
+            "link": "#управление-пользователями",
+            "children": []
+          },
+          {
+            "level": 3,
+            "title": "Управление командами",
+            "slug": "управление-командами",
+            "link": "#управление-командами",
+            "children": []
+          },
+          {
+            "level": 3,
+            "title": "Лицензия",
+            "slug": "лицензия",
+            "link": "#лицензия",
+            "children": []
+          },
+          {
+            "level": 3,
+            "title": "Переменные окружения",
+            "slug": "переменные-окружения",
+            "link": "#переменные-окружения",
+            "children": []
+          },
+          {
+            "level": 3,
+            "title": "Настройка приложения",
+            "slug": "настроика-приложения",
+            "link": "#настроика-приложения",
+            "children": []
+          }
+        ]
+      },
+      {
+        "level": 2,
+        "title": "Инструкция по установке",
+        "slug": "инструкция-по-установке",
+        "link": "#инструкция-по-установке",
+        "children": []
+      }
+    ],
+    "path": "/enterprise/",
     "pathLocale": "/",
     "extraFields": []
   },
@@ -276,49 +349,42 @@ export const searchIndex = [
       },
       {
         "level": 2,
-        "title": "Роли",
-        "slug": "роли",
-        "link": "#роли",
-        "children": []
-      },
-      {
-        "level": 2,
         "title": "Теги",
         "slug": "теги",
         "link": "#теги",
         "children": []
+      },
+      {
+        "level": 2,
+        "title": "Роли",
+        "slug": "роли",
+        "link": "#роли",
+        "children": [
+          {
+            "level": 3,
+            "title": "Создание ролей",
+            "slug": "создание-ролеи",
+            "link": "#создание-ролеи",
+            "children": []
+          },
+          {
+            "level": 3,
+            "title": "Редактирование ролей",
+            "slug": "редактирование-ролеи",
+            "link": "#редактирование-ролеи",
+            "children": []
+          },
+          {
+            "level": 3,
+            "title": "Удаление ролей",
+            "slug": "удаление-ролеи",
+            "link": "#удаление-ролеи",
+            "children": []
+          }
+        ]
       }
     ],
     "path": "/features/",
-    "pathLocale": "/",
-    "extraFields": []
-  },
-  {
-    "title": "Enterprise-версия",
-    "headers": [
-      {
-        "level": 2,
-        "title": "Архитектура",
-        "slug": "архитектура",
-        "link": "#архитектура",
-        "children": []
-      },
-      {
-        "level": 2,
-        "title": "Инструкция по установке",
-        "slug": "инструкция-по-установке",
-        "link": "#инструкция-по-установке",
-        "children": []
-      },
-      {
-        "level": 2,
-        "title": "Админинистративный интерфейс",
-        "slug": "админинистративныи-интерфеис",
-        "link": "#админинистративныи-интерфеис",
-        "children": []
-      }
-    ],
-    "path": "/enterprise/",
     "pathLocale": "/",
     "extraFields": []
   },
