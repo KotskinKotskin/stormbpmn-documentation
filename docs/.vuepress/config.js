@@ -3,7 +3,19 @@ import { defineUserConfig } from "vuepress/cli";
 import { viteBundler } from "@vuepress/bundler-vite";
 import { searchPlugin } from "@vuepress/plugin-search";
 
+
 export default defineUserConfig({
+  markdown: {
+    extendMarkdown: (md) => {
+      md.use(require("markdown-it-html5-embed"), {
+        html5embed: {
+          useImageSyntax: true,
+          useLinkSyntax: false,
+        },
+      });
+    },
+  },
+
   base: "",
   lastUpdated: true,
   lang: "ru-RU",
@@ -48,7 +60,16 @@ export default defineUserConfig({
     ],
     logo: "https://stormbpmn.com/static/img/bpmnstorm_small.png",
 
-    navbar: ["/", "/get-started", { text: 'Вернуться на сервис', link: 'https://stormbpmn.com', target:'_self', rel:false }],
+    navbar: [
+      "/",
+      "/get-started",
+      {
+        text: "Вернуться на сервис",
+        link: "https://stormbpmn.com",
+        target: "_self",
+        rel: false,
+      },
+    ],
   }),
   plugins: [
     searchPlugin({
