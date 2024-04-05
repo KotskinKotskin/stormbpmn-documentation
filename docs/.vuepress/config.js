@@ -3,6 +3,7 @@ import { defineUserConfig } from "vuepress/cli";
 import { viteBundler } from "@vuepress/bundler-vite";
 import { searchPlugin } from "@vuepress/plugin-search";
 
+import yandexMetrikaPlugin from 'vuepress-plugin-yandex-metrika';
 
 export default defineUserConfig({
   markdown: {
@@ -75,6 +76,15 @@ export default defineUserConfig({
     searchPlugin({
       // options
     }),
+    yandexMetrikaPlugin({
+      id: 96951202,
+      config: {
+        clickmap: false,
+        trackLinks: true,
+        accurateTrackBounce: true,
+        ecommerce: "dataLayer"         
+      }
+    })
   ],
   bundler: viteBundler(),
 });

@@ -7,6 +7,7 @@ import clientConfig5 from 'C:/Users/kotov/stormbpmn-documentation/node_modules/@
 import clientConfig6 from 'C:/Users/kotov/stormbpmn-documentation/node_modules/@vuepress/plugin-theme-data/lib/client/config.js'
 import clientConfig7 from 'C:/Users/kotov/stormbpmn-documentation/node_modules/@vuepress/theme-default/lib/client/config.js'
 import clientConfig8 from 'C:/Users/kotov/stormbpmn-documentation/node_modules/@vuepress/plugin-search/lib/client/config.js'
+import clientConfig9 from 'C:/Users/kotov/stormbpmn-documentation/node_modules/vuepress-plugin-yandex-metrika/dist/clientAppEnhanceFiles.js'
 
 export const clientConfigs = [
   clientConfig0,
@@ -18,4 +19,5 @@ export const clientConfigs = [
   clientConfig6,
   clientConfig7,
   clientConfig8,
+  clientConfig9,
 ]
