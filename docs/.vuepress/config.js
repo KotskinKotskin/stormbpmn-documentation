@@ -16,7 +16,7 @@ export default defineUserConfig({
     },
   },
 
-  base: "",
+  base: "/",
   lastUpdated: true,
   lang: "ru-RU",
 
