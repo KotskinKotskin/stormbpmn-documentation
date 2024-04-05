@@ -43,7 +43,7 @@
 <p>В этом видео мы подготовили подсказку для ваших <strong>заказчиков</strong>, чтобы они знали и понимали, где именно искать интересующую их информацию:</p>
 <iframe width="560" height="315" src="https://www.youtube.com/embed/tKGegGh15oc?si=pam4af5M82dYhPKw" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
 <h2 id="спроектировать-изменения-процесса-as-is-и-to-be" tabindex="-1"><a class="header-anchor" href="#спроектировать-изменения-процесса-as-is-и-to-be"><span>Спроектировать изменения процесса AS-IS и TO-BE</span></a></h2>
-<p>В этом сценарии мы хотим изменить какой-то процесс и для этого нам нужно нарисовать 2 состояния процесса - AS-IS и TO-BE.  В этом нам помогут:</p>
+<p>В этом сценарии мы хотим изменить какой-то процесс и для этого нам нужно нарисовать 2 состояния процесса - AS-IS и TO-BE. В этом нам помогут:</p>
 <ul>
 <li><RouteLink to="/features/#%D1%80%D0%B5%D0%B4%D0%B0%D0%BA%D1%82%D0%BE%D1%80-bpmn">Моделирование процессов в BPMN</RouteLink></li>
 <li><RouteLink to="/features/#%D0%BE%D0%BF%D0%B8%D1%81%D0%B0%D0%BD%D0%B8%D0%B5-%D0%B7%D0%B0%D0%B4%D0%B0%D1%87">Описание задач</RouteLink></li>
@@ -61,6 +61,7 @@
 <li><RouteLink to="/team-work/">Совместная работа</RouteLink></li>
 <li><RouteLink to="/features/#%D0%BE%D0%B1%D0%B5%D1%81%D0%BF%D0%B5%D1%87%D0%B5%D0%BD%D0%B8%D0%B5-%D0%BA%D0%B0%D1%87%D0%B5%D1%81%D1%82%D0%B2%D0%B0">Обеспечение качества</RouteLink></li>
 <li><RouteLink to="/features/#%D0%BF%D0%B0%D0%BF%D0%BA%D0%B8">Папки</RouteLink></li>
+<li><RouteLink to="/features/#%D1%80%D0%B5%D0%B4%D0%B0%D0%BA%D1%82%D0%BE%D1%80-%D0%B3%D1%80%D1%83%D0%BF%D0%BF-%D0%BF%D1%80%D0%BE%D1%86%D0%B5%D1%81%D1%81%D0%BE%D0%B2">Группы процессов</RouteLink></li>
 </ul>
 </div></template>
 

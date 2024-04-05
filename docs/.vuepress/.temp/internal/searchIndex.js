@@ -29,13 +29,6 @@ export const searchIndex = [
     "extraFields": []
   },
   {
-    "title": "Что такое BPMN",
-    "headers": [],
-    "path": "/bpmn/",
-    "pathLocale": "/",
-    "extraFields": []
-  },
-  {
     "title": "API",
     "headers": [
       {
@@ -47,6 +40,13 @@ export const searchIndex = [
       }
     ],
     "path": "/api/",
+    "pathLocale": "/",
+    "extraFields": []
+  },
+  {
+    "title": "Что такое BPMN",
+    "headers": [],
+    "path": "/bpmn/",
     "pathLocale": "/",
     "extraFields": []
   },
@@ -199,6 +199,35 @@ export const searchIndex = [
       },
       {
         "level": 2,
+        "title": "Редактор групп процессов",
+        "slug": "редактор-групп-процессов",
+        "link": "#редактор-групп-процессов",
+        "children": [
+          {
+            "level": 3,
+            "title": "Создание группы процессов",
+            "slug": "создание-группы-процессов",
+            "link": "#создание-группы-процессов",
+            "children": []
+          },
+          {
+            "level": 3,
+            "title": "Как работать с группами",
+            "slug": "как-работать-с-группами",
+            "link": "#как-работать-с-группами",
+            "children": []
+          },
+          {
+            "level": 3,
+            "title": "Горячие клавиши",
+            "slug": "горячие-клавиши",
+            "link": "#горячие-клавиши",
+            "children": []
+          }
+        ]
+      },
+      {
+        "level": 2,
         "title": "Описание задач",
         "slug": "описание-задач",
         "link": "#описание-задач",
@@ -292,8 +321,8 @@ export const searchIndex = [
       {
         "level": 2,
         "title": "Элементы архитектуры",
-        "slug": "элементы-архитектуры",
-        "link": "#элементы-архитектуры",
+        "slug": "элементы-архитектуры-1",
+        "link": "#элементы-архитектуры-1",
         "children": [
           {
             "level": 3,
