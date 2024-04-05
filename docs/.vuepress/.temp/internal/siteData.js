@@ -1,4 +1,4 @@
-export const siteData = JSON.parse("{\"base\":\"\",\"lang\":\"ru-RU\",\"title\":\"База знаний\",\"description\":\"Подробная документация о том, как решать ваши задачи с помощью Stormbpmn\",\"head\":[[\"link\",{\"rel\":\"icon\",\"href\":\"favicon.svg\",\"type\":\"image/svg+xml\"}]],\"locales\":{}}")
+export const siteData = JSON.parse("{\"base\":\"/\",\"lang\":\"ru-RU\",\"title\":\"База знаний\",\"description\":\"Подробная документация о том, как решать ваши задачи с помощью Stormbpmn\",\"head\":[[\"link\",{\"rel\":\"icon\",\"href\":\"favicon.svg\",\"type\":\"image/svg+xml\"}]],\"locales\":{}}")
 
 if (import.meta.webpackHot) {
   import.meta.webpackHot.accept()
