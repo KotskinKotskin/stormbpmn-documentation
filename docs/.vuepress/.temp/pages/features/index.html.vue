@@ -6,7 +6,7 @@
 <div class="custom-container tip"><p class="custom-container-title">Подсказка</p>
 <p>В <RouteLink to="/real-life-scenarios/">разделе</RouteLink> приведеные реальные сценарии использования системы, возможно начать оттуда будет лучшей идей.</p>
 </div>
-<nav class="table-of-contents"><ul><li><router-link to="#редактор-bpmn">Редактор BPMN</router-link><ul><li><router-link to="#левое-меню">Левое меню</router-link></li><li><router-link to="#меню-сохранения">Меню сохранения</router-link></li><li><router-link to="#верхнее-меню">Верхнее меню</router-link></li><li><router-link to="#контекстное-меню">Контекстное меню</router-link></li><li><router-link to="#меню-оверлеев">Меню оверлеев</router-link></li><li><router-link to="#меню-представлении">Меню представлений</router-link></li><li><router-link to="#правое-меню">Правое меню</router-link></li><li><router-link to="#обеспечение-удобства-работы">Обеспечение удобства работы</router-link></li></ul></li><li><router-link to="#описание-задач">Описание задач</router-link></li><li><router-link to="#домашняя-страница">Домашняя страница</router-link></li><li><router-link to="#оргструктура">Оргструктура</router-link><ul><li><router-link to="#загрузка-из-csv">Загрузка из CSV</router-link></li></ul></li><li><router-link to="#группы-процессов">Группы процессов</router-link></li><li><router-link to="#регламенты">Регламенты</router-link></li><li><router-link to="#версионирование">Версионирование</router-link></li><li><router-link to="#комментирование">Комментирование</router-link></li><li><router-link to="#графы">Графы</router-link></li><li><router-link to="#согласование">Согласование</router-link></li><li><router-link to="#импорт-процессов">Импорт процессов</router-link></li><li><router-link to="#экспорт-процессов">Экспорт процессов</router-link></li><li><router-link to="#поиск-процессов">Поиск процессов</router-link></li><li><router-link to="#элементы-архитектуры">Элементы архитектуры</router-link><ul><li><router-link to="#загрузка-из-csv-1">Загрузка из CSV</router-link></li></ul></li><li><router-link to="#связь-процессов">Связь процессов</router-link></li><li><router-link to="#сравнение-as-is-и-to-be">Сравнение AS-IS и TO-BE</router-link></li><li><router-link to="#обеспечение-качества">Обеспечение качества</router-link><ul><li><router-link to="#оценка-качества">Оценка качества</router-link></li><li><router-link to="#проверка-токена">Проверка токена</router-link></li></ul></li><li><router-link to="#папки">Папки</router-link></li><li><router-link to="#теги">Теги</router-link></li><li><router-link to="#роли">Роли</router-link><ul><li><router-link to="#создание-ролеи">Создание ролей</router-link></li><li><router-link to="#редактирование-ролеи">Редактирование ролей</router-link></li><li><router-link to="#удаление-ролеи">Удаление ролей</router-link></li></ul></li></ul></nav>
+<nav class="table-of-contents"><ul><li><router-link to="#редактор-bpmn">Редактор BPMN</router-link><ul><li><router-link to="#левое-меню">Левое меню</router-link></li><li><router-link to="#меню-сохранения">Меню сохранения</router-link></li><li><router-link to="#верхнее-меню">Верхнее меню</router-link></li><li><router-link to="#контекстное-меню">Контекстное меню</router-link></li><li><router-link to="#меню-оверлеев">Меню оверлеев</router-link></li><li><router-link to="#меню-представлении">Меню представлений</router-link></li><li><router-link to="#правое-меню">Правое меню</router-link></li><li><router-link to="#обеспечение-удобства-работы">Обеспечение удобства работы</router-link></li></ul></li><li><router-link to="#редактор-групп-процессов">Редактор групп процессов</router-link><ul><li><router-link to="#создание-группы-процессов">Создание группы процессов</router-link></li><li><router-link to="#как-работать-с-группами">Как работать с группами</router-link></li><li><router-link to="#горячие-клавиши">Горячие клавиши</router-link></li></ul></li><li><router-link to="#описание-задач">Описание задач</router-link></li><li><router-link to="#домашняя-страница">Домашняя страница</router-link></li><li><router-link to="#оргструктура">Оргструктура</router-link><ul><li><router-link to="#загрузка-из-csv">Загрузка из CSV</router-link></li></ul></li><li><router-link to="#группы-процессов">Группы процессов</router-link></li><li><router-link to="#регламенты">Регламенты</router-link></li><li><router-link to="#версионирование">Версионирование</router-link></li><li><router-link to="#комментирование">Комментирование</router-link></li><li><router-link to="#графы">Графы</router-link></li><li><router-link to="#согласование">Согласование</router-link></li><li><router-link to="#импорт-процессов">Импорт процессов</router-link></li><li><router-link to="#экспорт-процессов">Экспорт процессов</router-link></li><li><router-link to="#поиск-процессов">Поиск процессов</router-link></li><li><router-link to="#элементы-архитектуры-1">Элементы архитектуры</router-link><ul><li><router-link to="#загрузка-из-csv-1">Загрузка из CSV</router-link></li></ul></li><li><router-link to="#связь-процессов">Связь процессов</router-link></li><li><router-link to="#сравнение-as-is-и-to-be">Сравнение AS-IS и TO-BE</router-link></li><li><router-link to="#обеспечение-качества">Обеспечение качества</router-link><ul><li><router-link to="#оценка-качества">Оценка качества</router-link></li><li><router-link to="#проверка-токена">Проверка токена</router-link></li></ul></li><li><router-link to="#папки">Папки</router-link></li><li><router-link to="#теги">Теги</router-link></li><li><router-link to="#роли">Роли</router-link><ul><li><router-link to="#создание-ролеи">Создание ролей</router-link></li><li><router-link to="#редактирование-ролеи">Редактирование ролей</router-link></li><li><router-link to="#удаление-ролеи">Удаление ролей</router-link></li></ul></li></ul></nav>
 <h2 id="редактор-bpmn" tabindex="-1"><a class="header-anchor" href="#редактор-bpmn"><span>Редактор BPMN</span></a></h2>
 <p>Наш редактор имеет множество функций и все они направлены на обеспечение удобства работы с BPMN диаграммами.<br>
 Рассмотрим подробнее все возможности:
@@ -48,7 +48,7 @@
 <li>Конкретному человеку по e-mail с указанием прав (просматривать/редактировать)</li>
 <li>Получить код для встраивания диаграммы, она будет выглядеть вот так:</li>
 </ul>
- <iframe src="https://stormbpmn.com/app/diagram/0855ae10-6ef8-4a23-9df0-f7d6cef12722?embedded=true" style="border:1px #f2f2f2 none;" name="extAdmin" scrolling="yes" frameborder="1"  height="500" width="100%" allowfullscreen></iframe>
+<iframe src="https://stormbpmn.com/app/diagram/0855ae10-6ef8-4a23-9df0-f7d6cef12722?embedded=true" style="border:1px #f2f2f2 none;" name="extAdmin" scrolling="yes" frameborder="1"  height="500" width="100%" allowfullscreen></iframe>
 <p><img src="@source/features/share-diagram.png" alt="image"></p>
 <p>Больше о <RouteLink to="/team-work/">совместной работе</RouteLink></p>
 <h4 id="сменить-статус" tabindex="-1"><a class="header-anchor" href="#сменить-статус"><span>Сменить статус</span></a></h4>
@@ -99,11 +99,93 @@
 <h3 id="меню-оверлеев" tabindex="-1"><a class="header-anchor" href="#меню-оверлеев"><span>Меню оверлеев</span></a></h3>
 <h3 id="меню-представлении" tabindex="-1"><a class="header-anchor" href="#меню-представлении"><span>Меню представлений</span></a></h3>
 <h3 id="правое-меню" tabindex="-1"><a class="header-anchor" href="#правое-меню"><span>Правое меню</span></a></h3>
+<p>Правое меню отображает контекстую информацию к диаграмме в зависимости от выбранных настроек в <a href="#%D0%B2%D0%B5%D1%80%D1%85%D0%BD%D0%B5%D0%B5-%D0%BC%D0%B5%D0%BD%D1%8E">верхнем меню</a>.</p>
+<h4 id="детали-по-клику" tabindex="-1"><a class="header-anchor" href="#детали-по-клику"><span>Детали по клику</span></a></h4>
+<p>После включения соответсвующей настройки в правом меню появляется возможность:</p>
+<ul>
+<li>Поделиться ссылкой на конкретный элемент</li>
+<li>Найти выбранный элемент на схеме</li>
+<li>Установить <a href="#%D1%81%D0%B2%D1%8F%D0%B7%D1%8C-%D0%BF%D1%80%D0%BE%D1%86%D0%B5%D1%81%D1%81%D0%BE%D0%B2">связь</a> с Call Activity</li>
+<li>Установить роль</li>
+<li>Установить элементы архитектуры</li>
+<li>Прочитать описание выбранной задачи</li>
+<li>Просмотреть и написать комментарий к выбранной задачи</li>
+</ul>
+<p><img src="@source/features/click-details.png" alt="image"></p>
+<div class="custom-container tip"><p class="custom-container-title">TIP</p>
+<p>В этом представлении отображается схема выбранного Call Activity! Это удобный способ просматривать их содержимое с той же диаграммы, на которой оно используется.</p>
+</div>
 <h3 id="обеспечение-удобства-работы" tabindex="-1"><a class="header-anchor" href="#обеспечение-удобства-работы"><span>Обеспечение удобства работы</span></a></h3>
-<h4 id="горячие-клавиши" tabindex="-1"><a class="header-anchor" href="#горячие-клавиши"><span>Горячие клавиши</span></a></h4>
+<h2 id="редактор-групп-процессов" tabindex="-1"><a class="header-anchor" href="#редактор-групп-процессов"><span>Редактор групп процессов</span></a></h2>
+<div class="custom-container warning"><p class="custom-container-title">WARNING</p>
+<p>Группы процессов работают только на тарифах TEAM и выше.</p>
+</div>
+<div class="custom-container danger"><p class="custom-container-title">DANGER</p>
+<p>Функционал недавно выпущен и может содержать ошибки. Сообщайте о любых ошибках в чат в приложении, мы оперативно их устраним.</p>
+</div>
+<p>Группы процессов это отличная возможность моделировать процессы сверху-вниз. Вы можете смотреть на группы процессов как на простую иерархию, бизнес-возможности(Business Capability) или бизнес-функции.</p>
+<p><img src="@source/features/diagram-group.png" alt="image"></p>
+<div class="custom-container tip"><p class="custom-container-title">TIP</p>
+<p>Вложенность групп неограничена, но по практике лучше не использовать больше 3-4 уровней, а сложные структуры проектировать через вложенность диаграммы групп в диаграммы групп.</p>
+</div>
+<h3 id="создание-группы-процессов" tabindex="-1"><a class="header-anchor" href="#создание-группы-процессов"><span>Создание группы процессов</span></a></h3>
+<p>Создать группу процессов можно так:
+<img src="@source/features/create-group.png" alt="image"></p>
+<div class="custom-container tip"><p class="custom-container-title">TIP</p>
+<p>Групп процессов может быть сколько угодно! Это значит что вы можете формировать разные иерархии для разных целей. И этими группами можно так же <a href="#%D0%BF%D0%BE%D0%B4%D0%B5%D0%BB%D0%B8%D1%82%D1%8C%D1%81%D1%8F-%D0%B4%D0%B8%D0%B0%D0%B3%D1%80%D0%B0%D0%BC%D0%BC%D0%BE%D0%B8">делиться по ссылке</a>. А еще работаю <a href="#%D0%BA%D0%BE%D0%BC%D0%BC%D0%B5%D0%BD%D1%82%D0%B8%D1%80%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5">комментарии</a>.</p>
+</div>
+<h3 id="как-работать-с-группами" tabindex="-1"><a class="header-anchor" href="#как-работать-с-группами"><span>Как работать с группами</span></a></h3>
+<ol>
+<li>Добавьте группу нужного размера:<br>
+<img src="@source/features/create-group-1.png" alt="image"></li>
+<li>Двойным кликом на группу откройте меню редактирования группы:
+<img src="@source/features/create-group-2.png" alt="image"></li>
+<li>Укажите информацию о группе:
+<ul>
+<li>Название</li>
+<li>Цвет</li>
+<li>Описание</li>
+<li>Приоритет (возможно использовать для фильтрации)</li>
+<li>Уровень (возможно использовать для фильтрации)</li>
+</ul>
+</li>
+<li>Укажите связь группы с реализацией. Тут 2 возможности:
+<ul>
+<li><strong>Создать новую</strong> - создастся &quot;заглушка&quot; процесса (если выбрать BPMN) или группы процессов (если выбрать BCM). Отличная возможность приступить к реализации позднее или раздать задачи бизнес-аналиткам для моделирования.</li>
+<li><strong>Существующая схема</strong> - позволяет выбрать уже существующую реализацию процесса или группы процессов. Отлично подойдет, если вы из существующих процессов формируете иерархию. <strong>Существующая схема может быть привязана к любому количеству групп</strong>.</li>
+</ul>
+</li>
+</ol>
+<div class="custom-container tip"><p class="custom-container-title">TIP</p>
+<p>Привязка реализации позволяет отслеживать статус работы над реализацией и визуализировать ваш процесс по моделированию всей иерархии!
+<img src="@source/features/create-group-3.png" alt="image"></p>
+</div>
+<ol start="5">
+<li>
+<p>Формируйте группы и перемещайте их друг в друга, чтобы отобразить иерархию. Чтобы вытащить группы другой группы, зажмите <strong>CTRL</strong> и перемещайте ее за границу родителя.</p>
+</li>
+<li>
+<p>Используйте правое меню для навигации или просмотра фильтра групп. В фильтре работают: - Фильтр по названию группы - Фильтр по названию родительской группы - Фильтр по статусу привязанного процесса (new, progress, approve, done ) - Фильтр по типу (BPMN, BCM) - Фильтр по названию связанного процесса 7. Используйте фильтр и навигируйтесь по иерархии кликом на симол лупы с картой.<br>
+<img src="@source/features/create-group-4.png" alt="image"></p>
+</li>
+</ol>
+<h3 id="горячие-клавиши" tabindex="-1"><a class="header-anchor" href="#горячие-клавиши"><span>Горячие клавиши</span></a></h3>
+<p>Редактор групп поддерживает горячие клавиши:</p>
+<ul>
+<li><strong>CTRL+Z</strong> - отменить последнее действие.</li>
+<li><strong>CTRL+Y</strong> - повторить последнее действие.</li>
+<li><strong>CTRL+C</strong> - скопировать группу (без дочерних).</li>
+<li><strong>CTRL+V</strong> - вставить группу.</li>
+<li><strong>DEL</strong> - удалить группу с дочерними.</li>
+</ul>
+<h4 id="элементы-архитектуры" tabindex="-1"><a class="header-anchor" href="#элементы-архитектуры"><span>Элементы архитектуры</span></a></h4>
+<h4 id="связи-процесса" tabindex="-1"><a class="header-anchor" href="#связи-процесса"><span>Связи процесса</span></a></h4>
+<h4 id="сравнение-версии" tabindex="-1"><a class="header-anchor" href="#сравнение-версии"><span>Сравнение версий</span></a></h4>
+<h4 id="комментарии" tabindex="-1"><a class="header-anchor" href="#комментарии"><span>Комментарии</span></a></h4>
+<h4 id="горячие-клавиши-1" tabindex="-1"><a class="header-anchor" href="#горячие-клавиши-1"><span>Горячие клавиши</span></a></h4>
 <h4 id="копирование-между-разными-диаграммами" tabindex="-1"><a class="header-anchor" href="#копирование-между-разными-диаграммами"><span>Копирование между разными диаграммами</span></a></h4>
 <h4 id="смена-цветов" tabindex="-1"><a class="header-anchor" href="#смена-цветов"><span>Смена цветов</span></a></h4>
-<h4 id="горячие-клавиши-1" tabindex="-1"><a class="header-anchor" href="#горячие-клавиши-1"><span>Горячие клавиши</span></a></h4>
+<h4 id="горячие-клавиши-2" tabindex="-1"><a class="header-anchor" href="#горячие-клавиши-2"><span>Горячие клавиши</span></a></h4>
 <h2 id="описание-задач" tabindex="-1"><a class="header-anchor" href="#описание-задач"><span>Описание задач</span></a></h2>
 <h2 id="домашняя-страница" tabindex="-1"><a class="header-anchor" href="#домашняя-страница"><span>Домашняя страница</span></a></h2>
 <h2 id="оргструктура" tabindex="-1"><a class="header-anchor" href="#оргструктура"><span>Оргструктура</span></a></h2>
@@ -117,7 +199,7 @@
 <h2 id="импорт-процессов" tabindex="-1"><a class="header-anchor" href="#импорт-процессов"><span>Импорт процессов</span></a></h2>
 <h2 id="экспорт-процессов" tabindex="-1"><a class="header-anchor" href="#экспорт-процессов"><span>Экспорт процессов</span></a></h2>
 <h2 id="поиск-процессов" tabindex="-1"><a class="header-anchor" href="#поиск-процессов"><span>Поиск процессов</span></a></h2>
-<h2 id="элементы-архитектуры" tabindex="-1"><a class="header-anchor" href="#элементы-архитектуры"><span>Элементы архитектуры</span></a></h2>
+<h2 id="элементы-архитектуры-1" tabindex="-1"><a class="header-anchor" href="#элементы-архитектуры-1"><span>Элементы архитектуры</span></a></h2>
 <h3 id="загрузка-из-csv-1" tabindex="-1"><a class="header-anchor" href="#загрузка-из-csv-1"><span>Загрузка из CSV</span></a></h3>
 <h2 id="связь-процессов" tabindex="-1"><a class="header-anchor" href="#связь-процессов"><span>Связь процессов</span></a></h2>
 <h2 id="сравнение-as-is-и-to-be" tabindex="-1"><a class="header-anchor" href="#сравнение-as-is-и-to-be"><span>Сравнение AS-IS и TO-BE</span></a></h2>
@@ -127,7 +209,7 @@
 <h2 id="папки" tabindex="-1"><a class="header-anchor" href="#папки"><span>Папки</span></a></h2>
 <h2 id="теги" tabindex="-1"><a class="header-anchor" href="#теги"><span>Теги</span></a></h2>
 <h2 id="роли" tabindex="-1"><a class="header-anchor" href="#роли"><span>Роли</span></a></h2>
-<p>Роли это отличный инструмент для указания исполнителей задач. Под ролью понимается исполнитель конкретной задачи в процессе или процессах (т.к. Роли - это справочник, который можно переиспользовать).  Роли это правильная и хорошая альтернатива дорожкам.</p>
+<p>Роли это отличный инструмент для указания исполнителей задач. Под ролью понимается исполнитель конкретной задачи в процессе или процессах (т.к. Роли - это справочник, который можно переиспользовать). Роли это правильная и хорошая альтернатива дорожкам.</p>
 <iframe width="560" height="315" src="https://www.youtube.com/embed/_2W10c0YzcI?si=Br3u2STg2zdWwIQ8" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
 <h3 id="создание-ролеи" tabindex="-1"><a class="header-anchor" href="#создание-ролеи"><span>Создание ролей</span></a></h3>
 <div class="custom-container warning"><p class="custom-container-title">WARNING</p>
