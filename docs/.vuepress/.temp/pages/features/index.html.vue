@@ -6,7 +6,7 @@
 <div class="custom-container tip"><p class="custom-container-title">Подсказка</p>
 <p>В <RouteLink to="/real-life-scenarios/">разделе</RouteLink> приведеные реальные сценарии использования системы, возможно начать оттуда будет лучшей идей.</p>
 </div>
-<nav class="table-of-contents"><ul><li><router-link to="#редактор-bpmn">Редактор BPMN</router-link><ul><li><router-link to="#левое-меню">Левое меню</router-link></li><li><router-link to="#меню-сохранения">Меню сохранения</router-link></li><li><router-link to="#верхнее-меню">Верхнее меню</router-link></li><li><router-link to="#контекстное-меню">Контекстное меню</router-link></li><li><router-link to="#меню-оверлеев">Меню оверлеев</router-link></li><li><router-link to="#меню-представлении">Меню представлений</router-link></li><li><router-link to="#правое-меню">Правое меню</router-link></li><li><router-link to="#обеспечение-удобства-работы">Обеспечение удобства работы</router-link></li></ul></li><li><router-link to="#редактор-групп-процессов">Редактор групп процессов</router-link><ul><li><router-link to="#создание-группы-процессов">Создание группы процессов</router-link></li><li><router-link to="#как-работать-с-группами">Как работать с группами</router-link></li><li><router-link to="#горячие-клавиши">Горячие клавиши</router-link></li></ul></li><li><router-link to="#описание-задач">Описание задач</router-link></li><li><router-link to="#домашняя-страница">Домашняя страница</router-link></li><li><router-link to="#оргструктура">Оргструктура</router-link><ul><li><router-link to="#загрузка-из-csv">Загрузка из CSV</router-link></li></ul></li><li><router-link to="#группы-процессов">Группы процессов</router-link></li><li><router-link to="#регламенты">Регламенты</router-link></li><li><router-link to="#версионирование">Версионирование</router-link></li><li><router-link to="#комментирование">Комментирование</router-link></li><li><router-link to="#графы">Графы</router-link></li><li><router-link to="#согласование">Согласование</router-link></li><li><router-link to="#импорт-процессов">Импорт процессов</router-link></li><li><router-link to="#экспорт-процессов">Экспорт процессов</router-link></li><li><router-link to="#поиск-процессов">Поиск процессов</router-link></li><li><router-link to="#элементы-архитектуры-1">Элементы архитектуры</router-link><ul><li><router-link to="#загрузка-из-csv-1">Загрузка из CSV</router-link></li></ul></li><li><router-link to="#связь-процессов">Связь процессов</router-link></li><li><router-link to="#сравнение-as-is-и-to-be">Сравнение AS-IS и TO-BE</router-link></li><li><router-link to="#обеспечение-качества">Обеспечение качества</router-link><ul><li><router-link to="#оценка-качества">Оценка качества</router-link></li><li><router-link to="#проверка-токена">Проверка токена</router-link></li></ul></li><li><router-link to="#папки">Папки</router-link></li><li><router-link to="#теги">Теги</router-link></li><li><router-link to="#роли">Роли</router-link><ul><li><router-link to="#создание-ролеи">Создание ролей</router-link></li><li><router-link to="#редактирование-ролеи">Редактирование ролей</router-link></li><li><router-link to="#удаление-ролеи">Удаление ролей</router-link></li></ul></li></ul></nav>
+<nav class="table-of-contents"><ul><li><router-link to="#редактор-bpmn">Редактор BPMN</router-link><ul><li><router-link to="#левое-меню">Левое меню</router-link></li><li><router-link to="#меню-сохранения">Меню сохранения</router-link></li><li><router-link to="#верхнее-меню">Верхнее меню</router-link></li><li><router-link to="#контекстное-меню">Контекстное меню</router-link></li><li><router-link to="#меню-оверлеев">Меню оверлеев</router-link></li><li><router-link to="#меню-представлении">Меню представлений</router-link></li><li><router-link to="#правое-меню">Правое меню</router-link></li><li><router-link to="#обеспечение-удобства-работы">Обеспечение удобства работы</router-link></li></ul></li><li><router-link to="#редактор-групп-процессов">Редактор групп процессов</router-link><ul><li><router-link to="#создание-группы-процессов">Создание группы процессов</router-link></li><li><router-link to="#как-работать-с-группами">Как работать с группами</router-link></li><li><router-link to="#горячие-клавиши">Горячие клавиши</router-link></li></ul></li><li><router-link to="#описание-задач">Описание задач</router-link></li><li><router-link to="#домашняя-страница">Домашняя страница</router-link></li><li><router-link to="#оргструктура">Оргструктура</router-link><ul><li><router-link to="#загрузка-из-csv">Загрузка из CSV</router-link></li></ul></li><li><router-link to="#группы-процессов">Группы процессов</router-link></li><li><router-link to="#регламенты">Регламенты</router-link></li><li><router-link to="#версионирование">Версионирование</router-link><ul><li><router-link to="#как-вернуть-версию-процесса">Как вернуть версию процесса</router-link></li></ul></li><li><router-link to="#комментирование">Комментирование</router-link></li><li><router-link to="#графы">Графы</router-link></li><li><router-link to="#согласование">Согласование</router-link></li><li><router-link to="#импорт-процессов">Импорт процессов</router-link></li><li><router-link to="#экспорт-процессов">Экспорт процессов</router-link></li><li><router-link to="#поиск-процессов">Поиск процессов</router-link></li><li><router-link to="#элементы-архитектуры-1">Элементы архитектуры</router-link><ul><li><router-link to="#загрузка-из-csv-1">Загрузка из CSV</router-link></li></ul></li><li><router-link to="#связь-процессов">Связь процессов</router-link></li><li><router-link to="#сравнение-as-is-и-to-be">Сравнение AS-IS и TO-BE</router-link></li><li><router-link to="#обеспечение-качества">Обеспечение качества</router-link><ul><li><router-link to="#оценка-качества">Оценка качества</router-link></li><li><router-link to="#проверка-токена">Проверка токена</router-link></li></ul></li><li><router-link to="#папки">Папки</router-link></li><li><router-link to="#теги">Теги</router-link></li><li><router-link to="#роли">Роли</router-link><ul><li><router-link to="#создание-ролеи">Создание ролей</router-link></li><li><router-link to="#редактирование-ролеи">Редактирование ролей</router-link></li><li><router-link to="#удаление-ролеи">Удаление ролей</router-link></li></ul></li></ul></nav>
 <h2 id="редактор-bpmn" tabindex="-1"><a class="header-anchor" href="#редактор-bpmn"><span>Редактор BPMN</span></a></h2>
 <p>Наш редактор имеет множество функций и все они направлены на обеспечение удобства работы с BPMN диаграммами.<br>
 Рассмотрим подробнее все возможности:
@@ -165,7 +165,17 @@
 <p>Формируйте группы и перемещайте их друг в друга, чтобы отобразить иерархию. Чтобы вытащить группы другой группы, зажмите <strong>CTRL</strong> и перемещайте ее за границу родителя.</p>
 </li>
 <li>
-<p>Используйте правое меню для навигации или просмотра фильтра групп. В фильтре работают: - Фильтр по названию группы - Фильтр по названию родительской группы - Фильтр по статусу привязанного процесса (new, progress, approve, done ) - Фильтр по типу (BPMN, BCM) - Фильтр по названию связанного процесса 7. Используйте фильтр и навигируйтесь по иерархии кликом на симол лупы с картой.<br>
+<p>Используйте правое меню для навигации или просмотра фильтра групп. В фильтре работают:</p>
+<ul>
+<li>Фильтр по названию группы</li>
+<li>Фильтр по названию родительской группы</li>
+<li>Фильтр по статусу привязанного процесса (new, progress, approve, done )</li>
+<li>Фильтр по типу (BPMN, BCM)</li>
+<li>Фильтр по названию связанного процесса</li>
+</ul>
+</li>
+<li>
+<p>Используйте фильтр и навигируйтесь по иерархии кликом на симол лупы с картой.<br>
 <img src="@source/features/create-group-4.png" alt="image"></p>
 </li>
 </ol>
@@ -193,6 +203,19 @@
 <h2 id="группы-процессов" tabindex="-1"><a class="header-anchor" href="#группы-процессов"><span>Группы процессов</span></a></h2>
 <h2 id="регламенты" tabindex="-1"><a class="header-anchor" href="#регламенты"><span>Регламенты</span></a></h2>
 <h2 id="версионирование" tabindex="-1"><a class="header-anchor" href="#версионирование"><span>Версионирование</span></a></h2>
+<p>Система автоматически создает версии диаграмм вот по таким поводам:</p>
+<ul>
+<li>Прошло больше 30 изменений диаграммы</li>
+<li>Кто-то (не владелец процесса и не пред.автор изменения) внес изменения в диаграмму
+Это позволяет <strong>всегда</strong> восстановить пред.версию и посмотреть разницу. Автор диаграммы получает е-мейл уведомление, если в его диаграмме создали новую версию.</li>
+</ul>
+<h3 id="как-вернуть-версию-процесса" tabindex="-1"><a class="header-anchor" href="#как-вернуть-версию-процесса"><span>Как вернуть версию процесса</span></a></h3>
+<ol>
+<li>Если вы хотите вернуть версию процесса, то найдите на главной странице карточку процесса и нажмите в верхний правый угол, выберите &quot;Все версии&quot;:
+<img src="@source/features/restore-versions-1.png" alt="image"></li>
+<li>Выберете интересующую версию и нажмите <strong>посмотреть версию</strong>.</li>
+<li>В открывшемся окне нажмите <strong>&quot;установить как текущую&quot;</strong>.</li>
+</ol>
 <h2 id="комментирование" tabindex="-1"><a class="header-anchor" href="#комментирование"><span>Комментирование</span></a></h2>
 <h2 id="графы" tabindex="-1"><a class="header-anchor" href="#графы"><span>Графы</span></a></h2>
 <h2 id="согласование" tabindex="-1"><a class="header-anchor" href="#согласование"><span>Согласование</span></a></h2>
