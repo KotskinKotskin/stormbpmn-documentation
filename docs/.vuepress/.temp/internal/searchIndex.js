@@ -29,13 +29,6 @@ export const searchIndex = [
     "extraFields": []
   },
   {
-    "title": "Что такое BPMN",
-    "headers": [],
-    "path": "/bpmn/",
-    "pathLocale": "/",
-    "extraFields": []
-  },
-  {
     "title": "API",
     "headers": [
       {
@@ -47,6 +40,13 @@ export const searchIndex = [
       }
     ],
     "path": "/api/",
+    "pathLocale": "/",
+    "extraFields": []
+  },
+  {
+    "title": "Что такое BPMN",
+    "headers": [],
+    "path": "/bpmn/",
     "pathLocale": "/",
     "extraFields": []
   },
@@ -119,21 +119,6 @@ export const searchIndex = [
       }
     ],
     "path": "/enterprise/",
-    "pathLocale": "/",
-    "extraFields": []
-  },
-  {
-    "title": "Примеры процессов в BPMN",
-    "headers": [
-      {
-        "level": 2,
-        "title": "1 пример",
-        "slug": "_1-пример",
-        "link": "#_1-пример",
-        "children": []
-      }
-    ],
-    "path": "/examples/",
     "pathLocale": "/",
     "extraFields": []
   },
@@ -433,6 +418,21 @@ export const searchIndex = [
     "extraFields": []
   },
   {
+    "title": "Примеры процессов в BPMN",
+    "headers": [
+      {
+        "level": 2,
+        "title": "1 пример",
+        "slug": "_1-пример",
+        "link": "#_1-пример",
+        "children": []
+      }
+    ],
+    "path": "/examples/",
+    "pathLocale": "/",
+    "extraFields": []
+  },
+  {
     "title": "Как ... ?",
     "headers": [],
     "path": "/how-to/",
@@ -479,6 +479,13 @@ export const searchIndex = [
       }
     ],
     "path": "/real-life-scenarios/",
+    "pathLocale": "/",
+    "extraFields": []
+  },
+  {
+    "title": "Полезные ссылки",
+    "headers": [],
+    "path": "/usefull-link/",
     "pathLocale": "/",
     "extraFields": []
   },
@@ -566,13 +573,6 @@ export const searchIndex = [
       }
     ],
     "path": "/team-work/",
-    "pathLocale": "/",
-    "extraFields": []
-  },
-  {
-    "title": "Полезные ссылки",
-    "headers": [],
-    "path": "/usefull-link/",
     "pathLocale": "/",
     "extraFields": []
   },

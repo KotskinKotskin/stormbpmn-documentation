@@ -1,4 +1,4 @@
-import comp from "C:/docs/stormbpmn-documentation-main/stormbpmn-documentation-main/docs/.vuepress/.temp/pages/404.html.vue"
+import comp from "C:/docs/docs-main/stormbpmn-documentation/docs/.vuepress/.temp/pages/404.html.vue"
 const data = JSON.parse("{\"path\":\"/404.html\",\"title\":\"\",\"lang\":\"ru-RU\",\"frontmatter\":{\"layout\":\"NotFound\"},\"headers\":[],\"git\":{},\"filePathRelative\":null}")
 export { comp, data }
 
