@@ -483,13 +483,6 @@ export const searchIndex = [
     "extraFields": []
   },
   {
-    "title": "Полезные ссылки",
-    "headers": [],
-    "path": "/usefull-link/",
-    "pathLocale": "/",
-    "extraFields": []
-  },
-  {
     "title": "Совместная работа",
     "headers": [
       {
@@ -543,9 +536,23 @@ export const searchIndex = [
           },
           {
             "level": 3,
-            "title": "Обеспечение качества работы команды",
-            "slug": "обеспечение-качества-работы-команды",
-            "link": "#обеспечение-качества-работы-команды",
+            "title": "Прочие настройки команды",
+            "slug": "прочие-настроики-команды",
+            "link": "#прочие-настроики-команды",
+            "children": []
+          },
+          {
+            "level": 3,
+            "title": "Выход из команды",
+            "slug": "выход-из-команды",
+            "link": "#выход-из-команды",
+            "children": []
+          },
+          {
+            "level": 3,
+            "title": "Удаление команды",
+            "slug": "удаление-команды",
+            "link": "#удаление-команды",
             "children": []
           }
         ]
@@ -573,6 +580,13 @@ export const searchIndex = [
       }
     ],
     "path": "/team-work/",
+    "pathLocale": "/",
+    "extraFields": []
+  },
+  {
+    "title": "Полезные ссылки",
+    "headers": [],
+    "path": "/usefull-link/",
     "pathLocale": "/",
     "extraFields": []
   },
