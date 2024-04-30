@@ -36,100 +36,6 @@ export const searchIndex = [
     "extraFields": []
   },
   {
-    "title": "Управление серверами Camunda",
-    "headers": [],
-    "path": "/enterprise/camunda_manage.html",
-    "pathLocale": "/",
-    "extraFields": []
-  },
-  {
-    "title": "Enterprise-версия",
-    "headers": [
-      {
-        "level": 2,
-        "title": "Архитектура",
-        "slug": "архитектура",
-        "link": "#архитектура",
-        "children": []
-      },
-      {
-        "level": 2,
-        "title": "Админинистративный интерфейс",
-        "slug": "админинистративныи-интерфеис",
-        "link": "#админинистративныи-интерфеис",
-        "children": [
-          {
-            "level": 3,
-            "title": "Управление пользователями",
-            "slug": "управление-пользователями",
-            "link": "#управление-пользователями",
-            "children": []
-          },
-          {
-            "level": 3,
-            "title": "Управление командами",
-            "slug": "управление-командами",
-            "link": "#управление-командами",
-            "children": []
-          },
-          {
-            "level": 3,
-            "title": "Лицензия",
-            "slug": "лицензия",
-            "link": "#лицензия",
-            "children": []
-          },
-          {
-            "level": 3,
-            "title": "Переменные окружения",
-            "slug": "переменные-окружения",
-            "link": "#переменные-окружения",
-            "children": []
-          },
-          {
-            "level": 3,
-            "title": "Настройка приложения",
-            "slug": "настроика-приложения",
-            "link": "#настроика-приложения",
-            "children": []
-          }
-        ]
-      },
-      {
-        "level": 2,
-        "title": "Инструкция по установке",
-        "slug": "инструкция-по-установке",
-        "link": "#инструкция-по-установке",
-        "children": []
-      },
-      {
-        "level": 2,
-        "title": "Инструкция по обновлению",
-        "slug": "инструкция-по-обновлению",
-        "link": "#инструкция-по-обновлению",
-        "children": []
-      }
-    ],
-    "path": "/enterprise/",
-    "pathLocale": "/",
-    "extraFields": []
-  },
-  {
-    "title": "Rest API",
-    "headers": [
-      {
-        "level": 2,
-        "title": "Авторизация",
-        "slug": "авторизация",
-        "link": "#авторизация",
-        "children": []
-      }
-    ],
-    "path": "/enterprise/rest-api.html",
-    "pathLocale": "/",
-    "extraFields": []
-  },
-  {
     "title": "Бизнес-процессы в BPMN",
     "headers": [
       {
@@ -520,6 +426,100 @@ export const searchIndex = [
     "extraFields": []
   },
   {
+    "title": "Управление серверами Camunda",
+    "headers": [],
+    "path": "/enterprise/camunda_manage.html",
+    "pathLocale": "/",
+    "extraFields": []
+  },
+  {
+    "title": "Enterprise-версия",
+    "headers": [
+      {
+        "level": 2,
+        "title": "Архитектура",
+        "slug": "архитектура",
+        "link": "#архитектура",
+        "children": []
+      },
+      {
+        "level": 2,
+        "title": "Админинистративный интерфейс",
+        "slug": "админинистративныи-интерфеис",
+        "link": "#админинистративныи-интерфеис",
+        "children": [
+          {
+            "level": 3,
+            "title": "Управление пользователями",
+            "slug": "управление-пользователями",
+            "link": "#управление-пользователями",
+            "children": []
+          },
+          {
+            "level": 3,
+            "title": "Управление командами",
+            "slug": "управление-командами",
+            "link": "#управление-командами",
+            "children": []
+          },
+          {
+            "level": 3,
+            "title": "Лицензия",
+            "slug": "лицензия",
+            "link": "#лицензия",
+            "children": []
+          },
+          {
+            "level": 3,
+            "title": "Переменные окружения",
+            "slug": "переменные-окружения",
+            "link": "#переменные-окружения",
+            "children": []
+          },
+          {
+            "level": 3,
+            "title": "Настройка приложения",
+            "slug": "настроика-приложения",
+            "link": "#настроика-приложения",
+            "children": []
+          }
+        ]
+      },
+      {
+        "level": 2,
+        "title": "Инструкция по установке",
+        "slug": "инструкция-по-установке",
+        "link": "#инструкция-по-установке",
+        "children": []
+      },
+      {
+        "level": 2,
+        "title": "Инструкция по обновлению",
+        "slug": "инструкция-по-обновлению",
+        "link": "#инструкция-по-обновлению",
+        "children": []
+      }
+    ],
+    "path": "/enterprise/",
+    "pathLocale": "/",
+    "extraFields": []
+  },
+  {
+    "title": "Rest API",
+    "headers": [
+      {
+        "level": 2,
+        "title": "Авторизация",
+        "slug": "авторизация",
+        "link": "#авторизация",
+        "children": []
+      }
+    ],
+    "path": "/enterprise/rest-api.html",
+    "pathLocale": "/",
+    "extraFields": []
+  },
+  {
     "title": "Совместная работа",
     "headers": [
       {
@@ -635,16 +635,3 @@ export const searchIndex = [
     "extraFields": []
   }
 ]
-
-if (import.meta.webpackHot) {
-  import.meta.webpackHot.accept()
-  if (__VUE_HMR_RUNTIME__.updateSearchIndex) {
-    __VUE_HMR_RUNTIME__.updateSearchIndex(searchIndex)
-  }
-}
-
-if (import.meta.hot) {
-  import.meta.hot.accept(({ searchIndex }) => {
-    __VUE_HMR_RUNTIME__.updateSearchIndex(searchIndex)
-  })
-}
