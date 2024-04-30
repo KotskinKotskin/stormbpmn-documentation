@@ -34,7 +34,7 @@ jobs:
         run: npm run docs:build
 
       - name: create-archive
-        run: tar czf docs.tar.gz -C .vuepress/dist/ .
+        run: tar czf docs.tar.gz -C ./src/.vuepress/dist/ .
         
       - name: copy file via ssh key
         uses: appleboy/scp-action@v0.1.7
