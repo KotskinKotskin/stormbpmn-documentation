@@ -41,6 +41,7 @@ export default defineUserConfig({
     docsBranch: "main",
     // defaults to false, set to true to enable
     editLinks: true,
+    sidebarDepth: 2,
     // custom text for edit link. Defaults to "Edit this page"
     editLinkText: "Помогите нам улучшить документацию",
     displayAllHeaders: true,
