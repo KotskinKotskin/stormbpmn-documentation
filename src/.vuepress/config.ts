@@ -47,6 +47,7 @@ export default defineUserConfig({
     navbar: [
       "/",
       "/get-started",
+      "/features/1_bpmn-editor.html",
       {
         text: "Вернуться на сервис",
         link: "https://stormbpmn.com",

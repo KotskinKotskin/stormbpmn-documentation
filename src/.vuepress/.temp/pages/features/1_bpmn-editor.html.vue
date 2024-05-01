@@ -72,8 +72,6 @@
 <li>Отключить проверку ошибок.</li>
 <li>Отменить последнее дейсвтие.</li>
 <li>Повторить последнее действие.</li>
-<li>Распределить выделенные элементы по горизонтали.</li>
-<li>Выровнять выделенные элементы по центру.</li>
 <li>Приблизить.</li>
 <li>Отдалить.</li>
 <li>Включить или выключить миникарту.</li>
@@ -325,6 +323,20 @@
 <h3 id="связь-через-message-catch-events-message-catch-task" tabindex="-1"><a class="header-anchor" href="#связь-через-message-catch-events-message-catch-task"><span>Связь через Message Catch Events \ Message Catch Task</span></a></h3>
 <p>Для установления связи через откройте <a href="#%D0%BC%D0%B5%D0%BD%D1%8E-%D0%BF%D0%BE%D0%B4%D1%80%D0%BE%D0%B1%D0%BD%D0%BE%D1%81%D1%82%D0%B5%D0%B9-%D1%8D%D0%BB%D0%B5%D0%BC%D0%B5%D0%BD%D1%82%D0%B0">меню подробностей</a> и укажите соотвествующий связанный элемент отправки сообщения:<br>
 <img src="@source/features/links-2.png" alt="imaget"></p>
+<h3 id="декомпозиция-через-subprocess" tabindex="-1"><a class="header-anchor" href="#декомпозиция-через-subprocess"><span>Декомпозиция через Subprocess</span></a></h3>
+<p>Еще один вариант декомпозиции -использование Subprocess. В этом случае вы получаете возможность на одном листе проваливаться в подпроцессы.</p>
+<h4 id="как-использовать-subprocess" tabindex="-1"><a class="header-anchor" href="#как-использовать-subprocess"><span>Как использовать Subprocess</span></a></h4>
+<ol>
+<li>Укажите тип подпроцесса.</li>
+<li>Нажмите на значок стрелки:<br>
+<img src="@source/features/links-3.png" alt="imaget"></li>
+<li>Вернитесь на уровень выше при необходимости:<br>
+<img src="@source/features/links-4.png" alt="imaget"></li>
+</ol>
+<div class="hint-container warning">
+<p class="hint-container-title">Примечание</p>
+<p>По нотации BPMN Subrocess является непосредственной частью текущей схемы, поэтому переиспользовать его в других диаграммах (или даже в этой 2 раза) нельзя. Это не ярлык, а средство декомпозии. Такие связи не будут участвовать в графе связности.</p>
+</div>
 </div></template>
 
 
