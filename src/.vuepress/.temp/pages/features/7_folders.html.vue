@@ -3,6 +3,7 @@
 <p class="hint-container-title">Предупреждение</p>
 <p>Раздел в разработке</p>
 </div>
+<p>-- создание заглушки</p>
 </div></template>
 
 

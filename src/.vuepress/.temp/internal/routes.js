@@ -7,8 +7,6 @@ export const routes = Object.fromEntries([
   ["/enterprise/camunda_manage.html", { loader: () => import(/* webpackChunkName: "camunda_manage.html" */"C:/Users/kotov/stormbpmn-documentation/src/.vuepress/.temp/pages/enterprise/camunda_manage.html.js"), meta: {"t":"Управление серверами Camunda","i":"folder"} }],
   ["/enterprise/", { loader: () => import(/* webpackChunkName: "index.html" */"C:/Users/kotov/stormbpmn-documentation/src/.vuepress/.temp/pages/enterprise/index.html.js"), meta: {"t":"Enterprise-версия","i":"file","O":-3} }],
   ["/enterprise/rest-api.html", { loader: () => import(/* webpackChunkName: "rest-api.html" */"C:/Users/kotov/stormbpmn-documentation/src/.vuepress/.temp/pages/enterprise/rest-api.html.js"), meta: {"t":"Rest API","i":"gears"} }],
-  ["/real-life-scenarios/", { loader: () => import(/* webpackChunkName: "index.html" */"C:/Users/kotov/stormbpmn-documentation/src/.vuepress/.temp/pages/real-life-scenarios/index.html.js"), meta: {"t":"В реальной жизни","i":"user","O":2} }],
-  ["/team-work/", { loader: () => import(/* webpackChunkName: "index.html" */"C:/Users/kotov/stormbpmn-documentation/src/.vuepress/.temp/pages/team-work/index.html.js"), meta: {"t":"Совместная работа","i":"user-group","O":-3} }],
   ["/features/1_bpmn-editor.html", { loader: () => import(/* webpackChunkName: "1_bpmn-editor.html" */"C:/Users/kotov/stormbpmn-documentation/src/.vuepress/.temp/pages/features/1_bpmn-editor.html.js"), meta: {"t":"Бизнес-процессы в BPMN","i":"heart","O":1} }],
   ["/features/2_group-editor.html", { loader: () => import(/* webpackChunkName: "2_group-editor.html" */"C:/Users/kotov/stormbpmn-documentation/src/.vuepress/.temp/pages/features/2_group-editor.html.js"), meta: {"t":"Редактор групп процессов","O":2} }],
   ["/features/3_org-chart-editor.html", { loader: () => import(/* webpackChunkName: "3_org-chart-editor.html" */"C:/Users/kotov/stormbpmn-documentation/src/.vuepress/.temp/pages/features/3_org-chart-editor.html.js"), meta: {"t":"Редактор оргструктуры","O":3} }],
@@ -19,6 +17,8 @@ export const routes = Object.fromEntries([
   ["/features/7_folders.html", { loader: () => import(/* webpackChunkName: "7_folders.html" */"C:/Users/kotov/stormbpmn-documentation/src/.vuepress/.temp/pages/features/7_folders.html.js"), meta: {"t":"Папки и теги","O":7} }],
   ["/features/8_comments.html", { loader: () => import(/* webpackChunkName: "8_comments.html" */"C:/Users/kotov/stormbpmn-documentation/src/.vuepress/.temp/pages/features/8_comments.html.js"), meta: {"t":"Комментарии","O":8} }],
   ["/features/", { loader: () => import(/* webpackChunkName: "index.html" */"C:/Users/kotov/stormbpmn-documentation/src/.vuepress/.temp/pages/features/index.html.js"), meta: {"t":"Функции системы","i":"star","O":3} }],
+  ["/real-life-scenarios/", { loader: () => import(/* webpackChunkName: "index.html" */"C:/Users/kotov/stormbpmn-documentation/src/.vuepress/.temp/pages/real-life-scenarios/index.html.js"), meta: {"t":"В реальной жизни","i":"user","O":2} }],
+  ["/team-work/", { loader: () => import(/* webpackChunkName: "index.html" */"C:/Users/kotov/stormbpmn-documentation/src/.vuepress/.temp/pages/team-work/index.html.js"), meta: {"t":"Совместная работа","i":"user-group","O":-3} }],
   ["/404.html", { loader: () => import(/* webpackChunkName: "404.html" */"C:/Users/kotov/stormbpmn-documentation/src/.vuepress/.temp/pages/404.html.js"), meta: {"t":""} }],
 ]);
 

@@ -15,6 +15,7 @@ export default defineUserConfig({
     fullscreen: true,
     plugins: {
       search: true,
+      copyCode: {},
       mdEnhance: {
         mark: true,
         hint: true,
