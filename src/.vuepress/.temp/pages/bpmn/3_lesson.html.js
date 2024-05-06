@@ -1,0 +1,16 @@
+import comp from "C:/Users/kotov/stormbpmn-documentation/src/.vuepress/.temp/pages/bpmn/3_lesson.html.vue"
+const data = JSON.parse("{\"path\":\"/bpmn/3_lesson.html\",\"title\":\"3 урок:  3 уровня моделирования BPMN-схем\",\"lang\":\"ru-RU\",\"frontmatter\":{\"index\":false},\"headers\":[{\"level\":2,\"title\":\"Согласовательный уровень\",\"slug\":\"согласовательныи-уровень\",\"link\":\"#согласовательныи-уровень\",\"children\":[]},{\"level\":2,\"title\":\"Аналитический уровень\",\"slug\":\"аналитическии-уровень\",\"link\":\"#аналитическии-уровень\",\"children\":[]},{\"level\":2,\"title\":\"Исполняемый уровень\",\"slug\":\"исполняемыи-уровень\",\"link\":\"#исполняемыи-уровень\",\"children\":[]},{\"level\":2,\"title\":\"Выводы\",\"slug\":\"выводы\",\"link\":\"#выводы\",\"children\":[]}],\"git\":{\"createdTime\":null,\"updatedTime\":null,\"contributors\":[]},\"readingTime\":{\"minutes\":1.23,\"words\":369},\"filePathRelative\":\"bpmn/3_lesson.md\",\"excerpt\":\"\\n<p>Bpmn2 содержит ~480 элементов, которые не только описывают бизнес-процессы, но и могут использоваться для создания исполняемых программ в BPMS. При этом использование всей палитры может усложнить схему и сделать ее нечитаемой.</p>\\n<p>Авторы BPMN выделяют 3 уровня моделирования:</p>\\n<ul>\\n<li>\\n<p>Согласовательный (описательный);</p>\\n</li>\\n<li>\\n<p>Аналитический;</p>\\n</li>\\n<li>\\n<p>Исполняемый.</p>\\n</li>\\n</ul>\"}")
+export { comp, data }
+
+if (import.meta.webpackHot) {
+  import.meta.webpackHot.accept()
+  if (__VUE_HMR_RUNTIME__.updatePageData) {
+    __VUE_HMR_RUNTIME__.updatePageData(data)
+  }
+}
+
+if (import.meta.hot) {
+  import.meta.hot.accept(({ data }) => {
+    __VUE_HMR_RUNTIME__.updatePageData(data)
+  })
+}

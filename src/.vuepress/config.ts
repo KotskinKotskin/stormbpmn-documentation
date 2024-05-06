@@ -14,7 +14,9 @@ export default defineUserConfig({
   theme: hopeTheme({
     fullscreen: true,
     plugins: {
-      search: true,
+      searchPro: {
+        indexContent: true,
+      },
       copyCode: {},
       mdEnhance: {
         mark: true,

@@ -9,7 +9,7 @@ import clientConfig7 from 'C:/Users/kotov/stormbpmn-documentation/node_modules/@
 import clientConfig8 from 'C:/Users/kotov/stormbpmn-documentation/node_modules/@vuepress/plugin-copy-code/lib/client/config.js'
 import clientConfig9 from 'C:/Users/kotov/stormbpmn-documentation/src/.vuepress/.temp/md-enhance/config.js'
 import clientConfig10 from 'C:/Users/kotov/stormbpmn-documentation/node_modules/@vuepress/plugin-photo-swipe/lib/client/config.js'
-import clientConfig11 from 'C:/Users/kotov/stormbpmn-documentation/node_modules/@vuepress/plugin-search/lib/client/config.js'
+import clientConfig11 from 'C:/Users/kotov/stormbpmn-documentation/node_modules/vuepress-plugin-search-pro/lib/client/config.js'
 import clientConfig12 from 'C:/Users/kotov/stormbpmn-documentation/src/.vuepress/.temp/theme-hope/config.js'
 import clientConfig13 from 'C:/Users/kotov/stormbpmn-documentation/node_modules/vuepress-plugin-yandex-metrika/dist/clientAppEnhanceFiles.js'
 
