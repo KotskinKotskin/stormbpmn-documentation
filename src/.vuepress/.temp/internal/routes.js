@@ -3,7 +3,7 @@ export const redirects = JSON.parse("{}")
 export const routes = Object.fromEntries([
   ["/get-started.html", { loader: () => import(/* webpackChunkName: "get-started.html" */"C:/Users/kotov/stormbpmn-documentation/src/.vuepress/.temp/pages/get-started.html.js"), meta: {"t":"С чего начать","i":"play","O":1} }],
   ["/", { loader: () => import(/* webpackChunkName: "index.html" */"C:/Users/kotov/stormbpmn-documentation/src/.vuepress/.temp/pages/index.html.js"), meta: {"t":"Главная страница","O":0} }],
-  ["/bpmn/1_lesson.html", { loader: () => import(/* webpackChunkName: "1_lesson.html" */"C:/Users/kotov/stormbpmn-documentation/src/.vuepress/.temp/pages/bpmn/1_lesson.html.js"), meta: {"t":"1 урок:  BPM, BPMN, BPMS","I":false} }],
+  ["/bpmn/1_lesson.html", { loader: () => import(/* webpackChunkName: "1_lesson.html" */"C:/Users/kotov/stormbpmn-documentation/src/.vuepress/.temp/pages/bpmn/1_lesson.html.js"), meta: {"t":"1 урок: BPM, BPMN, BPMS","I":false} }],
   ["/bpmn/2_lesson.html", { loader: () => import(/* webpackChunkName: "2_lesson.html" */"C:/Users/kotov/stormbpmn-documentation/src/.vuepress/.temp/pages/bpmn/2_lesson.html.js"), meta: {"t":"2 урок:  Понятие бизнес-процесса и экзепляра процесса","I":false} }],
   ["/bpmn/3_lesson.html", { loader: () => import(/* webpackChunkName: "3_lesson.html" */"C:/Users/kotov/stormbpmn-documentation/src/.vuepress/.temp/pages/bpmn/3_lesson.html.js"), meta: {"t":"3 урок:  3 уровня моделирования BPMN-схем","I":false} }],
   ["/bpmn/4_lesson.html", { loader: () => import(/* webpackChunkName: "4_lesson.html" */"C:/Users/kotov/stormbpmn-documentation/src/.vuepress/.temp/pages/bpmn/4_lesson.html.js"), meta: {"t":"4 урок: BPMN для \"чайников\". Базовые элементы. (1/3)","I":false} }],
@@ -11,6 +11,7 @@ export const routes = Object.fromEntries([
   ["/bpmn/6_lesson.html", { loader: () => import(/* webpackChunkName: "6_lesson.html" */"C:/Users/kotov/stormbpmn-documentation/src/.vuepress/.temp/pages/bpmn/6_lesson.html.js"), meta: {"t":"6 урок: BPMN для \"чайников\". Пулы и дорожки. (3/3)","I":false} }],
   ["/bpmn/7_lesson.html", { loader: () => import(/* webpackChunkName: "7_lesson.html" */"C:/Users/kotov/stormbpmn-documentation/src/.vuepress/.temp/pages/bpmn/7_lesson.html.js"), meta: {"t":"7 урок: Проверка BPMN-схем на корректность","I":false} }],
   ["/bpmn/8_lesson.html", { loader: () => import(/* webpackChunkName: "8_lesson.html" */"C:/Users/kotov/stormbpmn-documentation/src/.vuepress/.temp/pages/bpmn/8_lesson.html.js"), meta: {"t":"8 урок: Хороший стиль BPMN","I":false} }],
+  ["/bpmn/9_lesson.html", { loader: () => import(/* webpackChunkName: "9_lesson.html" */"C:/Users/kotov/stormbpmn-documentation/src/.vuepress/.temp/pages/bpmn/9_lesson.html.js"), meta: {"t":"9 урок: Разбираем и улучшаем схему BPMN","I":false} }],
   ["/bpmn/", { loader: () => import(/* webpackChunkName: "index.html" */"C:/Users/kotov/stormbpmn-documentation/src/.vuepress/.temp/pages/bpmn/index.html.js"), meta: {"t":"Что такое BPMN","i":"circle-nodes","O":-3} }],
   ["/enterprise/camunda_manage.html", { loader: () => import(/* webpackChunkName: "camunda_manage.html" */"C:/Users/kotov/stormbpmn-documentation/src/.vuepress/.temp/pages/enterprise/camunda_manage.html.js"), meta: {"t":"Управление серверами Camunda","i":"folder"} }],
   ["/enterprise/", { loader: () => import(/* webpackChunkName: "index.html" */"C:/Users/kotov/stormbpmn-documentation/src/.vuepress/.temp/pages/enterprise/index.html.js"), meta: {"t":"Enterprise-версия","i":"file","O":-3} }],
@@ -28,7 +29,6 @@ export const routes = Object.fromEntries([
   ["/real-life-scenarios/", { loader: () => import(/* webpackChunkName: "index.html" */"C:/Users/kotov/stormbpmn-documentation/src/.vuepress/.temp/pages/real-life-scenarios/index.html.js"), meta: {"t":"В реальной жизни","i":"user","O":2} }],
   ["/team-work/", { loader: () => import(/* webpackChunkName: "index.html" */"C:/Users/kotov/stormbpmn-documentation/src/.vuepress/.temp/pages/team-work/index.html.js"), meta: {"t":"Совместная работа","i":"user-group","O":-3} }],
   ["/404.html", { loader: () => import(/* webpackChunkName: "404.html" */"C:/Users/kotov/stormbpmn-documentation/src/.vuepress/.temp/pages/404.html.js"), meta: {"t":""} }],
-  ["/bpmn/9_lesson.html", { loader: () => import(/* webpackChunkName: "9_lesson.html" */"C:/Users/kotov/stormbpmn-documentation/src/.vuepress/.temp/pages/bpmn/9_lesson.html.js"), meta: {"t":"9 урок: Разбираем и улучшаем схему BPMN","I":false} }],
 ]);
 
 if (import.meta.webpackHot) {

@@ -6,6 +6,11 @@ index: false
 
 Вы уже умеете использовать BPMN и знаете, как проверять корректность схем. Этого ещё недостаточно, чтобы делать адекватные и читаемые диаграммы. Сегодня поговорим про “хороший стиль” моделирования и о том, что нужно обязательно учитывать, когда делаете схемы.
 
+
+## Видеоверсия
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/KmwUmINlzGo?si=F9C03KODLxb-FJcz" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
 ## Зачем нужен хороший стиль
 
 Ваши схемы могут видеть сотни людей — коллеги в офисе, посетители вашей страницы на Facebook, разработчики BPMS-систем. Чтобы людям было удобно работать со схемами, недостаточно соблюдать спецификацию BPMN — она не учитывает особенности человеческого восприятия.
@@ -85,3 +90,6 @@ index: false
 
 ![image](8_lesson_13.png)  
 Это избыточный символ BPMN, который портит читаемость — со схемы непонятно, что хотели сказать. Используйте шлюзы, если есть условия для перехода потоков.
+
+## Факультатив
+<iframe width="560" height="315" src="https://www.youtube.com/embed/bfHvofV_xkk?si=P_qw7IxZowzd3zqu" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>

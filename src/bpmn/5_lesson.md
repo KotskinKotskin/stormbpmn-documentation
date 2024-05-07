@@ -8,6 +8,11 @@ index: false
 
 Это большое письмо. Крепитесь.
 
+:::tip
+
+ В статье меньше информации о символах, чем в видео. Смотрите их, только если решили максимально проникнуть в мир BPMN :)
+:::
+
 ## Уточняем базовые символы
 
 ### Действия
@@ -25,6 +30,8 @@ index: false
 
 ![image](5_lesson_5.png)
 
+<iframe width="560" height="315" src="https://www.youtube.com/embed/dnpBTyunZ2I?si=RxeOnClgBiwAZh4g" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
 ### События
 
 События бывают трёх видов: **стартовое**, **промежуточное** и **завершающее**.
@@ -39,6 +46,8 @@ index: false
 | 5   | Событие | Завершающее событие                    | ![image](5_lesson_10.png) | Показывает, что что-то случилось и процесс нужно завершить                                  |
 | 6   | Событие | Завершающее событие отправки сообщения | ![image](5_lesson_11.png) | Показывает, что нужно завершить процесс и отправить сообщение участнику взаимодействия      |
 | 7   | События | Терминальное завершающее событие       | ![image](5_lesson_12.png) | Показывает, что нужно завершить процесс и любые прочие действия в процессе немедленно       |
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/jOL6oQInO0k?si=mAE1mD4gmTp9vAS1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 ### Шлюзы
 

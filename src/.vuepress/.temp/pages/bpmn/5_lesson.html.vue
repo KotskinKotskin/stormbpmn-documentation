@@ -1,6 +1,10 @@
 <template><div><h1 id="_5-урок-bpmn-для-чаиников-базовые-элементы-2-3" tabindex="-1"><a class="header-anchor" href="#_5-урок-bpmn-для-чаиников-базовые-элементы-2-3"><span>5 урок: BPMN для &quot;чайников&quot;. Базовые элементы. (2/3)</span></a></h1>
 <p>Я не сказал вам всей правды — в BPMN для чайников символов немного больше. Сегодня обсудим оставшиеся базовые элементы и особенности их применения.</p>
 <p>Это большое письмо. Крепитесь.</p>
+<div class="hint-container tip">
+<p class="hint-container-title">Совет</p>
+<p>В статье меньше информации о символах, чем в видео. Смотрите их, только если решили максимально проникнуть в мир BPMN 😃</p>
+</div>
 <h2 id="уточняем-базовые-символы" tabindex="-1"><a class="header-anchor" href="#уточняем-базовые-символы"><span>Уточняем базовые символы</span></a></h2>
 <h3 id="деиствия" tabindex="-1"><a class="header-anchor" href="#деиствия"><span>Действия</span></a></h3>
 <p>Действия бывают двух видов: <strong>задача</strong> и <strong>подпроцесс</strong>.</p>
@@ -54,6 +58,7 @@
 </table>
 <p>Подпроцессы помогают экономить пространство на схеме и декомпозировать, т.е. разделять на части большие процессы.</p>
 <p><img src="@source/bpmn/5_lesson_5.png" alt="image"></p>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/dnpBTyunZ2I?si=RxeOnClgBiwAZh4g" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 <h3 id="события" tabindex="-1"><a class="header-anchor" href="#события"><span>События</span></a></h3>
 <p>События бывают трёх видов: <strong>стартовое</strong>, <strong>промежуточное</strong> и <strong>завершающее</strong>.</p>
 <table>
@@ -125,6 +130,7 @@
 </tr>
 </tbody>
 </table>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/jOL6oQInO0k?si=mAE1mD4gmTp9vAS1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 <h3 id="шлюзы" tabindex="-1"><a class="header-anchor" href="#шлюзы"><span>Шлюзы</span></a></h3>
 <p>Шлюзы бывают двух видов: <strong>исключающий</strong> и <strong>параллельный</strong>.</p>
 <table>

@@ -6,10 +6,16 @@ index: false
 
 Понятие бизнес-процесса очень широкое, существует масса трактовок. Чтобы эту рассылку вы понимали правильно, вам нужно знать что под процессами понимает международное сообщество.
 
+## Видеоверсия и повторение первого урока
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/iFPKWpHA9pk?si=BOxh7YNDD3WQQHdh" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
 ## Официальное определение (ABPMP.ORG)
 
-Существует общественная организация — The Association of Business Process Management Professionals. Она создана в 2003 году, в США.  
+Существует общественная организация — The Association of Business Process Management Professionals. Она создана в 2003 году, в США. 
+
 Задача организации — обобщать опыт экспертов в области процессов, проводить обучение, издавать книги и глоссарии.
+
 Ассоциация не зависит от производителей софта или методологии и существует полностью на взносы членов, поэтому я ей доверяю.
 Коллеги из ABPMP написали свод знаний по управлению процессами. В нём подробно описан термин “процесс”.  
 

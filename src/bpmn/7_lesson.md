@@ -7,6 +7,10 @@ index: false
 Настало время научиться проверять, что схема, которую мы составили, не содержит логических ошибок. Для этого в BPMN-науке используется воображаемая игра — Token game.
 
 
+## Видеоверсия
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/44y1u8BWR6Y?si=TXVBH5u5aoHMkylN" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
 ## Идея
 
 Token games — это игра с жетонами, или “токенами”. Такая же, как любая настольная игра. Только вместо поля настольной игры используется поле вашего процесса.  
@@ -51,3 +55,7 @@ Token games — это игра с жетонами, или “токенами�
 ## Проверка больших схем
 
 Для валидации больших схем одной внимательности не хватит — нужно использовать специализированные средства, например, [проверку качества в stormbpmn.com](/features/1_bpmn-editor.html#качество-бизнес-процессов-bpmn).
+
+## Факультатив
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/GUCgr7J-Pzs?si=GteDuwUi7NVRlb4M" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>

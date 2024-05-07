@@ -114,6 +114,8 @@
 <p>Дальше мы задумаемся над тем, что поставщик-то может и не поставить товар! И может не предоставить документы, и с этим нужно что-то делать. Ещё понимаем, что не обработан случай, когда счетов на согласование нет.</p>
 <p>Продолжать можно бесконечно, чтобы остановиться надо помнить вашу цель — автоматизировать бизнес-процесс для чего-то. В BPMS системах полно инструментария, чтобы снять некорректные процессы, уточнить информацию комментариями и так далее.</p>
 <p>Главное помнить, что схемы настоящих процессов — сложные. Если схема простая, из 4 квадратиков — то это повод задуматься и понять, что такую схему автоматизировать не нужно.</p>
-</div></template>
+<h2 id="факультатив" tabindex="-1"><a class="header-anchor" href="#факультатив"><span>Факультатив</span></a></h2>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/3R3N1Cof9IQ?si=ZO3D7ow_kxR5-NcG" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/cTj_hXN6ac0?si=oDZvQKUQl4iTuHS8" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div></template>
 
 

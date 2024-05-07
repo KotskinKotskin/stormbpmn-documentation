@@ -1,5 +1,7 @@
 <template><div><h1 id="_8-урок-хорошии-стиль-bpmn" tabindex="-1"><a class="header-anchor" href="#_8-урок-хорошии-стиль-bpmn"><span>8 урок: Хороший стиль BPMN</span></a></h1>
 <p>Вы уже умеете использовать BPMN и знаете, как проверять корректность схем. Этого ещё недостаточно, чтобы делать адекватные и читаемые диаграммы. Сегодня поговорим про “хороший стиль” моделирования и о том, что нужно обязательно учитывать, когда делаете схемы.</p>
+<h2 id="видеоверсия" tabindex="-1"><a class="header-anchor" href="#видеоверсия"><span>Видеоверсия</span></a></h2>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/KmwUmINlzGo?si=F9C03KODLxb-FJcz" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 <h2 id="зачем-нужен-хорошии-стиль" tabindex="-1"><a class="header-anchor" href="#зачем-нужен-хорошии-стиль"><span>Зачем нужен хороший стиль</span></a></h2>
 <p>Ваши схемы могут видеть сотни людей — коллеги в офисе, посетители вашей страницы на Facebook, разработчики BPMS-систем. Чтобы людям было удобно работать со схемами, недостаточно соблюдать спецификацию BPMN — она не учитывает особенности человеческого восприятия.</p>
 <p>Работая с разными схемами, я прочувствовал правила “хорошего стиля”, т.е. негласное соглашение о том, как лучше оформлять схемы. Делюсь с вами.</p>
@@ -80,6 +82,8 @@
 <h3 id="не-используите-условныи-переход" tabindex="-1"><a class="header-anchor" href="#не-используите-условныи-переход"><span>Не используйте условный переход</span></a></h3>
 <p><img src="@source/bpmn/8_lesson_13.png" alt="image"><br>
 Это избыточный символ BPMN, который портит читаемость — со схемы непонятно, что хотели сказать. Используйте шлюзы, если есть условия для перехода потоков.</p>
+<h2 id="факультатив" tabindex="-1"><a class="header-anchor" href="#факультатив"><span>Факультатив</span></a></h2>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/bfHvofV_xkk?si=P_qw7IxZowzd3zqu" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 </div></template>
 
 
