@@ -289,7 +289,7 @@ icon: heart
 <iframe width="560" height="315" src="https://www.youtube.com/embed/Gfx5atU3YDY?si=ARC0B7o3i9K1DCey" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 :::danger
-Симуляция токена поддерживает не все элементы. Вы получите соответсвующее уведомление __Not supported__, если воспользуетесь таким элементов. Замените его.
+Симуляция токена поддерживает не все элементы. Вы получите соответсвующее уведомление __Not supported__, если воспользуетесь таким элементов. Замените его. Симуляция токена работает только если у вас есть права на редактирование диаграммы. А редактирование отключается у любой диаграммы, если ее статус на согласовании\готова.  
 :::
 
 Для включения симуляции токена нажмите кнопку, приблизьтесь к любому стартовому событию и нажмите на символ Play. Используйте переключатель на шлюзах, чтобы вести Token по выбранному направлению:  
