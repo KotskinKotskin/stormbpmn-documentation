@@ -20,6 +20,9 @@ export default defineUserConfig({
       copyCode: {},
       mdEnhance: {
         mark: true,
+        align: true,
+        attrs: false,
+        tasklist: true,
         hint: true,
       },
     },

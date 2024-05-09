@@ -29,8 +29,8 @@
 </div>
 <p>В этом же меню сохранить <strong>чужую диаграмму</strong>, к которой вы не имеете доступа на редактирование, в свои диаграммы.</p>
 <p><img src="@source/features/save-menu.png" alt="image"></p>
-<h4 id="скачать" tabindex="-1"><a class="header-anchor" href="#скачать"><span>Скачать</span></a></h4>
-<p>В этом меню можно скачать диаграмму в нужном формате, включая <a href="#%D1%80%D0%B5%D0%B3%D0%BB%D0%B0%D0%BC%D0%B5%D0%BD%D1%82%D1%8B">.docx</a>
+<h4 id="скачать-экспорт-png-bpmn-docx" tabindex="-1"><a class="header-anchor" href="#скачать-экспорт-png-bpmn-docx"><span>Скачать (экспорт PNG, BPMN, .DOCX)</span></a></h4>
+<p>В этом меню можно скачать диаграмму в нужном формате, включая <a href="#%D1%80%D0%B5%D0%B3%D0%BB%D0%B0%D0%BC%D0%B5%D0%BD%D1%82%D1%8B">.docx</a><br>
 <img src="@source/features/download-menu.png" alt="image"></p>
 <div class="hint-container tip">
 <p class="hint-container-title">Совет</p>
@@ -246,7 +246,7 @@
 <iframe width="560" height="315" src="https://www.youtube.com/embed/Gfx5atU3YDY?si=ARC0B7o3i9K1DCey" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 <div class="hint-container caution">
 <p class="hint-container-title">Предупреждение</p>
-<p>Симуляция токена поддерживает не все элементы. Вы получите соответсвующее уведомление <strong>Not supported</strong>, если воспользуетесь таким элементов. Замените его.</p>
+<p>Симуляция токена поддерживает не все элементы. Вы получите соответсвующее уведомление <strong>Not supported</strong>, если воспользуетесь таким элементов. Замените его. Симуляция токена работает только если у вас есть права на редактирование диаграммы. А редактирование отключается у любой диаграммы, если ее статус на согласовании\готова.</p>
 </div>
 <p>Для включения симуляции токена нажмите кнопку, приблизьтесь к любому стартовому событию и нажмите на символ Play. Используйте переключатель на шлюзах, чтобы вести Token по выбранному направлению:<br>
 <img src="@source/features/error-check-3.png" alt="image"></p>
