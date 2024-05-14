@@ -21,9 +21,9 @@ order: 6
 Пример фильтрации массива по типу:
 
 ```
-{{?assetList.?[#this.assetType.toString() == 'SYSTEM']}}     
- {{?assetType.toString() == 'SYSTEM'}}  {{assetName}} 
-{{/?assetList.?[#this.assetType.toString() == 'SYSTEM']}}
+{{?assetList.?[#this.assetType.toString() == 'SYSTEM']}}
+{{?assetType.toString() == 'SYSTEM'}}{{assetLinkReg}}{{/}}
+{{/assetList.?[#this.assetType.toString() == 'SYSTEM']}}
 ```
 
 В шаблонах работают макросы.
@@ -98,7 +98,7 @@ order: 6
   {{assetType}}-тип элемента архитектуры
   {{assetTypeStr}}  - тип элемента архитектуры на русском
   {{assetName}}  - название элемента архитектуры
-  {{+description}}  - описание элемента архитектуры
+  {{+assetDescription}}  - описание элемента архитектуры
   {{assetLink}}  -внешняя ссылка
   {{assetLinkReg}}  - красивая кликабельная ссылка, где под именем ссылка
  {{/assetList}}
@@ -115,7 +115,7 @@ order: 6
  [assetType] -тип элемента архитектуры
  [assetTypeStr] - тип элемента архитектуры на русском
  [assetName] - название элемента архитектуры
- [+description] - описание элемента архитектуры
+ [+assetDescription] - описание элемента архитектуры
  [assetLink] -внешняя ссылка
  [assetLinkReg] - красивая кликабельная ссылка, где под именем ссылка
 
@@ -124,7 +124,7 @@ order: 6
   [assetType] -тип элемента архитектуры
   [assetTypeStr] - тип элемента архитектуры на русском
   [assetName] - название элемента архитектуры
-  [+description] - описание элемента архитектуры
+  [+assetDescription] - описание элемента архитектуры
   [assetLink] -внешняя ссылка
   [assetLinkReg] - красивая кликабельная ссылка, где под именем ссылка
  [/linkedTasks] 
@@ -133,7 +133,7 @@ order: 6
  [assetType] -тип элемента архитектуры
  [assetTypeStr] - тип элемента архитектуры на русском
  [assetName] - название элемента архитектуры
- [+description] - описание элемента архитектуры
+ [+assetDescription] - описание элемента архитектуры
  [fromItemName]-элемент, к которому пркреплен элемент архитектуры
  [assetLink] -внешняя ссылка строкой
  [assetLinkReg] - внешняя ссылка с положенной ссылкой в ворде
