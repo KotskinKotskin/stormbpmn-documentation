@@ -70,7 +70,6 @@ order: 6
 
 {{participantsTable}} -таблица участников
  [typeStr]  - тип участника
- [person] - сотрудник
  [person.email]- почта
  [person.firstName]- имя
  [person.lastName]- фамилия
