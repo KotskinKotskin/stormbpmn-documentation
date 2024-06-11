@@ -49,6 +49,7 @@ order: 5
 
 ### C помощью загрузки из .csv
 
+Разделитель - запятая.
 По [ссылке](https://stormbpmn.com/app/team):  
 ![image](create-element_architecture-4.png)
 
