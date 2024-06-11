@@ -26,7 +26,7 @@ C отдельного представления
 
 По [ссылке](https://stormbpmn.com/app/team/assignees/):  
 ![image](create-assignee-3.png)
- C помощью загрузки из .csv (разделитель - запятая):
+ C помощью загрузки из .csv (разделитель - запятая, кодировка UTF8):
 
 По [ссылке](https://stormbpmn.com/app/team):  
 ![image](create-assignee-4.png)
