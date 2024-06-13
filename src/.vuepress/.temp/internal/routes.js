@@ -28,8 +28,8 @@ export const routes = Object.fromEntries([
   ["/features/8_comments.html", { loader: () => import(/* webpackChunkName: "8_comments.html" */"C:/Users/kotov/stormbpmn-documentation/src/.vuepress/.temp/pages/features/8_comments.html.js"), meta: {"t":"Комментарии","O":8} }],
   ["/features/", { loader: () => import(/* webpackChunkName: "index.html" */"C:/Users/kotov/stormbpmn-documentation/src/.vuepress/.temp/pages/features/index.html.js"), meta: {"t":"Функции системы","i":"star","O":3} }],
   ["/real-life-scenarios/", { loader: () => import(/* webpackChunkName: "index.html" */"C:/Users/kotov/stormbpmn-documentation/src/.vuepress/.temp/pages/real-life-scenarios/index.html.js"), meta: {"t":"В реальной жизни","i":"user","O":2} }],
-  ["/team-work/", { loader: () => import(/* webpackChunkName: "index.html" */"C:/Users/kotov/stormbpmn-documentation/src/.vuepress/.temp/pages/team-work/index.html.js"), meta: {"t":"Совместная работа","i":"user-group","O":-3} }],
   ["/support/", { loader: () => import(/* webpackChunkName: "index.html" */"C:/Users/kotov/stormbpmn-documentation/src/.vuepress/.temp/pages/support/index.html.js"), meta: {"t":"Тех.поддержка и администрирование","i":"handshake-angle","O":-1} }],
+  ["/team-work/", { loader: () => import(/* webpackChunkName: "index.html" */"C:/Users/kotov/stormbpmn-documentation/src/.vuepress/.temp/pages/team-work/index.html.js"), meta: {"t":"Совместная работа","i":"user-group","O":-3} }],
   ["/404.html", { loader: () => import(/* webpackChunkName: "404.html" */"C:/Users/kotov/stormbpmn-documentation/src/.vuepress/.temp/pages/404.html.js"), meta: {"t":""} }],
 ]);
 
