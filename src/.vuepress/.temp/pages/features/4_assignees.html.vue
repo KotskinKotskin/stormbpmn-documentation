@@ -13,7 +13,7 @@
 <p>C отдельного представления</p>
 <p>По <a href="https://stormbpmn.com/app/team/assignees/" target="_blank" rel="noopener noreferrer">ссылке<ExternalLinkIcon/></a>:<br>
 <img src="@source/features/create-assignee-3.png" alt="image">
-C помощью загрузки из .csv:</p>
+C помощью загрузки из .csv (разделитель - запятая, кодировка UTF8):</p>
 <p>По <a href="https://stormbpmn.com/app/team" target="_blank" rel="noopener noreferrer">ссылке<ExternalLinkIcon/></a>:<br>
 <img src="@source/features/create-assignee-4.png" alt="image"></p>
 <h3 id="редактирование-ролеи" tabindex="-1"><a class="header-anchor" href="#редактирование-ролеи"><span>Редактирование ролей</span></a></h3>

@@ -208,7 +208,7 @@
 <p>Редактор поддерживает работу с горячими клавишами, что сильно ускоряет работу при моделировании процессов:</p>
 <ul>
 <li><strong>ctrl + z</strong> отменить последнее действие</li>
-<li><strong>ctrl + y</strong> - выполнить последнее действие</li>
+<li><strong>ctrl + y</strong> - вернуть отмененное действие</li>
 <li><strong>ctrl + a</strong> - выделить всё</li>
 <li><strong>ctrl + scroll</strong> - изменение масштаба</li>
 <li><strong>scroll</strong> - перемещение по вертикали</li>

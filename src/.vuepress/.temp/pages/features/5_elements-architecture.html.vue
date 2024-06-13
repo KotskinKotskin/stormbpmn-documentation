@@ -34,7 +34,8 @@
 <p>По <a href="https://stormbpmn.com/app/team/assets/" target="_blank" rel="noopener noreferrer">ссылке<ExternalLinkIcon/></a>:<br>
 <img src="@source/features/create-element_architecture-3.png" alt="image"></p>
 <h3 id="c-помощью-загрузки-из-csv" tabindex="-1"><a class="header-anchor" href="#c-помощью-загрузки-из-csv"><span>C помощью загрузки из .csv</span></a></h3>
-<p>По <a href="https://stormbpmn.com/app/team" target="_blank" rel="noopener noreferrer">ссылке<ExternalLinkIcon/></a>:<br>
+<p>Разделитель - запятая, кодировка - UTF8.
+По <a href="https://stormbpmn.com/app/team" target="_blank" rel="noopener noreferrer">ссылке<ExternalLinkIcon/></a>:<br>
 <img src="@source/features/create-element_architecture-4.png" alt="image"></p>
 <h3 id="c-помощью-rest-api" tabindex="-1"><a class="header-anchor" href="#c-помощью-rest-api"><span>C помощью <RouteLink to="/enterprise/rest-api.html#%D0%B7%D0%B0%D0%B3%D1%80%D1%83%D0%B7%D0%BA%D0%B0-%D0%B8-%D0%B8%D0%BB%D0%B8-%D0%BE%D0%B1%D0%BD%D0%BE%D0%B2%D0%BB%D0%B5%D0%BD%D0%B8%D0%B5-%D1%8D%D0%BB%D0%B5%D0%BC%D0%B5%D0%BD%D1%82%D0%BE%D0%B2-%D0%B0%D1%80%D1%85%D0%B8%D1%82%D0%B5%D0%BA%D1%82%D1%83%D1%80%D1%8B">REST API</RouteLink></span></a></h3>
 <h2 id="редактирование-элементов-архитектуры" tabindex="-1"><a class="header-anchor" href="#редактирование-элементов-архитектуры"><span>Редактирование Элементов архитектуры</span></a></h2>
