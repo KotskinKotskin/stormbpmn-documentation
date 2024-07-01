@@ -104,7 +104,7 @@ order: 6
      {{assetLink}}  -внешняя ссылка
      {{assetLinkReg}}  - красивая кликабельная ссылка, где под именем ссылка
    {{/assetList}} - окончание массива элементы архитектуры, связанные с задачей
-{{/assigneesListDescription}} окончание массива описания задач
+{{/assigneesListDescription}} - окончание массива описания задач
 
 Массив пулов с описанием задач в каждом из них:
 {{?assigneesListDescriptionByPool}} - начало массива пулов
@@ -113,8 +113,8 @@ order: 6
     Внутри него те же хэштеги описания задач, что описаны выше:
      {{activityName}} - название элемента диаграммы
       ...
-  {{/second}}
-{{/assigneesListDescriptionByPool}} 
+  {{/second}} - окончание массива задач в пуле
+{{/assigneesListDescriptionByPool}}  - начало массива пулов
 
 
 {{processCollaboration}} - таблица связей процесса
