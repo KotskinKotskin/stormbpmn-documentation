@@ -25,7 +25,8 @@ index: false
 
 ## Общая схема базового BPMN
 
-![image](4_lesson_1.png)
+![image](https://github.com/user-attachments/assets/20e3e810-6f39-4931-bbb2-8bd8d83d77af)
+
 
 ## Таблица описания элементов
 
