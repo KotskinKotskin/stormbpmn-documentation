@@ -168,6 +168,7 @@ update databasechangelog set filename = CONCAT('/db/changelog/changes/',SUBSTRIN
 - STORM_DISABLE_ENV_IN_UI - установить true \ false. Запрещает просмотр ENV-значений в UI администратора.
 - STORM_DISABLE_ANON_SHARING - установить true \ false.  запрещает делиться диаграммами анонимно.  Переопределяет настройку enableAnonDiagrams в UI администратора.
 - STORM_SENTRY_ENABLE - установить false.
+- STORM_ENABLE_SAAS_FEATURES - установить false.
 
 :::
 
