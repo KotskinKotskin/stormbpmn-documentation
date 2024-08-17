@@ -162,8 +162,8 @@ upstream storm {
 ```
 update databasechangelog set filename = CONCAT('/db/changelog/changes/',SUBSTRING(filename,35))
 ```
-Обновление на версию >=6.6.441 требдует новых ENV переменных:
-- STORM_ALLOWED_ORIGINS - установить значение, с которого разрешены сетевые запросы из браузера. Как правило это base_url, что-то типа https://storm.corp.local. Можно установить *(любой домен), но кто вы после этого?
+Обновление на версию >=6.6.441 требует новых ENV переменных:
+- STORM_ALLOWED_ORIGINS - установить значение, с которого разрешены сетевые запросы из браузера. Как правило это base_url, что-то типа https://storm.corp.local. Можно установить *(любой адрес), но кто вы после этого?
 - STORM_DISABLE_SIMPLE_AUTH - установить true \ false. Запрещает базовую авторизацию c емейлом и паролем по базе Stormbpmn.
 - STORM_DISABLE_ENV_IN_UI - установить true \ false. Запрещает просмотр ENV-значений в UI администратора.
 - STORM_DISABLE_ANON_SHARING - установить true \ false.  запрещает делиться диаграммами анонимно.  Переопределяет настройку enableAnonDiagrams в UI администратора.
