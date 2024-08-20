@@ -169,7 +169,7 @@ update databasechangelog set filename = CONCAT('/db/changelog/changes/',SUBSTRIN
 - STORM_DISABLE_ANON_SHARING - установить true \ false.  запрещает делиться диаграммами анонимно.  Переопределяет настройку enableAnonDiagrams в UI администратора.
 - STORM_SENTRY_ENABLE - установить false.
 - STORM_ENABLE_SAAS_FEATURES - установить false.
-
+- GOTENBERG_URL - ссылка на URL-сервериса конвертации docx в pdf, например. https://demo.gotenberg.dev. Можно вписать что угодно, если не используете конверацию.
 :::
 
 ### Disaster recovery plan при обновлении
