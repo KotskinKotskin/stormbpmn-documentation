@@ -37,7 +37,7 @@ order: -1
 
 ## SLA
 
-| #   | Название                                   | Облако          | Enterprise     |
+| #   | Название                                   | Team          | Enterprise     |
 | --- | ------------------------------------------ | --------------- | -------------- |
 | 1   | Время реагирования                         | 5 рабочих дней  | 16 часов       |
 | 2   | Время устранения критической неисправности | 30 рабочих дней | 15 рабочих дней |
@@ -162,6 +162,14 @@ upstream storm {
 ```
 update databasechangelog set filename = CONCAT('/db/changelog/changes/',SUBSTRING(filename,35))
 ```
+Обновление на версию >=6.6.441 требует новых ENV переменных:
+- STORM_ALLOWED_ORIGINS - установить значение, с которого разрешены сетевые запросы из браузера. Как правило это base_url, что-то типа https://storm.corp.local. Можно установить *(любой адрес), но кто вы после этого?
+- STORM_DISABLE_SIMPLE_AUTH - установить true \ false. Запрещает базовую авторизацию c емейлом и паролем по базе Stormbpmn.
+- STORM_DISABLE_ENV_IN_UI - установить true \ false. Запрещает просмотр ENV-значений в UI администратора.
+- STORM_DISABLE_ANON_SHARING - установить true \ false.  запрещает делиться диаграммами анонимно.  Переопределяет настройку enableAnonDiagrams в UI администратора.
+- STORM_SENTRY_ENABLE - установить false.
+- STORM_ENABLE_SAAS_FEATURES - установить false.
+- GOTENBERG_URL - ссылка на URL-сервериса конвертации docx в pdf, например. https://demo.gotenberg.dev. Можно вписать что угодно, если не используете конверацию.
 :::
 
 ### Disaster recovery plan при обновлении
