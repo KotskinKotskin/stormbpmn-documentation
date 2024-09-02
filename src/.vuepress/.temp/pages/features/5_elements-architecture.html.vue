@@ -26,9 +26,9 @@
 <li><strong>Статус</strong> - отображет информацию о том, в каком состоянии находится Элемент архитектуры.</li>
 <li><strong>Цвет</strong> - используется в оверлеях.</li>
 </ul>
-<h3 id="с-интефеиса-процесса-в-контекстом-меню" tabindex="-1"><a class="header-anchor" href="#с-интефеиса-процесса-в-контекстом-меню"><span>С интефейса процесса в <RouteLink to="/features/1_bpmn-editor.html#%D0%BA%D0%BE%D0%BD%D1%82%D0%B5%D0%BA%D1%81%D1%82%D0%BD%D0%BE%D0%B5-%D0%BC%D0%B5%D0%BD%D1%8E">контекстом меню</RouteLink></span></a></h3>
+<h3 id="с-интерфеиса-процесса-в-контекстом-меню" tabindex="-1"><a class="header-anchor" href="#с-интерфеиса-процесса-в-контекстом-меню"><span>С интерфейса процесса в <RouteLink to="/features/1_bpmn-editor.html#%D0%BA%D0%BE%D0%BD%D1%82%D0%B5%D0%BA%D1%81%D1%82%D0%BD%D0%BE%D0%B5-%D0%BC%D0%B5%D0%BD%D1%8E">контекстом меню</RouteLink></span></a></h3>
 <p><img src="@source/features/create-element_architecture.png" alt="image"></p>
-<h3 id="с-интефеиса-процесса-в-описании-задач" tabindex="-1"><a class="header-anchor" href="#с-интефеиса-процесса-в-описании-задач"><span>С интефейса процесса в <RouteLink to="/features/1_bpmn-editor.html#%D0%BE%D0%BF%D0%B8%D1%81%D0%B0%D0%BD%D0%B8%D0%B5-%D0%B7%D0%B0%D0%B4%D0%B0%D1%87">описании задач</RouteLink></span></a></h3>
+<h3 id="с-интерфеиса-процесса-в-описании-задач" tabindex="-1"><a class="header-anchor" href="#с-интерфеиса-процесса-в-описании-задач"><span>С интерфейса процесса в <RouteLink to="/features/1_bpmn-editor.html#%D0%BE%D0%BF%D0%B8%D1%81%D0%B0%D0%BD%D0%B8%D0%B5-%D0%B7%D0%B0%D0%B4%D0%B0%D1%87">описании задач</RouteLink></span></a></h3>
 <p><img src="@source/features/create-element_architecture-2.png" alt="image"></p>
 <h3 id="c-отдельного-представления" tabindex="-1"><a class="header-anchor" href="#c-отдельного-представления"><span>C отдельного представления</span></a></h3>
 <p>По <a href="https://stormbpmn.com/app/team/assets/" target="_blank" rel="noopener noreferrer">ссылке<ExternalLinkIcon/></a>:<br>
