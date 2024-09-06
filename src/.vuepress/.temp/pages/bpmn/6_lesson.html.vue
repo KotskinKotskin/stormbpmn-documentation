@@ -10,7 +10,7 @@
 <h2 id="взаимодеиствие-исполнителеи-между-собои" tabindex="-1"><a class="header-anchor" href="#взаимодеиствие-исполнителеи-между-собои"><span>Взаимодействие исполнителей между собой</span></a></h2>
 <p>Как помните, я показывал вам 3 типа линии.</p>
 <p><img src="@source/bpmn/6_lesson_3.png" alt="image"></p>
-<p>Линияи спользуется для соединения элементов процесса (события, задачи, подпроцессы, шлюзы) в пуле. Вы не можете начать или прервать эту линию в процессе просто так. Линии должны начинаться на стартовых событиях, а заканчиваться на завершающих событиях.</p>
+<p>Линия используется для соединения элементов процесса (события, задачи, подпроцессы, шлюзы) в пуле. Вы не можете начать или прервать эту линию в процессе просто так. Линии должны начинаться на стартовых событиях, а заканчиваться на завершающих событиях.</p>
 <p>Линия НЕ может выходить за границу пула: это нарушит целостность процесса, и вы потеряете над ним контроль.</p>
 <div class="hint-container caution">
 <p class="hint-container-title">Предупреждение</p>
@@ -34,6 +34,7 @@
 <p>Stormbpmn не позволит совершать такие (и многие другие) ошибки за счет автоматческого <RouteLink to="/features/1_bpmn-editor.html#%D0%BA%D0%B0%D1%87%D0%B5%D1%81%D1%82%D0%B2%D0%BE-%D0%B1%D0%B8%D0%B7%D0%BD%D0%B5%D1%81-%D0%BF%D1%80%D0%BE%D1%86%D0%B5%D1%81%D1%81%D0%BE%D0%B2-bpmn">контроля качества</RouteLink></p>
 </div>
 <h2 id="факультатив" tabindex="-1"><a class="header-anchor" href="#факультатив"><span>Факультатив</span></a></h2>
-<iframe width="560" height="315" src="https://www.youtube.com/embed/EshGX0pa6_M?si=aEn1R3U4jBfpPaMw" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div></template>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/EshGX0pa6_M?si=aEn1R3U4jBfpPaMw" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+</div></template>
 
 

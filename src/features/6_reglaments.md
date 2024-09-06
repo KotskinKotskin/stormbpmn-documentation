@@ -42,7 +42,7 @@ order: 6
 - Элементы архитектуры
 - Согласование
 
-
+## Шаблон регламента
 ::: info
 Воспользуйтесь [базовым шаблоном](https://docs.google.com/document/d/1e9GZfWQDymoFcsF95yOTZdqkz4hXflzI2QyMUpqaFmY/edit#heading=h.bnj92bmrrns8) для быстрого старта. 
 
@@ -92,7 +92,7 @@ order: 6
 
 
 Массив описания задач:
-{{?assigneesListDescription}} - начално массива
+{{?assigneesListDescription}} - начало массива
   Внутри него:
    {{activityName}} - название элемента диаграммы (задачи)
    {{elementType}} - тип элемента (событие, шлюз, задача)
@@ -119,7 +119,7 @@ order: 6
      {{activityName}} - название элемента диаграммы
       ...
   {{/second}} - окончание массива задач в пуле
-{{/assigneesListDescriptionByPool}}  - начало массива пулов
+{{/assigneesListDescriptionByPool}}  - окончание массива пулов
 
 
 {{processCollaboration}} - таблица связей процесса

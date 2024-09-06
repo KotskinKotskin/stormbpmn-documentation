@@ -36,13 +36,13 @@
 </tr>
 <tr>
 <td style="text-align:center">5</td>
-<td style="text-align:center">Базовый SLA ( 5 дней реакция, 30 дней устранение)</td>
+<td style="text-align:center">Базовый SLA</td>
 <td style="text-align:center">✓</td>
 <td style="text-align:center"></td>
 </tr>
 <tr>
 <td style="text-align:center">6</td>
-<td style="text-align:center">Расширенный SLA (2 часа реакция, 5 дней устранение)</td>
+<td style="text-align:center">Расширенный SLA</td>
 <td style="text-align:center"></td>
 <td style="text-align:center">✓</td>
 </tr>
@@ -119,7 +119,7 @@
 <p><img src="@source/enterprise/storm-arch.png" alt="image"></p>
 <p>В некоторых ситуациях Stormbpmn предлагает опции по использованию компонент:</p>
 <ul>
-<li><strong>Аутентификация</strong> (Keycloak/LDAPS/Внутренний механизм) : на выбор прямая интеграция с LDAP, через Keycloak или встроенный механизм. Keycloak позволяет подключить другие провайдеры авторизации, но требует отдельного обслуживания.</li>
+<li><strong>Аутентификация</strong> (Keycloak/LDAPS/Oauth2/Внутренний механизм) : на выбор прямая интеграция с LDAP, через Keycloak, Oauth2 или встроенный механизм. Keycloak позволяет подключить другие провайдеры авторизации, но требует отдельного обслуживания.</li>
 <li><strong>E-mail уведомления</strong> (SMTP/Mautic) интеграция через mautic дает возможность шаблонизировать письма под ваши потребности, но требует отдельного обслуживания.</li>
 <li><strong>Отрисовка PlantUML</strong> (PlantUML/Не использовать): позволяет рисовать в Stormbpmn PlantUML диаграммы.</li>
 <li><strong>Мониторинг</strong> (Prometheus/Не использовать):  позволяет анализировать работоспособность системы.</li>
@@ -176,6 +176,14 @@
 <li>autoJoinTeamId - идентификатор команды, к которой автоматически подключать всех новых пользователей.</li>
 <li>disableTeamPopUp - не показывать попап при первом логине с созданием команды.</li>
 <li>disableTeamCreation - запретить создавать команды.</li>
+<li>OAuthIsEnabled - включение кастомного провайдера Oauth. (потестировать можно <a href="https://docs.wiremock.io/oauth2-mock/" target="_blank" rel="noopener noreferrer">тут<ExternalLinkIcon/></a></li>
+<li>OAuthClientId - clientId приложения, зарегистрированного в кастомном провайдере Oauth.</li>
+<li>OAuthClientSecret - clientSecret приложения, зарегистрированного в кастомном провайдере Oauth.</li>
+<li>OAuthAuthorizeUri - URL авторизации в кастомном провайдере.</li>
+<li>OAuthUserInfoUri - URL получения информации о пользователе.</li>
+<li>OAuthTokenUri - URL для запроса токена.</li>
+<li>OAuthButtonLabel - текст на кнопке авторизации.</li>
+<li>OAuthRedirectUri - URL для редиректа ( ${baseUrl}/app/signin по-умолчанию).</li>
 </ul>
 <p>Настройка видимости в “настройке” разрешает возвращать настройку на фронт, т.е. делает доступным просмотр для клиента. Не устанавливаете ее для паролей и прочих вещей, которые не влияют на поведение приложения на фронте.</p>
 <h2 id="инструкция-по-установке" tabindex="-1"><a class="header-anchor" href="#инструкция-по-установке"><span>Инструкция по установке</span></a></h2>

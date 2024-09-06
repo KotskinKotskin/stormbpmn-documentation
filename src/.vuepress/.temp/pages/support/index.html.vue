@@ -25,7 +25,7 @@
 <tr>
 <th>#</th>
 <th>Название</th>
-<th>Облако</th>
+<th>Team</th>
 <th>Enterprise</th>
 </tr>
 </thead>
@@ -131,7 +131,17 @@
 <p>Обновление между версией &lt;6.3.231 на более высокую требует манипуляции с базой.
 Перед обновлением выполните запрос в БД:</p>
 <div class="language-text line-numbers-mode" data-ext="text" data-title="text"><pre v-pre class="language-text"><code>update databasechangelog set filename = CONCAT('/db/changelog/changes/',SUBSTRING(filename,35))
-</code></pre><div class="line-numbers" aria-hidden="true"><div class="line-number"></div></div></div></div>
+</code></pre><div class="line-numbers" aria-hidden="true"><div class="line-number"></div></div></div><p>Обновление на версию &gt;=6.6.441 требует новых ENV переменных:</p>
+<ul>
+<li>STORM_ALLOWED_ORIGINS - установить значение, с которого разрешены сетевые запросы из браузера. Как правило это base_url, что-то типа https://storm.corp.local. Можно установить *(любой адрес), но кто вы после этого?</li>
+<li>STORM_DISABLE_SIMPLE_AUTH - установить true \ false. Запрещает базовую авторизацию c емейлом и паролем по базе Stormbpmn.</li>
+<li>STORM_DISABLE_ENV_IN_UI - установить true \ false. Запрещает просмотр ENV-значений в UI администратора.</li>
+<li>STORM_DISABLE_ANON_SHARING - установить true \ false.  запрещает делиться диаграммами анонимно.  Переопределяет настройку enableAnonDiagrams в UI администратора.</li>
+<li>STORM_SENTRY_ENABLE - установить false.</li>
+<li>STORM_ENABLE_SAAS_FEATURES - установить false.</li>
+<li>GOTENBERG_URL - ссылка на URL-сервериса конвертации docx в pdf, например. https://demo.gotenberg.dev. Можно вписать что угодно, если не используете конверацию.</li>
+</ul>
+</div>
 <h3 id="disaster-recovery-plan-при-обновлении" tabindex="-1"><a class="header-anchor" href="#disaster-recovery-plan-при-обновлении"><span>Disaster recovery plan при обновлении</span></a></h3>
 <ol>
 <li>Сохранить логи контейнера.</li>
