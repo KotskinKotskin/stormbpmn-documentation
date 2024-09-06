@@ -25,6 +25,7 @@
 <li>Элементы архитектуры</li>
 <li>Согласование</li>
 </ul>
+<h2 id="шаблон-регламента" tabindex="-1"><a class="header-anchor" href="#шаблон-регламента"><span>Шаблон регламента</span></a></h2>
 <div class="hint-container info">
 <p class="hint-container-title">Инфо</p>
 <p>Воспользуйтесь <a href="https://docs.google.com/document/d/1e9GZfWQDymoFcsF95yOTZdqkz4hXflzI2QyMUpqaFmY/edit#heading=h.bnj92bmrrns8" target="_blank" rel="noopener noreferrer">базовым шаблоном<ExternalLinkIcon/></a> для быстрого старта.</p>
@@ -73,7 +74,7 @@
 
 
 <span class="token key atrule">Массив описания задач</span><span class="token punctuation">:</span>
-<span class="token punctuation">{</span><span class="token punctuation">{</span><span class="token punctuation">?</span>assigneesListDescription<span class="token punctuation">}</span><span class="token punctuation">}</span> <span class="token punctuation">-</span> начално массива
+<span class="token punctuation">{</span><span class="token punctuation">{</span><span class="token punctuation">?</span>assigneesListDescription<span class="token punctuation">}</span><span class="token punctuation">}</span> <span class="token punctuation">-</span> начало массива
   <span class="token key atrule">Внутри него</span><span class="token punctuation">:</span>
    <span class="token punctuation">{</span><span class="token punctuation">{</span>activityName<span class="token punctuation">}</span><span class="token punctuation">}</span> <span class="token punctuation">-</span> название элемента диаграммы (задачи)
    <span class="token punctuation">{</span><span class="token punctuation">{</span>elementType<span class="token punctuation">}</span><span class="token punctuation">}</span> <span class="token punctuation">-</span> тип элемента (событие<span class="token punctuation">,</span> шлюз<span class="token punctuation">,</span> задача)
@@ -100,7 +101,7 @@
      <span class="token punctuation">{</span><span class="token punctuation">{</span>activityName<span class="token punctuation">}</span><span class="token punctuation">}</span> <span class="token punctuation">-</span> название элемента диаграммы
       <span class="token punctuation">...</span>
   <span class="token punctuation">{</span><span class="token punctuation">{</span>/second<span class="token punctuation">}</span><span class="token punctuation">}</span> <span class="token punctuation">-</span> окончание массива задач в пуле
-<span class="token punctuation">{</span><span class="token punctuation">{</span>/assigneesListDescriptionByPool<span class="token punctuation">}</span><span class="token punctuation">}</span>  <span class="token punctuation">-</span> начало массива пулов
+<span class="token punctuation">{</span><span class="token punctuation">{</span>/assigneesListDescriptionByPool<span class="token punctuation">}</span><span class="token punctuation">}</span>  <span class="token punctuation">-</span> окончание массива пулов
 
 
 <span class="token punctuation">{</span><span class="token punctuation">{</span>processCollaboration<span class="token punctuation">}</span><span class="token punctuation">}</span> <span class="token punctuation">-</span> таблица связей процесса
