@@ -42,7 +42,7 @@ order: 6
 - Элементы архитектуры
 - Согласование
 
-## Шаблон регламента
+## Шаблон регламента процесса
 ::: info
 Воспользуйтесь [базовым шаблоном](https://docs.google.com/document/d/1e9GZfWQDymoFcsF95yOTZdqkz4hXflzI2QyMUpqaFmY/edit#heading=h.bnj92bmrrns8) для быстрого старта. 
 
@@ -181,8 +181,13 @@ order: 6
 - Участие в процессах
 - Сотрудники на роли
 
+## Шаблон регламента роли
+
 ::: info
 Воспользуйтесь [базовым шаблоном](https://docs.google.com/document/d/17WWmGZGagXA6r4aFL59sCD4bCBvUaWXamCFAGf3iUMY/edit?usp=sharing) для быстрого старта. 
+
+Или [расширенным шаблоном](https://disk.yandex.ru/i/XnBKp4pG4T684g). 
+И [пример выгрузки регламента роли по этому шаблону](https://disk.yandex.ru/i/7EiD_Pmn_-FYUg)
 :::
 
 ```yml
