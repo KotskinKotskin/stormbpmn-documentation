@@ -1,7 +1,7 @@
 import { defineClientConfig } from "vuepress/client";
-import { useHintContainers } from "D:/StormBPMN/stormbpmn-documentation/node_modules/vuepress-plugin-md-enhance/lib/client/composables/useHintContainers.js";
-import "D:/StormBPMN/stormbpmn-documentation/node_modules/vuepress-plugin-md-enhance/lib/client/styles/hint/index.scss";
-import "D:/StormBPMN/stormbpmn-documentation/node_modules/vuepress-plugin-md-enhance/lib/client/styles/tasklist.scss";
+import { useHintContainers } from "C:/Users/kotov/stormbpmn-documentation/node_modules/vuepress-plugin-md-enhance/lib/client/composables/useHintContainers.js";
+import "C:/Users/kotov/stormbpmn-documentation/node_modules/vuepress-plugin-md-enhance/lib/client/styles/hint/index.scss";
+import "C:/Users/kotov/stormbpmn-documentation/node_modules/vuepress-plugin-md-enhance/lib/client/styles/tasklist.scss";
 
 export default defineClientConfig({
   enhance: ({ app }) => {

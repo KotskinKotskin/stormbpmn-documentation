@@ -48,7 +48,7 @@ export default defineUserConfig({
     lastUpdated: true, // string | boolean,
     sidebar: "structure",
 
-    logo: "https://stormbpmn.com/static/img/bpmnstorm_small.png",
+    logo: "https://new.stormbpmn.com/favicon.svg",
 
     navbar: [
       "/",

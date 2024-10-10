@@ -25,7 +25,7 @@
 <li>Элементы архитектуры</li>
 <li>Согласование</li>
 </ul>
-<h2 id="шаблон-регламента" tabindex="-1"><a class="header-anchor" href="#шаблон-регламента"><span>Шаблон регламента</span></a></h2>
+<h2 id="шаблон-регламента-процесса" tabindex="-1"><a class="header-anchor" href="#шаблон-регламента-процесса"><span>Шаблон регламента процесса</span></a></h2>
 <div class="hint-container info">
 <p class="hint-container-title">Инфо</p>
 <p>Воспользуйтесь <a href="https://docs.google.com/document/d/1e9GZfWQDymoFcsF95yOTZdqkz4hXflzI2QyMUpqaFmY/edit#heading=h.bnj92bmrrns8" target="_blank" rel="noopener noreferrer">базовым шаблоном<ExternalLinkIcon/></a> для быстрого старта.</p>
@@ -152,9 +152,12 @@
 <li>Участие в процессах</li>
 <li>Сотрудники на роли</li>
 </ul>
+<h2 id="шаблон-регламента-роли" tabindex="-1"><a class="header-anchor" href="#шаблон-регламента-роли"><span>Шаблон регламента роли</span></a></h2>
 <div class="hint-container info">
 <p class="hint-container-title">Инфо</p>
 <p>Воспользуйтесь <a href="https://docs.google.com/document/d/17WWmGZGagXA6r4aFL59sCD4bCBvUaWXamCFAGf3iUMY/edit?usp=sharing" target="_blank" rel="noopener noreferrer">базовым шаблоном<ExternalLinkIcon/></a> для быстрого старта.</p>
+<p>Или <a href="https://disk.yandex.ru/i/XnBKp4pG4T684g" target="_blank" rel="noopener noreferrer">расширенным шаблоном<ExternalLinkIcon/></a>.
+И <a href="https://disk.yandex.ru/i/7EiD_Pmn_-FYUg" target="_blank" rel="noopener noreferrer">пример выгрузки регламента роли по этому шаблону<ExternalLinkIcon/></a></p>
 </div>
 <div class="language-yaml line-numbers-mode" data-ext="yml" data-title="yml"><pre v-pre class="language-yaml"><code>
 <span class="token punctuation">{</span><span class="token punctuation">{</span>assignee.name<span class="token punctuation">}</span><span class="token punctuation">}</span> <span class="token punctuation">-</span> имя роли

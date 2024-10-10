@@ -5,8 +5,8 @@
 <p>Мы предоставляем 3 канала поддержки:</p>
 <ul>
 <li>Чат в приложении (кружочек в правой нижней части). Работает только в облачной версии.</li>
-<li>Почта <strong>help@stormbpmn.com</strong> или <strong>storm@bpmn2.ru</strong>.</li>
-<li>Портал <a href="https://bpmn2.freshdesk.com" target="_blank" rel="noopener noreferrer">bpmn2.freshdesk.com<ExternalLinkIcon/></a>. Способ для просмотра ваших заявок и статусов. На портале отдельная регистрация от облачной версии.</li>
+<li>Почта <strong>help@stormbpmn.com</strong></li>
+<li>Портал <a href="https://stormbpmn.portal.happydesk.ru/login" target="_blank" rel="noopener noreferrer">техподдержки<ExternalLinkIcon/></a>. Способ для просмотра ваших заявок и статусов. На портале отдельная регистрация от облачной версии.</li>
 </ul>
 <h3 id="информация-для-устранения-неисправности" tabindex="-1"><a class="header-anchor" href="#информация-для-устранения-неисправности"><span>Информация для устранения неисправности</span></a></h3>
 <p>Для быстрого устранения неисправности приложите в свою заявку:</p>
