@@ -1,9 +1,8 @@
 ---
 dir:
-  order: -3
   link: true
 index: true
-icon: "folder"
+icon: "server"
 ---
 
 # Управление серверами Camunda

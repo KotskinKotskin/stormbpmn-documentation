@@ -1,6 +1,6 @@
 ---
+order: 3
 dir:
-  order: -3
   link: true
 index: true
 icon: "gears"
