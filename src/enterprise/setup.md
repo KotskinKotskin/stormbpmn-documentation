@@ -75,7 +75,21 @@ update sm_teams set full_access = true
 
 
 ### Балансер
-Снимать SSL, а так же обеспечивать отказоустойчивость и скейлинг предлагается путем установки балансера перед нодами приложения. Stormbpmn-ноды stateless. Воспользуйтесь любым, который вам нравится и подходит под вашу архитектуру, мы предпочитаем **nginx**. Вот [отличный мануал](https://docs.nginx.com/nginx/admin-guide/security-controls/securing-http-traffic-upstream/)
+Снимать SSL, а так же обеспечивать отказоустойчивость и скейлинг предлагается путем установки балансера перед нодами приложения. Stormbpmn-ноды stateless. Воспользуйтесь любым, который вам нравится и подходит под вашу архитектуру, мы предпочитаем **nginx**. Вот [отличный мануал](https://docs.nginx.com/nginx/admin-guide/security-controls/securing-http-traffic-upstream/).
+
+Мы советуем настроить на балансере добавление заголовков для кеширования статический ресурсов. Вот так выглядит конфиг для NGINX:
+```
+    # Настройка кеширования для статических ресурсов
+    location ~* \.(ico|css|js|woff2?|eot|ttf)$ {
+        # Включаем заголовки кеширования
+        expires 30d; # Срок кеширования 30 дней
+        add_header Cache-Control "public, max-age=2592000, immutable"; # 2592000 секунд = 30 дней
+
+        # Если нужно сбросить заголовки по умолчанию
+        add_header Pragma public;
+        add_header Vary Accept-Encoding;
+    }
+```
 
 
 ### S3-хранилище
