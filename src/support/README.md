@@ -170,6 +170,13 @@ update databasechangelog set filename = CONCAT('/db/changelog/changes/',SUBSTRIN
 - STORM_SENTRY_ENABLE - установить false.
 - STORM_ENABLE_SAAS_FEATURES - установить false.
 - GOTENBERG_URL - ссылка на URL-сервериса конвертации docx в pdf, например. https://demo.gotenberg.dev. Можно вписать что угодно, если не используете конверацию.
+- 
+
+Обновление на версию >=6.6.559 требует установки extention базы данных:
+```
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+```
+
 :::
 
 ### Disaster recovery plan при обновлении
