@@ -1,13 +1,28 @@
 <template><div><h1 id="установка" tabindex="-1"><a class="header-anchor" href="#установка"><span>Установка</span></a></h1>
 <p>Stormbpmn поставляется как docker-контейнер из приватного репозитория, который включается в себя и front, и back. Установка заключается в правильном указании .ENV-перменных внутрь контейнера, поднятии смежных контейнеров (если необходимо), и манипуляции в административном интерфейсе.</p>
+<div class="hint-container tip">
+<p class="hint-container-title">Совет</p>
+<p>Контейнер расположен в приватном репозитории, запросите доступ к нему через менеджера, с которым работаете.</p>
+</div>
+<h2 id="верхнеуровневая-архитектура" tabindex="-1"><a class="header-anchor" href="#верхнеуровневая-архитектура"><span>Верхнеуровневая архитектура</span></a></h2>
+<p>Если использовать все возможности системы, то компонентная архитектура будет выглядеть так:</p>
+<p><img src="@source/enterprise/storm_arch.png" alt="image"></p>
+<p>Подробнее по <a href="https://stormbpmn.com/app/diagram/f3af4a00-b1dd-4666-ad10-82f89705c74e?embedded=true" target="_blank" rel="noopener noreferrer">ссылке.<ExternalLinkIcon/></a></p>
 <h2 id="get-started" tabindex="-1"><a class="header-anchor" href="#get-started"><span>Get started</span></a></h2>
 <p>Для минимальной работы приложения вам нужно всего 2 контейнера - сам контейнер приложения и база данных.</p>
+<h3 id="требования-к-ресурсам" tabindex="-1"><a class="header-anchor" href="#требования-к-ресурсам"><span>Требования к ресурсам</span></a></h3>
+<p>Контейнер stormbmn:</p>
+<ul>
+<li>vCPU - 4</li>
+<li>vRAM - 8 GB
+Прочие контейнеры не требуют серьезных ресурсов - если вы будете создавать их с нуля (а не переиспользовать существующие сервисы компании), то ориентируетесь на минимальные требования из документации соответствующих контейнеров.</li>
+</ul>
 <h3 id="настроика-базы" tabindex="-1"><a class="header-anchor" href="#настроика-базы"><span>Настройка базы</span></a></h3>
 <ul>
 <li>Разверните в докере Postgresql (12 или старше версии) или воспользуйтесь существующей инфраструктурой в компании.</li>
 <li>Создайте схему (не обязательно, будет использоваться public по умолчанию). Запомните название.</li>
 <li>Создайте базу. Запомните название.</li>
-<li>Создайте пользователя с полными правами доступа к базе. Запомните логин и пароль.</li>
+<li>Создайте пользователя с полными правами доступа к базе (и схему). Запомните логин и пароль.</li>
 <li>Узнайте порт, на котором работает сервер БД. Запомните его.</li>
 <li>Обеспечьте сетевую доступность между базой и предполагаемым местом установки основного контейнера.</li>
 </ul>
@@ -22,13 +37,15 @@
 <li><strong>JAVA_OPTS</strong> -  значение оперативки, которое выделили контейнеру. Ожидается значение, похожее на &quot;-Xmx8g&quot;</li>
 <li><strong>SPRING_PROFILES_ACTIVE</strong> - установить prod.</li>
 <li><strong>LICENSE_KEY</strong> - лицензионный ключ. Запросите его у нас.</li>
+<li><strong>JWTSECRET</strong> - соль для шифрования паролей. Укажите не меньше 15 символов, желательно случайных.</li>
 </ul>
 </li>
 <li>Запустите контейнер, если всё ок, то миграции в базу данных выполнятся автоматически.</li>
+<li>Пропишите порт, по которому хотите ходить в приложение. Контейнер выставляет наружу порт 8080.</li>
 </ul>
 <div class="hint-container tip">
 <p class="hint-container-title">Совет</p>
-<p>Вот и всё, минимальная установка готова! Вы сможете попасть в приложение через веб интерфейс по порту 8080.</p>
+<p>Вот и всё, минимальная установка готова! Вы сможете попасть в приложение через веб интерфейс по порту, который прописали выше.</p>
 </div>
 <h2 id="создание-административнои-учетнои-записи" tabindex="-1"><a class="header-anchor" href="#создание-административнои-учетнои-записи"><span>Создание административной учетной записи</span></a></h2>
 <ul>
@@ -46,34 +63,31 @@
 <h2 id="полноценная-установка" tabindex="-1"><a class="header-anchor" href="#полноценная-установка"><span>Полноценная установка</span></a></h2>
 <p>Установка выше позволит убедиться что все базово работает, но не является production-ready. Для полноценной работы необходимо:</p>
 <ul>
-<li>
-<p>Поставить балансер и настроить SSL.</p>
-</li>
-<li>
-<p>Развернуть S3-хранилище для хранения картинок и шаблонов документов.</p>
-</li>
-<li>
-<p>Развернуть Plantuml-сервер.</p>
-</li>
-<li>
-<p>Подключить Storm к системам мониторинга и алертов.</p>
-</li>
-<li>
-<p>Обеспечить резервное копирование.</p>
-</li>
-<li>
-<p>&quot;Захардендить&quot; настройки безопасности.</p>
-</li>
-<li>
-<p>Подключить SIEM-логирование.</p>
-</li>
-<li>
-<p>Выбрать провайдер почты и настроить его.</p>
-</li>
+<li>Поставить балансер и настроить SSL.</li>
+<li>Развернуть S3-хранилище для хранения картинок и шаблонов документов.</li>
+<li>Развернуть Plantuml-сервер.</li>
+<li>Развернуть сервис конвертации файлов.</li>
+<li>Подключить Storm к системам мониторинга и алертов.</li>
+<li>Обеспечить резервное копирование.</li>
+<li>&quot;Захардендить&quot; настройки безопасности.</li>
+<li>Подключить SIEM-логирование.</li>
+<li>Выбрать провайдер почты и настроить его.</li>
+<li>Настроить бизнес-параметры в административном интерфейсе</li>
 </ul>
 <h3 id="балансер" tabindex="-1"><a class="header-anchor" href="#балансер"><span>Балансер</span></a></h3>
-<p>Снимать SSL, а так же обеспечивать отказоустойчивость и скейлинг предлагается путем установки балансера перед нодами приложения. Stormbpmn-ноды stateless. Воспользуйтесь любым, который вам нравится и подходит под вашу архитектуру, мы предпочитаем <strong>nginx</strong>. Вот <a href="https://docs.nginx.com/nginx/admin-guide/security-controls/securing-http-traffic-upstream/" target="_blank" rel="noopener noreferrer">отличный мануал<ExternalLinkIcon/></a></p>
-<h3 id="s3-хранилище" tabindex="-1"><a class="header-anchor" href="#s3-хранилище"><span>S3-хранилище</span></a></h3>
+<p>Снимать SSL, а так же обеспечивать отказоустойчивость и скейлинг предлагается путем установки балансера перед нодами приложения. Stormbpmn-ноды stateless. Воспользуйтесь любым, который вам нравится и подходит под вашу архитектуру, мы предпочитаем <strong>nginx</strong>. Вот <a href="https://docs.nginx.com/nginx/admin-guide/security-controls/securing-http-traffic-upstream/" target="_blank" rel="noopener noreferrer">отличный мануал<ExternalLinkIcon/></a>.</p>
+<p>Мы советуем настроить на балансере добавление заголовков для кеширования статический ресурсов. Вот так выглядит конфиг для NGINX:</p>
+<div class="language-text line-numbers-mode" data-ext="text" data-title="text"><pre v-pre class="language-text"><code>    # Настройка кеширования для статических ресурсов
+    location ~* \.(ico|css|js|woff2?|eot|ttf)$ {
+        # Включаем заголовки кеширования
+        expires 30d; # Срок кеширования 30 дней
+        add_header Cache-Control "public, max-age=2592000, immutable"; # 2592000 секунд = 30 дней
+
+        # Если нужно сбросить заголовки по умолчанию
+        add_header Pragma public;
+        add_header Vary Accept-Encoding;
+    }
+</code></pre><div class="line-numbers" aria-hidden="true"><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div></div></div><h3 id="s3-хранилище" tabindex="-1"><a class="header-anchor" href="#s3-хранилище"><span>S3-хранилище</span></a></h3>
 <p>В S3-хранилище хранятся картинки бизнес-процессов, аватары пользователей, шаблоны для генерации документов. Можно использовать любое, мы советуем <strong>minio</strong>. Вот <a href="https://min.io/docs/minio/linux/index.html" target="_blank" rel="noopener noreferrer">отличный мануал<ExternalLinkIcon/></a>.
 После установки укажите значения в ENV-переменные storm:</p>
 <ul>
@@ -89,6 +103,13 @@
 </code></pre><div class="line-numbers" aria-hidden="true"><div class="line-number"></div></div></div><p>И укажите адрес сервера в ENV-переменную storm:</p>
 <ul>
 <li><strong>PLANTUML_SERVER</strong> - ожидаемое значение похоже на http://192.168.0.5:8080/</li>
+</ul>
+<h3 id="сервис-конвератации-документов" tabindex="-1"><a class="header-anchor" href="#сервис-конвератации-документов"><span>Сервис конвератации документов</span></a></h3>
+<p>Этот компонент обеспечивает подготовку PDF-файлов. Установите его командой:</p>
+<div class="language-text line-numbers-mode" data-ext="text" data-title="text"><pre v-pre class="language-text"><code>docker run --rm -d -p 3000:3000 gotenberg/gotenberg:8
+</code></pre><div class="line-numbers" aria-hidden="true"><div class="line-number"></div></div></div><p>И укажите адрес сервера в ENV-переменную storm:</p>
+<ul>
+<li><strong>GOTENBERG_URL</strong> - ожидаемое значение похоже на 	http://192.168.0.5:3000</li>
 </ul>
 <h3 id="подключить-storm-к-системам-мониторинга-и-обеспечить-резервное-копирование" tabindex="-1"><a class="header-anchor" href="#подключить-storm-к-системам-мониторинга-и-обеспечить-резервное-копирование"><span>Подключить STORM к системам мониторинга и обеспечить резервное копирование</span></a></h3>
 <p>Мы предоставляем метрики в формате Prometeus, <RouteLink to="/support/">подробности о подключении и обеспечении резервного копирования</RouteLink>.</p>
@@ -210,6 +231,21 @@
 </ul>
 <p>Будет отсылаться информация об изменении версии, о комментариях, о новой задаче на согласовании, о завершении согласований.</p>
 <p>Какой вариант вы бы не выбрали, проверить отправку писем можно оставит комментарий с содержимым @&lt;ваш_емейл&gt; test , например &quot;@kotov@bpmn2.ru test&quot;.</p>
+<h3 id="настроика-бизнес-параметров" tabindex="-1"><a class="header-anchor" href="#настроика-бизнес-параметров"><span>Настройка бизнес-параметров</span></a></h3>
+<p>Управлять бизнес-параметрами может администратор системы, они доступы по ссылке <strong>/app/admin</strong>, во вкладке &quot;настройки приложения&quot;.</p>
+<ul>
+<li><strong>enableCommonAssets</strong> - разрешить всем командам использовать все элементы архитектуры всех команд.</li>
+<li><strong>enableCommonRoles</strong> - разрешить всем командам использовать все роли всех команд.</li>
+<li><strong>enableCommonUsers</strong> - разрешить всем командам использовать общую оргструктуру.</li>
+<li><strong>enableCommonUsers</strong> - разрешить всем командам использовать общую оргструктуру.</li>
+<li><strong>allDiagramsAnonAccess</strong> - разрешить анонимный доступ ко всем диаграммам по умолчанию.</li>
+<li><strong>enableAnonSearchPage</strong> - заменить главную страницу для аноимных пользователей на поиск по диаграммам.</li>
+<li><strong>autoEnableEnterpriseLicense</strong> - разрешить автоматическую выдачу лицензий.</li>
+<li><strong>autoJoinTeamId</strong> - автоматически подключать всех новых пользователей в команду, ID которой указан в настройке.</li>
+<li><strong>disableTeamPopUp</strong> - запретить отображение окна с предложением создать команду.</li>
+<li><strong>disableTeamCreation</strong> - запретить создание команд.
+Настройте эти параметры исходя из ваших требований и сценария работы.</li>
+</ul>
 <div class="hint-container tip">
 <p class="hint-container-title">Совет</p>
 <p>Напишите по почте help@stormbpmn.com или вашему менджеру, если у вас что-то не получилось. Мы с радостью поможем.</p>

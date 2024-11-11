@@ -140,8 +140,11 @@
 <li>STORM_SENTRY_ENABLE - установить false.</li>
 <li>STORM_ENABLE_SAAS_FEATURES - установить false.</li>
 <li>GOTENBERG_URL - ссылка на URL-сервериса конвертации docx в pdf, например. https://demo.gotenberg.dev. Можно вписать что угодно, если не используете конверацию.</li>
+<li></li>
 </ul>
-</div>
+<p>Обновление на версию &gt;=6.6.559 требует установки extention базы данных:</p>
+<div class="language-text line-numbers-mode" data-ext="text" data-title="text"><pre v-pre class="language-text"><code>CREATE EXTENSION IF NOT EXISTS pgcrypto;
+</code></pre><div class="line-numbers" aria-hidden="true"><div class="line-number"></div></div></div></div>
 <h3 id="disaster-recovery-plan-при-обновлении" tabindex="-1"><a class="header-anchor" href="#disaster-recovery-plan-при-обновлении"><span>Disaster recovery plan при обновлении</span></a></h3>
 <ol>
 <li>Сохранить логи контейнера.</li>

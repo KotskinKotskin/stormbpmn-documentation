@@ -29,7 +29,7 @@
 <li><strong>allDiagramsAnonAccess</strong> - разрешить анонимный доступ ко всех диаграммам. По-умолчанию - false..</li>
 </ul>
 <h2 id="авторизация" tabindex="-1"><a class="header-anchor" href="#авторизация"><span>Авторизация</span></a></h2>
-<p>Поддерживается 3 типа авторизации - keycloak, oauth2, ldap.  Рекомендуем использовать ouath2.</p>
+<p>Поддерживается 4 типа авторизации - keycloak, oauth2, ldap, встроенная.  Рекомендуем использовать ouath2. Для встроенной авторизации дополнительных настроек не требуется.</p>
 <h3 id="настроика-keycloak" tabindex="-1"><a class="header-anchor" href="#настроика-keycloak"><span>Настройка keycloak</span></a></h3>
 <p>В данном разделе перечислены настройки, которые связаны с авторизацией с использованием keycloak:</p>
 <h4 id="переменные-окружения-1" tabindex="-1"><a class="header-anchor" href="#переменные-окружения-1"><span>Переменные окружения</span></a></h4>
@@ -83,40 +83,68 @@
 <h3 id="принцип-работы" tabindex="-1"><a class="header-anchor" href="#принцип-работы"><span>Принцип работы</span></a></h3>
 <p>Каждый запрос-ответ от пользователя формирует следующий объект:</p>
 <div class="language-text line-numbers-mode" data-ext="text" data-title="text"><pre v-pre class="language-text"><code>{
-  "timestamp": "2007-12-03T10:15:30:55.000000", // временная метка в таймзоне сервера
-  "sessionId": "ergjieor-ergjniuo-qjwer", // уникальная ID сессии пользователя. 
-  "forwarder": null, // пустота
-  "source": "stormbpmn", // название нашего приложения. Может быть изменено
-  "subject": "kotov@bpmn2.ru", // почта пользователя, соверщающего запрос.
-  "subjectIP": "192.168.0.1", // ip-адрес пользователя. Получается от прокси-сервера из заголовка X-Forwarded-For. Если заголовок отсутствует, то значение будет отсутствовать. 
-  "object": "uaerhgae-aerj3234-egerg", // ID объекта, надо который совершается операция.
-  "resourse": "diagram", // тип объекта, над который совершается операция.
-  "ctp": null, //служебное поле
+  "timestamp": "2007-12-03T10:15:30:55.000000", // Временная метка в таймзоне сервера
+  "sessionId": "ergjieor-ergjniuo-qjwer", // Уникальный ID сессии пользователя 
+  "forwarder": null, // Служебное поле
+  "source": "stormbpmn", // Название нашего приложения. Может быть изменено в ENV переменной SYSLOG_SOURCE.
+  "subject": "kotov@bpmn2.ru", // Почта пользователя, соверщающего запрос
+  "subjectIP": "192.168.0.1", // IP-адрес пользователя. Проставляется при наличии заголовка X-Forwarded-For от прокси-сервера.
+  "object": "uaerhgae-aerj3234-egerg", // ID объекта, над которым совершается операция
+  "resourse": "diagram", // Тип объекта, над которым совершается операция. Список возможных значений: GET /api/v1/syslog/resources
+  "ctp": null, // Служебное поле
+  "action": "CHANGE" // Тип события. Возможные значения: [ GET, CREATE, CHANGE, DELETE ]
   "tags": [ 
     "storm",
     "users_audit",
     "iia",
     null,
     null
-  ], //служебные поля
+  ], // Служебные поля
   "payload": {
-    "method": "POST", //вызванный метод
-    "url": "/api/v1/diagram", //вызванный URL
-    "request": { //присланный запрос, уникальный объект для каждого URL
+    "method": "POST", // Вызванный метод
+    "url": "/api/v1/diagram", // Вызванный URL
+    "request": { // Присланный запрос, уникальный объект для каждого URL
        ...
     },
-    "response": { //полученный ответ, уникальный объект для каждого URL
-      
+    "response": { // Полученный ответ, уникальный объект для каждого URL
+       ...
     }
   },
-  "result": "sucess" // success если код ответа 2ХХ, в противом случае "error"
+  "result": "SUCCESSFUL" // Статус ответа. Возможные значения: [ SUCCESSFUL, CLIENT_ERROR, SERVER_ERROR ]
 }
-</code></pre><div class="line-numbers" aria-hidden="true"><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div></div></div><h3 id="настроика-syslog" tabindex="-1"><a class="header-anchor" href="#настроика-syslog"><span>Настройка Syslog</span></a></h3>
+</code></pre><div class="line-numbers" aria-hidden="true"><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div></div></div><h3 id="настроика-syslog" tabindex="-1"><a class="header-anchor" href="#настроика-syslog"><span>Настройка Syslog</span></a></h3>
 <p>Для включения SIEM-логирования в syslog необходимо установить следующие ENV-переменные:</p>
-<ul>
-<li>TBD - включает SIEM-логирование. По-умолчанию - false.</li>
-<li>TBD - указывает сервера syslog. Можно указать несолько через запятую. Протокол передачи данных - TCP, без SSL.</li>
-</ul>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">Название</th>
+<th style="text-align:center">Описание</th>
+<th style="text-align:center">Значение</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">AUDIT_ENABLED</td>
+<td style="text-align:center">Флаг включения аудита запросов</td>
+<td style="text-align:center">true</td>
+</tr>
+<tr>
+<td style="text-align:center">AUDIT_CHANNEL</td>
+<td style="text-align:center">Канал аудит логов</td>
+<td style="text-align:center">syslog</td>
+</tr>
+<tr>
+<td style="text-align:center">SYSLOG_SERVERS</td>
+<td style="text-align:center">Список syslog серверов для стриминга<br>(протокол TCP, формат сообщений <a href="https://datatracker.ietf.org/doc/html/rfc3164" target="_blank" rel="noopener noreferrer">RFC 3164<ExternalLinkIcon/></a>)</td>
+<td style="text-align:center">localhost:514,192.168.78.53:601<br>(пример)</td>
+</tr>
+<tr>
+<td style="text-align:center">SYSLOG_SOURCE</td>
+<td style="text-align:center">Название приложения<br>(передается серверам и в поле source самого лога)</td>
+<td style="text-align:center">stormbpmn<br>(по умолчанию)</td>
+</tr>
+</tbody>
+</table>
 </div></template>
 
 
