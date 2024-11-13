@@ -1,11 +1,11 @@
 import { defineClientConfig } from "vuepress/client";
-import { hasGlobalComponent } from "C:/Users/kotov/stormbpmn-documentation/node_modules/@vuepress/helper/lib/client/index.js";
+import { hasGlobalComponent } from "C:/StormBPMN/stormbpmn-documentation/node_modules/@vuepress/helper/lib/client/index.js";
 
-import { useScriptTag } from "C:/Users/kotov/stormbpmn-documentation/node_modules/@vueuse/core/index.mjs";
-import Badge from "C:/Users/kotov/stormbpmn-documentation/node_modules/vuepress-plugin-components/lib/client/components/Badge.js";
-import FontIcon from "C:/Users/kotov/stormbpmn-documentation/node_modules/vuepress-plugin-components/lib/client/components/FontIcon.js";
+import { useScriptTag } from "C:/StormBPMN/stormbpmn-documentation/node_modules/@vueuse/core/index.mjs";
+import Badge from "C:/StormBPMN/stormbpmn-documentation/node_modules/vuepress-plugin-components/lib/client/components/Badge.js";
+import FontIcon from "C:/StormBPMN/stormbpmn-documentation/node_modules/vuepress-plugin-components/lib/client/components/FontIcon.js";
 
-import "C:/Users/kotov/stormbpmn-documentation/node_modules/vuepress-plugin-components/lib/client/styles/sr-only.scss";
+import "C:/StormBPMN/stormbpmn-documentation/node_modules/vuepress-plugin-components/lib/client/styles/sr-only.scss";
 
 export default defineClientConfig({
   enhance: ({ app }) => {

@@ -1,12 +1,12 @@
 import { defineClientConfig } from "vuepress/client";
 
 
-import { HopeIcon, Layout, NotFound, injectDarkmode, setupDarkmode, setupSidebarItems, scrollPromise } from "C:/Users/kotov/stormbpmn-documentation/node_modules/vuepress-theme-hope/lib/bundle/export.js";
+import { HopeIcon, Layout, NotFound, injectDarkmode, setupDarkmode, setupSidebarItems, scrollPromise } from "C:/StormBPMN/stormbpmn-documentation/node_modules/vuepress-theme-hope/lib/bundle/export.js";
 
-import { defineCatalogInfoGetter } from "C:/Users/kotov/stormbpmn-documentation/node_modules/@vuepress/plugin-catalog/lib/client/index.js"
+import { defineCatalogInfoGetter } from "C:/StormBPMN/stormbpmn-documentation/node_modules/@vuepress/plugin-catalog/lib/client/index.js"
 import { h } from "vue"
 
-import "C:/Users/kotov/stormbpmn-documentation/node_modules/vuepress-theme-hope/lib/bundle/styles/all.scss";
+import "C:/StormBPMN/stormbpmn-documentation/node_modules/vuepress-theme-hope/lib/bundle/styles/all.scss";
 
 defineCatalogInfoGetter((meta) => {
   const title = meta.t;

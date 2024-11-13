@@ -11,8 +11,12 @@ actions:
     link: /real-life-scenarios/
     type: secondary
     icon: user
-  - text: Описание функций
+  - text: Описание функций нынешнего шторма
     link: /features/1_bpmn-editor.html
+    type: secondary  
+    icon: star
+  - text: Функции нового шторма
+    link: /features_new_storm/1_bpmn-editor.html
     type: secondary  
     icon: star
 
