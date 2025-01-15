@@ -15,6 +15,10 @@ actions:
     link: /features/1_bpmn-editor.html
     type: secondary  
     icon: star
+  - text: Новый шторм
+    link: /features_new_storm/1_bpmn-editor.html
+    type: primary  
+    icon: star
 
 
 features:
