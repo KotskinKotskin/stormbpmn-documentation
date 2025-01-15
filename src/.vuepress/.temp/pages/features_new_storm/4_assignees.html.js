@@ -1,5 +1,5 @@
 import comp from "C:/StormBPMN/stormbpmn-documentation/src/.vuepress/.temp/pages/features_new_storm/4_assignees.html.vue"
-const data = JSON.parse("{\"path\":\"/features_new_storm/4_assignees.html\",\"title\":\"Роли\",\"lang\":\"ru-RU\",\"frontmatter\":{\"order\":4},\"headers\":[{\"level\":3,\"title\":\"Создание ролей\",\"slug\":\"создание-ролеи\",\"link\":\"#создание-ролеи\",\"children\":[]},{\"level\":3,\"title\":\"Редактирование ролей\",\"slug\":\"редактирование-ролеи\",\"link\":\"#редактирование-ролеи\",\"children\":[]},{\"level\":3,\"title\":\"Удаление ролей\",\"slug\":\"удаление-ролеи\",\"link\":\"#удаление-ролеи\",\"children\":[]}],\"git\":{\"createdTime\":null,\"updatedTime\":null,\"contributors\":[]},\"readingTime\":{\"minutes\":0.6,\"words\":179},\"filePathRelative\":\"features_new_storm/4_assignees.md\"}")
+const data = JSON.parse("{\"path\":\"/features_new_storm/4_assignees.html\",\"title\":\"Роли\",\"lang\":\"ru-RU\",\"frontmatter\":{\"order\":4},\"headers\":[],\"git\":{\"createdTime\":1714504462000,\"updatedTime\":1731506253000,\"contributors\":[{\"name\":\"VovaGDX\",\"email\":\"vladimir.shishkin@gmail.com\",\"commits\":1}]},\"readingTime\":{\"minutes\":0.2,\"words\":61},\"filePathRelative\":\"features_new_storm/4_assignees.md\",\"localizedDate\":\"30 апреля 2024 г.\"}")
 export { comp, data }
 
 if (import.meta.webpackHot) {
