@@ -1,7 +1,7 @@
 ---
 dir:
   order: 3
-  text: Новый Шторм - функции
+  text: New Шторм - функции
   collapsible: false
 index: false
 icon: "star"
