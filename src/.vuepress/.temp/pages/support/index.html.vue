@@ -2,11 +2,12 @@
 <p>В данном разделе описаны варианты поддержки пользователей облачной версии и Enterprise-версии.</p>
 <p>Для пользователей Enterprise-версии описаны традиционные задачи технического администрирования системы.</p>
 <h2 id="каналы-поддержки" tabindex="-1"><a class="header-anchor" href="#каналы-поддержки"><span>Каналы поддержки</span></a></h2>
-<p>Мы предоставляем 3 канала поддержки:</p>
+<p>Мы предоставляем 4 канала поддержки:</p>
 <ul>
 <li>Чат в приложении (кружочек в правой нижней части). Работает только в облачной версии.</li>
 <li>Почта <strong>help@stormbpmn.com</strong></li>
 <li>Портал <a href="https://stormbpmn.portal.happydesk.ru/login" target="_blank" rel="noopener noreferrer">техподдержки<ExternalLinkIcon/></a>. Способ для просмотра ваших заявок и статусов. На портале отдельная регистрация от облачной версии.</li>
+<li><a href="https://t.me/stormbpmn_bot" target="_blank" rel="noopener noreferrer">@Stormbpmn_bot<ExternalLinkIcon/></a> - бот в телеграмм</li>
 </ul>
 <h3 id="информация-для-устранения-неисправности" tabindex="-1"><a class="header-anchor" href="#информация-для-устранения-неисправности"><span>Информация для устранения неисправности</span></a></h3>
 <p>Для быстрого устранения неисправности приложите в свою заявку:</p>
@@ -120,6 +121,7 @@
 <li>Ознакомиться с <a href="https://stormbpmn.changelogfy.com/changelog/en" target="_blank" rel="noopener noreferrer">changelog<ExternalLinkIcon/></a></li>
 <li>Определить целевую версию образа контейнера.</li>
 <li>Выполнить <a href="#%D1%80%D0%B5%D0%B7%D0%B2%D0%B5%D1%80%D0%BD%D0%BE%D0%B5-%D0%BA%D0%BE%D0%BF%D0%B8%D1%80%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5">резервное копирование базы</a>.</li>
+<li>Выполнить ЛОКАЛЬНОЕ сохранение текущего image контейнера.</li>
 <li>Скачать целевую версию образа контейнера.</li>
 <li>Сменить версию образа контейнера на целевую.</li>
 <li>Дождаться положительных ответов liveness и readiness probe.</li>
