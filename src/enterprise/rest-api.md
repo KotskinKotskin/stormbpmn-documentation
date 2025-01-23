@@ -450,7 +450,7 @@ Query-параметры: **diagramId** - уникальный идентифи�
 Позволяет получить список согласований по е-мейлу участника команды.
 
 
-Путь: **GET /public-api/v1/approvals?userEmail={diagramId}&status={status}&isApprover={isApprover}** 
+Путь: **GET /public-api/v1/approvals?userEmail={userEmail}&status={status}&isApprover={isApprover}** 
 
 Query параметры:
 - {userEmail} - Электронная почта участника команды. Обязателен.
