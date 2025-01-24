@@ -3,9 +3,7 @@
 <img src="@source/features_new_storm/bpmn-modeler.png" alt="image"></p>
 <h2 id="описание-всех-меню" tabindex="-1"><a class="header-anchor" href="#описание-всех-меню"><span>Описание всех меню</span></a></h2>
 <h3 id="меню-навигации" tabindex="-1"><a class="header-anchor" href="#меню-навигации"><span>Меню навигации</span></a></h3>
-<div class="hint-container caution">
-<p class="hint-container-title">ОПИСАТЬ</p>
-</div>
+<p>О нём рассказано в описании <RouteLink to="/features_new_storm/0_home-page.html#%D0%BC%D0%B5%D0%BD%D1%8E-%D0%BD%D0%B0%D0%B2%D0%B8%D0%B3%D0%B0%D1%86%D0%B8%D0%B8">главной</RouteLink> страницы</p>
 <h3 id="меню-деиствии" tabindex="-1"><a class="header-anchor" href="#меню-деиствии"><span>Меню действий</span></a></h3>
 <p>В этом меню возможно:</p>
 <ul>
@@ -136,7 +134,7 @@
 <li>Вернуть отмененное действие.</li>
 <li>Сменить цвет выбранным элементам.</li>
 <li>Скопировать выделенные элементы для вставки между вкладками.</li>
-<li>Вставить выделенные элементы из другой вкладки.</li>
+<li>Вставить выделенные элементы в другую схему.</li>
 <li>Включить <a href="#%D0%BE%D1%86%D0%B5%D0%BD%D0%BA%D0%B0-%D0%BA%D0%B0%D1%87%D0%B5%D1%81%D1%82%D0%B2%D0%B0">проверку ошибок</a>.</li>
 <li>Выполнить автонумерацию элементов.</li>
 <li>Очистить автонумерацию.</li>
