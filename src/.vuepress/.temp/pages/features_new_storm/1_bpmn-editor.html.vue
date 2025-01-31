@@ -152,10 +152,10 @@
 <li>Текстовая аннотация к элементу.</li>
 <li>Изменение атрибутов текущего элемента.</li>
 <li>Соеденение текущего элементв с другим.</li>
-<li>Открытие меню <a href="#%D0%BC%D0%B5%D0%BD%D1%8E-%D0%B4%D0%BE%D0%BF%D0%BE%D0%BB%D0%BD%D0%B8%D1%82%D0%B5%D0%BB%D1%8C%D0%BD%D1%8B%D1%85-%D0%BD%D0%B0%D1%81%D1%82%D1%80%D0%BE%D0%B5%D0%BA-%D1%8D%D0%BB%D0%B5%D0%BC%D0%B5%D0%BD%D1%82%D0%B0">дополнительных настроек элемента</a>.</li>
+<li>Открытие <a href="#%D0%BC%D0%B5%D0%BD%D1%8E-%D0%BF%D0%BE%D0%B4%D1%80%D0%BE%D0%B1%D0%BD%D0%BE%D1%81%D1%82%D0%B5%D0%B8">меню подробностей</a>.</li>
 </ol>
 <p><img src="@source/features_new_storm/context-menu-1.png" alt="image"></p>
-<h3 id="меню-дополнительных-настроек-элемента" tabindex="-1"><a class="header-anchor" href="#меню-дополнительных-настроек-элемента"><span>Меню дополнительных настроек элемента</span></a></h3>
+<h3 id="меню-подробностеи" tabindex="-1"><a class="header-anchor" href="#меню-подробностеи"><span>Меню подробностей</span></a></h3>
 <p>В этом меню предоставляется возможность указывать всю ключевую информацию об элементе:</p>
 <ol>
 <li>Название</li>
@@ -356,7 +356,7 @@
 <div class="hint-container caution">
 <p class="hint-container-title">В разработке</p>
 <h3 id="расчет-длительности-сценария" tabindex="-1"><a class="header-anchor" href="#расчет-длительности-сценария"><span>Расчет длительности сценария</span></a></h3>
-<p>Если вы указывали <a href="#%D0%BC%D0%B5%D0%BD%D1%8E-%D0%B4%D0%BE%D0%BF%D0%BE%D0%BB%D0%BD%D0%B8%D1%82%D0%B5%D0%BB%D1%8C%D0%BD%D1%8B%D1%85-%D0%BD%D0%B0%D1%81%D1%82%D1%80%D0%BE%D0%B5%D0%BA-%D1%8D%D0%BB%D0%B5%D0%BC%D0%B5%D0%BD%D1%82%D0%B0">длительность в задачах</a>, то система может посчитать время, за которое выполнится конкретный проход токена при симуляции токена, указав самые длительные операции:
+<p>Если вы указывали <a href="#%D0%BC%D0%B5%D0%BD%D1%8E-%D0%BF%D0%BE%D0%B4%D1%80%D0%BE%D0%B1%D0%BD%D0%BE%D1%81%D1%82%D0%B5%D0%B8">длительность в задачах</a>, то система может посчитать время, за которое выполнится конкретный проход токена при симуляции токена, указав самые длительные операции:
 <img src="@source/features_new_storm/error-check-4.png" alt="image"></p>
 </div>
 <div class="hint-container caution">
@@ -455,10 +455,10 @@
 <p>Система поддерживает возможность связи процессов друг с другом с целью удобной навигации и построения графов связности.</p>
 <p>Просматривать связи можно через <a href="#%D0%BC%D0%B5%D0%BD%D1%8E-%D0%BE%D0%B2%D0%B5%D1%80%D0%BB%D0%B5%D0%B5%D0%B2">меню оверлеев</a> или <a href="#%D0%BF%D1%80%D0%B0%D0%B2%D0%BE%D0%B5-%D0%BC%D0%B5%D0%BD%D1%8E">правое меню</a>.</p>
 <h3 id="связь-через-call-activity-и-participant" tabindex="-1"><a class="header-anchor" href="#связь-через-call-activity-и-participant"><span>Связь через Call activity и Participant</span></a></h3>
-<p>Для установления связи через Call activity\Participant откройте <a href="#%D0%BC%D0%B5%D0%BD%D1%8E-%D0%BF%D0%BE%D0%B4%D1%80%D0%BE%D0%B1%D0%BD%D0%BE%D1%81%D1%82%D0%B5%D0%B9-%D1%8D%D0%BB%D0%B5%D0%BC%D0%B5%D0%BD%D1%82%D0%B0">меню подробностей</a> и укажите соответствующий связанный бизнес-процесс:<br>
+<p>Для установления связи через Call activity\Participant откройте <a href="#%D0%BC%D0%B5%D0%BD%D1%8E-%D0%BF%D0%BE%D0%B4%D1%80%D0%BE%D0%B1%D0%BD%D0%BE%D1%81%D1%82%D0%B5%D0%B8">меню подробностей</a> и укажите соответствующий связанный бизнес-процесс:<br>
 <img src="@source/features_new_storm/links-1.png" alt="imaget"></p>
 <h3 id="связь-через-message-catch-events-message-catch-task" tabindex="-1"><a class="header-anchor" href="#связь-через-message-catch-events-message-catch-task"><span>Связь через Message Catch Events \ Message Catch Task</span></a></h3>
-<p>Для установления такой связи откройте <a href="#%D0%BC%D0%B5%D0%BD%D1%8E-%D0%BF%D0%BE%D0%B4%D1%80%D0%BE%D0%B1%D0%BD%D0%BE%D1%81%D1%82%D0%B5%D0%B9-%D1%8D%D0%BB%D0%B5%D0%BC%D0%B5%D0%BD%D1%82%D0%B0">меню подробностей</a> и укажите соответствующий связанный элемент отправки сообщения:<br>
+<p>Для установления такой связи откройте <a href="#%D0%BC%D0%B5%D0%BD%D1%8E-%D0%BF%D0%BE%D0%B4%D1%80%D0%BE%D0%B1%D0%BD%D0%BE%D1%81%D1%82%D0%B5%D0%B8">меню подробностей</a> и укажите соответствующий связанный элемент отправки сообщения:<br>
 <img src="@source/features_new_storm/links-2.png" alt="imaget"></p>
 </div>
 <h3 id="декомпозиция-через-subprocess" tabindex="-1"><a class="header-anchor" href="#декомпозиция-через-subprocess"><span>Декомпозиция через Subprocess</span></a></h3>

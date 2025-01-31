@@ -409,6 +409,63 @@ Query-параметры: <strong>diagramId</strong> - уникальный ид
     <span class="token string-property property">"externalLink"</span><span class="token operator">:</span> <span class="token string">"https://bash.im"</span>
 <span class="token punctuation">}</span>
 
-</code></pre><div class="line-numbers" aria-hidden="true"><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div></div></div></div></template>
+</code></pre><div class="line-numbers" aria-hidden="true"><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div></div></div><h3 id="получение-списка-согласовании-пользователя-по-е-меилу" tabindex="-1"><a class="header-anchor" href="#получение-списка-согласовании-пользователя-по-е-меилу"><span>Получение списка согласований пользователя по е-мейлу</span></a></h3>
+<p>Позволяет получить список согласований по е-мейлу участника команды.</p>
+<p>Путь: <strong>GET /public-api/v1/approvals?userEmail={userEmail}&amp;status={status}&amp;isApprover={isApprover}</strong></p>
+<p>Query параметры:</p>
+<ul>
+<li>{userEmail} - Электронная почта участника команды. Обязателен.</li>
+<li>{status} - Статус согласования. Не обязателен. По-умолчанию вернутся все согласования. Возможные значения:  PENDING, ACCEPTED, DECLINED, COMPLETED</li>
+<li>{isApprover} - Признак согласующего. Не обязателен. По-умолчанию вернуться со всеми значениями. Возможные значения: true, false</li>
+</ul>
+<p>Тело ответа:</p>
+<div class="language-javascript line-numbers-mode" data-ext="js" data-title="js"><pre v-pre class="language-javascript"><code><span class="token punctuation">{</span>
+    <span class="token string-property property">"content"</span><span class="token operator">:</span> <span class="token punctuation">[</span>  <span class="token comment">//размер этого массива говорит о количестве точных ответов (до предела SIZE). Если здесь будет больше 20, то нужно переключать page в query. В интерфейсах, которые используют интеграцию можно нарисовать кнопку "20+" это и так дофига.</span>
+        <span class="token punctuation">{</span>
+            <span class="token string-property property">"id"</span><span class="token operator">:</span> <span class="token string">"867bc39c-9145-4eb5-b59f-00545a6a9a3f"</span><span class="token punctuation">,</span>
+            <span class="token string-property property">"approverEmail"</span><span class="token operator">:</span> <span class="token string">"r.aergaerg@sertgsertg.com"</span><span class="token punctuation">,</span>
+            <span class="token string-property property">"approverName"</span><span class="token operator">:</span> <span class="token keyword">null</span><span class="token punctuation">,</span>
+            <span class="token string-property property">"diagramId"</span><span class="token operator">:</span> <span class="token string">"fbeb4c64-e172-4e09-9fa1-6e509a11ffde"</span><span class="token punctuation">,</span>
+            <span class="token string-property property">"createdOn"</span><span class="token operator">:</span> <span class="token string">"2025-01-23T17:44:27.323817"</span><span class="token punctuation">,</span>
+            <span class="token string-property property">"createdOnStr"</span><span class="token operator">:</span> <span class="token keyword">null</span><span class="token punctuation">,</span>
+            <span class="token string-property property">"approvalTime"</span><span class="token operator">:</span> <span class="token keyword">null</span><span class="token punctuation">,</span>
+            <span class="token string-property property">"approvalTimeStr"</span><span class="token operator">:</span> <span class="token keyword">null</span><span class="token punctuation">,</span>
+            <span class="token string-property property">"status"</span><span class="token operator">:</span> <span class="token string">"PENDING"</span><span class="token punctuation">,</span>
+            <span class="token string-property property">"createdBy"</span><span class="token operator">:</span> <span class="token string">"r.aerhaer@aergaerg.com"</span><span class="token punctuation">,</span>
+            <span class="token string-property property">"comment"</span><span class="token operator">:</span> <span class="token keyword">null</span><span class="token punctuation">,</span>
+            <span class="token string-property property">"diagramVersion"</span><span class="token operator">:</span> <span class="token string">"11"</span><span class="token punctuation">,</span>
+            <span class="token string-property property">"diagramName"</span><span class="token operator">:</span> <span class="token string">"Работа с подрядчиком на ЭТП. Верхний уровень"</span><span class="token punctuation">,</span>
+            <span class="token string-property property">"direction"</span><span class="token operator">:</span> <span class="token keyword">null</span><span class="token punctuation">,</span>
+            <span class="token string-property property">"importantComments"</span><span class="token operator">:</span> <span class="token punctuation">[</span><span class="token punctuation">]</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">]</span><span class="token punctuation">,</span>
+    <span class="token string-property property">"pageable"</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+        <span class="token string-property property">"sort"</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+            <span class="token string-property property">"empty"</span><span class="token operator">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span>
+            <span class="token string-property property">"sorted"</span><span class="token operator">:</span> <span class="token boolean">false</span><span class="token punctuation">,</span>
+            <span class="token string-property property">"unsorted"</span><span class="token operator">:</span> <span class="token boolean">true</span>
+        <span class="token punctuation">}</span><span class="token punctuation">,</span>
+        <span class="token string-property property">"offset"</span><span class="token operator">:</span> <span class="token number">0</span><span class="token punctuation">,</span>
+        <span class="token string-property property">"pageSize"</span><span class="token operator">:</span> <span class="token number">20</span><span class="token punctuation">,</span>
+        <span class="token string-property property">"pageNumber"</span><span class="token operator">:</span> <span class="token number">0</span><span class="token punctuation">,</span>
+        <span class="token string-property property">"unpaged"</span><span class="token operator">:</span> <span class="token boolean">false</span><span class="token punctuation">,</span>
+        <span class="token string-property property">"paged"</span><span class="token operator">:</span> <span class="token boolean">true</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span>
+    <span class="token string-property property">"last"</span><span class="token operator">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span>
+    <span class="token string-property property">"totalElements"</span><span class="token operator">:</span> <span class="token number">1</span><span class="token punctuation">,</span>
+    <span class="token string-property property">"totalPages"</span><span class="token operator">:</span> <span class="token number">1</span><span class="token punctuation">,</span>
+    <span class="token string-property property">"size"</span><span class="token operator">:</span> <span class="token number">20</span><span class="token punctuation">,</span> 
+    <span class="token string-property property">"number"</span><span class="token operator">:</span> <span class="token number">0</span><span class="token punctuation">,</span>
+    <span class="token string-property property">"sort"</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+        <span class="token string-property property">"empty"</span><span class="token operator">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span>
+        <span class="token string-property property">"sorted"</span><span class="token operator">:</span> <span class="token boolean">false</span><span class="token punctuation">,</span>
+        <span class="token string-property property">"unsorted"</span><span class="token operator">:</span> <span class="token boolean">true</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span>
+    <span class="token string-property property">"first"</span><span class="token operator">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span>
+    <span class="token string-property property">"numberOfElements"</span><span class="token operator">:</span> <span class="token number">1</span><span class="token punctuation">,</span>
+    <span class="token string-property property">"empty"</span><span class="token operator">:</span> <span class="token boolean">false</span>
+<span class="token punctuation">}</span>
+
+</code></pre><div class="line-numbers" aria-hidden="true"><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div></div></div></div></template>
 
 

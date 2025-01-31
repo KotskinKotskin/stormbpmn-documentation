@@ -51,9 +51,8 @@
 <li>Выберите ту версию, из которой хотите восстановить свою модель. Нажмите в левом верхнем углу зеленую кнопку &quot;Установить как текущую&quot;</li>
 </ol>
 <p><img src="@source/features/FAQ-recovery.png" alt="image"></p>
-<h2 id="cвязи" tabindex="-1"><a class="header-anchor" href="#cвязи"><span>Cвязи</span></a></h2>
-<h3 id="создание-связи" tabindex="-1"><a class="header-anchor" href="#создание-связи"><span>создание связи</span></a></h3>
-<h4 id="создание-связи-у-call-activity" tabindex="-1"><a class="header-anchor" href="#создание-связи-у-call-activity"><span>создание связи у call-activity</span></a></h4>
+<h2 id="cвязи-создание-удаление-связи" tabindex="-1"><a class="header-anchor" href="#cвязи-создание-удаление-связи"><span>Cвязи: создание, удаление связи</span></a></h2>
+<h3 id="создание-связи-у-call-activity" tabindex="-1"><a class="header-anchor" href="#создание-связи-у-call-activity"><span>создание связи у call-activity</span></a></h3>
 <ol>
 <li>встаньте на элемент call-activity</li>
 <li>нажмите на кнопку расширенных настроек (карандаш)</li>
@@ -61,7 +60,7 @@
 (начните набирать любое слово из его названия и система автоматически предложит вам схемы из имеющихся)</li>
 </ol>
 <p><img src="@source/features/FAQ-create_link_CA.png" alt="image"></p>
-<h4 id="создание-связи-через-отправку-получение-месседжа" tabindex="-1"><a class="header-anchor" href="#создание-связи-через-отправку-получение-месседжа"><span>создание связи через отправку, получение месседжа</span></a></h4>
+<h3 id="создание-связи-через-отправку-получение-месседжа" tabindex="-1"><a class="header-anchor" href="#создание-связи-через-отправку-получение-месседжа"><span>создание связи через отправку, получение месседжа</span></a></h3>
 <ol>
 <li>встаньте на элмент &quot;отправка месседжа&quot;</li>
 <li>нажмите на кнопку расширенных настроек (карандаш)</li>
@@ -85,6 +84,48 @@
 <li>удалите связь, нажав кнопку справа от названия связанной схемы</li>
 </ol>
 <p><img src="@source/features/FAQ-delete_link.png" alt="image"></p>
+<h2 id="отображение-оверлеев-по-умолчанию" tabindex="-1"><a class="header-anchor" href="#отображение-оверлеев-по-умолчанию"><span>Отображение оверлеев по умолчанию</span></a></h2>
+<p>Чтобы оверлей отображался сразу при открытии схемы, как у Вас, так и у людей с которыми Вы ей поделились:</p>
+<ol>
+<li>откройте <a href="https://stormbpmn.com/app/profile" target="_blank" rel="noopener noreferrer">страницу профиля<ExternalLinkIcon/></a></li>
+<li>перейдите на вкладку Настройки</li>
+<li>проставьте флаги у тех оверлеев, которые желаете отображать сразу при открытии схемы</li>
+</ol>
+<p><img src="@source/features/FAQ-overlays-def-view.png" alt="image"></p>
+<h2 id="ошибка-предоставления-доступа-к-схеме" tabindex="-1"><a class="header-anchor" href="#ошибка-предоставления-доступа-к-схеме"><span>Ошибка предоставления доступа к схеме</span></a></h2>
+<h2 id="some-business-exception-happen" tabindex="-1"><a class="header-anchor" href="#some-business-exception-happen"><span>some business exception happen</span></a></h2>
+<p>При предоставлении доступа к схеме система может вывести сообщение об ошибке (<em>желтый стикер внизу посередине экрана</em>):
+&quot;some business exception happen&quot;.
+<img src="@source/features/FAQ-error_business_exception.png" alt="image"></p>
+<p>Это означает, что Вам стала недоступна возможность поделиться новыми схемами, так как Вы достигли ограничения в 5 предоставлений доступа на вашем тарифе
+Чтобы поделиться новой схемой возможны 2 варианта:</p>
+<ol>
+<li>перейти на тариф где бесконечное количество предоставлений доступа к схемам - <a href="https://stormbpmn.com/pricing/" target="_blank" rel="noopener noreferrer">PersonalPro или Team<ExternalLinkIcon/></a></li>
+<li>удалить один из ранее предоставленных доступов. Их перечень находится на странице <a href="https://stormbpmn.com/app/guests" target="_blank" rel="noopener noreferrer">Гости<ExternalLinkIcon/></a></li>
+</ol>
+<h2 id="счет-на-оплату-от-юридического-лица" tabindex="-1"><a class="header-anchor" href="#счет-на-оплату-от-юридического-лица"><span>Счёт на оплату от юридического лица</span></a></h2>
+<p>Для создания счёта на оплату от юридического лица:</p>
+<ol>
+<li>откройте страницу <a href="https://stormbpmn.com/app/upgrade" target="_blank" rel="noopener noreferrer">улучшения тарифа<ExternalLinkIcon/></a></li>
+<li>в колонке тарифа Теам нажмите на ссылку <a href="https://stormbpmn.com/app/generateInvoice" target="_blank" rel="noopener noreferrer">&quot;Оплатить по счёту&quot;<ExternalLinkIcon/></a>
+<img src="@source/features/FAQ-generate-invoice-1.png" alt="image"></li>
+</ol>
+<p>Откроется страница <a href="https://stormbpmn.com/app/generateInvoice" target="_blank" rel="noopener noreferrer">создания счёта<ExternalLinkIcon/></a>
+В ней укажите:</p>
+<ol>
+<li>Название, ИНН компании</li>
+<li>Количество лицензий</li>
+</ol>
+<div class="hint-container warning">
+<p class="hint-container-title">Примечание</p>
+<p>Минимальная сумма по счёту расчитана на количество участников вашей команды на момент формирования счёта.</p>
+</div>
+<ol start="3">
+<li>Срок использования в месяцах</li>
+<li>нажмите на кнопку &quot;Скачать счёт&quot;</li>
+</ol>
+<p><img src="@source/features/FAQ-generate-invoice-2.png" alt="image"></p>
+<p>При оплате по такому счёту лицензии активируются автоматически, а поступление платежа будет отражено на странице <a href="https://stormbpmn.com/app/billing" target="_blank" rel="noopener noreferrer">&quot;Подписка и счета&quot;<ExternalLinkIcon/></a></p>
 </div></template>
 
 
