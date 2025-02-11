@@ -86,6 +86,28 @@ Active directory kerberos SSO  не поддерживается, только s
 - **OAuthButtonLabel** - текст на кнопке авторизации.
 - **OAuthRedirectUri** - URL для редиректа в приложение ( укажите ваш базовый URL + /app/sigin).
 
+#### Пример создания и настройки Oauth2-клиента в Keycloak 26.0.7
+1. Создать клиента в нужном realm
+2. Указать clientId
+3. Указать Valid redirect URIs  как ${BASEURL}/app/signin (например https://stormbpmn.com/app/signin)
+4. Указать Web origins как * или ${BASEURL} (например https://stormbpmn.com)
+5. Client authentication -> ON
+6. Authorization -> OFF
+7. Standard flow -> ON
+8. Implicit flow -> ON
+9. На вкладке Credentianals:  Client Authenticator -> Client Id and Secret
+10. Получить Client secret
+11. На вкладке Client Scopes убедиться, что email и profile default
+12. В настройках storm указать:
+- Client Id
+- Client Secret
+- URL авторизации (например http://localhost:8888/realms/master/protocol/openid-connect/auth)
+- URL получения информации о пользователе (например http://localhost:8888/realms/master/protocol/openid-connect/userinfo)
+- URL получения токена (например http://localhost:8888/realms/master/protocol/openid-connect/token)
+- Текст на кнопке входа (например Войти через ouath)
+- URL для редиректа (например https://stormbpmn.com/app/signin)\
+- Включить кастомный провайдер Oauth - ON
+
 
 ## Регистрация событий безопасности и интеграции с SIEM\лог-коллекторами
 Мы предоставляем возможность получать информацию о всех операциях, выполняемых авторизированными пользователями в отдельном хранилище. Сейчас поддерживается Syslog как транспорт, сообщите менеджерам, если вам требуется другой транспорт, например Kafka.
