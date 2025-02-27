@@ -1,5 +1,5 @@
 ---
-index: false
+index: true
 ---
 
 # 8 урок: Хороший стиль BPMN

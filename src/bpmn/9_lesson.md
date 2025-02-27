@@ -1,5 +1,5 @@
 ---
-index: false
+index: true
 ---
 
 # 9 урок: Разбираем и улучшаем схему BPMN

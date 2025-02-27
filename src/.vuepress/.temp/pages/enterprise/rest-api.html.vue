@@ -1,6 +1,6 @@
 <template><div><div class="hint-container warning">
 <p class="hint-container-title">Примечание</p>
-<p>В облачном версии есть ограничения на использования API.</p>
+<p>В облачной версии есть ограничения на использования API.</p>
 </div>
 <h1 id="rest-api" tabindex="-1"><a class="header-anchor" href="#rest-api"><span>Rest API</span></a></h1>
 <p>Система представляет API для решения основных задач - получения и изменения диаграмм, получения и изменения элементов архитектуры. API работает по протоколу HTTP, сериализация - JSON.</p>
@@ -13,7 +13,7 @@
 <h1 id="ограничения-api-в-облачнои-версии" tabindex="-1"><a class="header-anchor" href="#ограничения-api-в-облачнои-версии"><span>Ограничения API в облачной версии</span></a></h1>
 <ul>
 <li>
-<p><strong>Ограничение скорости по умолчанию</strong>- 5 запросов в 1 минуту.  Вы можете найти оставшиеся запросы в заголовке ответа X-Rate-Limit-Remaining.</p>
+<p><strong>Ограничение скорости по умолчанию</strong> - 5 запросов в 1 минуту.  Вы можете найти оставшиеся запросы в заголовке ответа X-Rate-Limit-Remaining.</p>
 </li>
 <li>
 <p><strong>Размер одного запроса по умолчанию</strong> - 10 Мб. Вы не можете загрузить больше за один запрос.</p>
@@ -50,7 +50,7 @@
     <span class="token string-property property">"errors"</span><span class="token operator">:</span> <span class="token punctuation">{</span> <span class="token comment">//объект с ошибками </span>
         <span class="token string-property property">"emptyName"</span><span class="token operator">:</span> <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">,</span> <span class="token comment">// массив внешних идентификаторов, у которых пустое имя.</span>
         <span class="token string-property property">"emptyDefinition"</span><span class="token operator">:</span> <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">,</span> <span class="token comment">// массив внешних идентификаторов, у которых пустое тело.</span>
-        <span class="token string-property property">"notXml"</span><span class="token operator">:</span> <span class="token punctuation">[</span><span class="token punctuation">]</span> <span class="token comment">// массив внешних идентификаторов, у которых невалидный XML .</span>
+        <span class="token string-property property">"notXml"</span><span class="token operator">:</span> <span class="token punctuation">[</span><span class="token punctuation">]</span> <span class="token comment">// массив внешних идентификаторов, у которых невалидный XML.</span>
     <span class="token punctuation">}</span><span class="token punctuation">,</span>
     <span class="token string-property property">"createdDiagrams"</span><span class="token operator">:</span> <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">,</span> <span class="token comment">// массив созданных диаграмм, внутри такой же объект, как ниже.</span>
     <span class="token string-property property">"updatedDiagrams"</span><span class="token operator">:</span> <span class="token punctuation">[</span> <span class="token comment">// массив обновленных диаграмм.</span>
@@ -118,11 +118,11 @@ rm temp.json
 <div class="language-javascript line-numbers-mode" data-ext="js" data-title="js"><pre v-pre class="language-javascript"><code><span class="token punctuation">[</span> 
   <span class="token punctuation">{</span>
     <span class="token string-property property">"id"</span><span class="token operator">:</span> <span class="token keyword">null</span><span class="token punctuation">,</span>  <span class="token comment">// ID элемента в системе. </span>
-    <span class="token string-property property">"externalId"</span><span class="token operator">:</span> <span class="token keyword">null</span><span class="token punctuation">,</span>  <span class="token comment">//ID элемент во внешней системе.</span>
-    <span class="token string-property property">"name"</span><span class="token operator">:</span> <span class="token string">"B2C USER"</span><span class="token punctuation">,</span> <span class="token comment">// Название.</span>
-    <span class="token string-property property">"description"</span><span class="token operator">:</span> <span class="token string">""</span><span class="token punctuation">,</span> <span class="token comment">// Описание. Ожидается unescaped html, для отображения на UI.</span>
+    <span class="token string-property property">"externalId"</span><span class="token operator">:</span> <span class="token keyword">null</span><span class="token punctuation">,</span>  <span class="token comment">//ID элемента во внешней системе.</span>
+    <span class="token string-property property">"name"</span><span class="token operator">:</span> <span class="token string">"B2C USER"</span><span class="token punctuation">,</span> <span class="token comment">// название.</span>
+    <span class="token string-property property">"description"</span><span class="token operator">:</span> <span class="token string">""</span><span class="token punctuation">,</span> <span class="token comment">// описание. Ожидается unescaped html, для отображения на UI.</span>
     <span class="token string-property property">"externalUrl"</span><span class="token operator">:</span> <span class="token keyword">null</span><span class="token punctuation">,</span> <span class="token comment">// ссылка на внешнюю систему, можно прислать с плейсхолдером, например https://mywiki.corp.com/entity/${externalId}</span>
-    <span class="token string-property property">"type"</span><span class="token operator">:</span> <span class="token string">"CLIENT"</span> <span class="token comment">// тип элемент архитектуры. Возможные значения UNSPECIFIED, DOCUMENT, SYSTEM, COMMUNCATION, CLIENT, ENTITY, ACTION, OTHER</span>
+    <span class="token string-property property">"type"</span><span class="token operator">:</span> <span class="token string">"CLIENT"</span> <span class="token comment">// тип элемента архитектуры. Возможные значения UNSPECIFIED, DOCUMENT, SYSTEM, COMMUNICATION, CLIENT, ENTITY, ACTION, OTHER</span>
     <span class="token string-property property">"status"</span><span class="token operator">:</span> <span class="token string">"NEW"</span> <span class="token comment">// статус элемента архитектуры. Возможные значения NEW, TRIAL, PRODUCTION, DECOMMISSIONING, ARCHIVE </span>
   <span class="token punctuation">}</span>
 <span class="token punctuation">]</span>
@@ -130,15 +130,15 @@ rm temp.json
 <div class="language-javascript line-numbers-mode" data-ext="js" data-title="js"><pre v-pre class="language-javascript"><code><span class="token punctuation">[</span> 
   <span class="token punctuation">{</span>
     <span class="token string-property property">"id"</span><span class="token operator">:</span> <span class="token number">234234</span><span class="token punctuation">,</span>  <span class="token comment">// ID элемента в системе. </span>
-    <span class="token string-property property">"externalId"</span><span class="token operator">:</span> <span class="token keyword">null</span><span class="token punctuation">,</span>  <span class="token comment">//ID элемент во внешней системе.</span>
-    <span class="token string-property property">"name"</span><span class="token operator">:</span> <span class="token string">"B2C USER"</span><span class="token punctuation">,</span> <span class="token comment">// Название.</span>
-    <span class="token string-property property">"description"</span><span class="token operator">:</span> <span class="token string">""</span><span class="token punctuation">,</span> <span class="token comment">// Описание. Ожидается unescaped html, для отображения на UI.</span>
+    <span class="token string-property property">"externalId"</span><span class="token operator">:</span> <span class="token keyword">null</span><span class="token punctuation">,</span>  <span class="token comment">//ID элемента во внешней системе.</span>
+    <span class="token string-property property">"name"</span><span class="token operator">:</span> <span class="token string">"B2C USER"</span><span class="token punctuation">,</span> <span class="token comment">// название.</span>
+    <span class="token string-property property">"description"</span><span class="token operator">:</span> <span class="token string">""</span><span class="token punctuation">,</span> <span class="token comment">// описание. Ожидается unescaped html, для отображения на UI.</span>
     <span class="token string-property property">"externalUrl"</span><span class="token operator">:</span> <span class="token keyword">null</span><span class="token punctuation">,</span> <span class="token comment">// ссылка на внешнюю систему, можно прислать с плейсхолдером, например https://mywiki.corp.com/entity/${externalId}</span>
-    <span class="token string-property property">"type"</span><span class="token operator">:</span> <span class="token string">"CLIENT"</span><span class="token punctuation">,</span> <span class="token comment">// тип элемент архитектуры. Возможные значения UNSPECIFIED, DOCUMENT, SYSTEM, COMMUNCATION, CLIENT, ENTITY, ACTION, OTHER.</span>
+    <span class="token string-property property">"type"</span><span class="token operator">:</span> <span class="token string">"CLIENT"</span><span class="token punctuation">,</span> <span class="token comment">// тип элемент архитектуры. Возможные значения UNSPECIFIED, DOCUMENT, SYSTEM, COMMUNICATION, CLIENT, ENTITY, ACTION, OTHER.</span>
     <span class="token string-property property">"status"</span><span class="token operator">:</span> <span class="token string">"NEW"</span><span class="token punctuation">,</span> <span class="token comment">// статус элемента архитектуры. Возможные значения NEW, TRIAL, PRODUCTION, DECOMMISSIONING, ARCHIVE.</span>
-    <span class="token string-property property">"createdOn"</span><span class="token operator">:</span> <span class="token string">"2024-05-02T17:19:41.459888"</span><span class="token punctuation">,</span> <span class="token comment">// Дата создания.</span>
-    <span class="token string-property property">"updatedOn "</span><span class="token operator">:</span> <span class="token string">"2024-05-02T17:19:41.459888"</span> <span class="token comment">// Дата обновления.</span>
-    <span class="token string-property property">"updatedBy  "</span><span class="token operator">:</span> <span class="token string">"kotov@bpmn2.ru"</span> <span class="token comment">// Дата обновления.</span>
+    <span class="token string-property property">"createdOn"</span><span class="token operator">:</span> <span class="token string">"2024-05-02T17:19:41.459888"</span><span class="token punctuation">,</span> <span class="token comment">// дата создания.</span>
+    <span class="token string-property property">"updatedOn "</span><span class="token operator">:</span> <span class="token string">"2024-05-02T17:19:41.459888"</span> <span class="token comment">// дата обновления.</span>
+    <span class="token string-property property">"updatedBy  "</span><span class="token operator">:</span> <span class="token string">"kotov@bpmn2.ru"</span> <span class="token comment">// автор обновления.</span>
   <span class="token punctuation">}</span>
 <span class="token punctuation">]</span>
 </code></pre><div class="line-numbers" aria-hidden="true"><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div></div></div><ul>
@@ -215,7 +215,7 @@ Query-параметры: <strong>diagramId</strong> - уникальный ид
     <span class="token string-property property">"authorUsername"</span><span class="token operator">:</span> <span class="token string">"kotov@bpmn2.ru"</span><span class="token punctuation">,</span>
     <span class="token string-property property">"you"</span><span class="token operator">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span>
     <span class="token string-property property">"versionNumber"</span><span class="token operator">:</span> <span class="token number">4</span><span class="token punctuation">,</span>
-    <span class="token string-property property">"description"</span><span class="token operator">:</span> <span class="token string">"&lt;p>На вход то&lt;/p>&lt;p>&amp;nbsp;&lt;/p>&lt;p>На выход эито&lt;/p>"</span><span class="token punctuation">,</span>
+    <span class="token string-property property">"description"</span><span class="token operator">:</span> <span class="token string">"&lt;p>На вход то&lt;/p>&lt;p>&amp;nbsp;&lt;/p>&lt;p>На выход это&lt;/p>"</span><span class="token punctuation">,</span>
     <span class="token string-property property">"public"</span><span class="token operator">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span>
     <span class="token string-property property">"type"</span><span class="token operator">:</span> <span class="token string">"BPMN"</span><span class="token punctuation">,</span>
     <span class="token string-property property">"tags"</span><span class="token operator">:</span> <span class="token keyword">null</span><span class="token punctuation">,</span>
@@ -252,7 +252,7 @@ Query-параметры: <strong>diagramId</strong> - уникальный ид
             <span class="token string-property property">"type"</span><span class="token operator">:</span> <span class="token string">"CALL_ACTIVITY"</span><span class="token punctuation">,</span>
             <span class="token string-property property">"id"</span><span class="token operator">:</span> <span class="token string">"5d6da77b-c338-48c8-8a98-4ed2dd6d5034"</span><span class="token punctuation">,</span>
             <span class="token string-property property">"toDiagramName"</span><span class="token operator">:</span> <span class="token string">"1) Заправка ТС на АЗС"</span><span class="token punctuation">,</span>
-            <span class="token string-property property">"fromDiagramName"</span><span class="token operator">:</span> <span class="token string">"Процесс возмещения кпупнного дохода по ОТС СДЕЛКАМ"</span><span class="token punctuation">,</span>
+            <span class="token string-property property">"fromDiagramName"</span><span class="token operator">:</span> <span class="token string">"Процесс возмещения кпупного дохода по ОТС СДЕЛКАМ"</span><span class="token punctuation">,</span>
             <span class="token string-property property">"createdOn"</span><span class="token operator">:</span> <span class="token string">"2023-06-28T15:47:00.664525"</span><span class="token punctuation">,</span>
             <span class="token string-property property">"updatedOn"</span><span class="token operator">:</span> <span class="token string">"2023-06-28T15:47:00.664509"</span><span class="token punctuation">,</span>
             <span class="token string-property property">"updatedBy"</span><span class="token operator">:</span> <span class="token string">"kotov@bpmn2.ru"</span>
@@ -416,7 +416,7 @@ Query-параметры: <strong>diagramId</strong> - уникальный ид
 <ul>
 <li>{userEmail} - Электронная почта участника команды. Обязателен.</li>
 <li>{status} - Статус согласования. Не обязателен. По-умолчанию вернутся все согласования. Возможные значения:  PENDING, ACCEPTED, DECLINED, COMPLETED</li>
-<li>{isApprover} - Признак согласующего. Не обязателен. По-умолчанию вернуться со всеми значениями. Возможные значения: true, false</li>
+<li>{isApprover} - Признак согласующего. Не обязателен. По-умолчанию вернутся со всеми значениями. Возможные значения: true, false</li>
 </ul>
 <p>Тело ответа:</p>
 <div class="language-javascript line-numbers-mode" data-ext="js" data-title="js"><pre v-pre class="language-javascript"><code><span class="token punctuation">{</span>

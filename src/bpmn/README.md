@@ -1,10 +1,11 @@
 ---
 dir:
-  order: -3
-  link: true
+  order: -1
+  link: false
   text: Что такое BPMN
-  collapsible: false
-index: true
+  collapsible: true
+  collapsed: true
+index: false
 icon: "circle-nodes"
 ---
 

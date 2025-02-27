@@ -1,5 +1,5 @@
 ---
-order: 3
+order: 5
 dir:
   link: true
 index: true

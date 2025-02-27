@@ -2,7 +2,8 @@
 dir:
   order: 3
   text: Функции системы
-  collapsible: false
+  collapsible: true
+  collapsed: true
 index: false
 icon: "star"
 order: 3

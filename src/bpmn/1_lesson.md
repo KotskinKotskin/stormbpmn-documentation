@@ -1,5 +1,5 @@
 ---
-index: false
+index: true
 ---
 
 # 1 урок: BPM, BPMN, BPMS
