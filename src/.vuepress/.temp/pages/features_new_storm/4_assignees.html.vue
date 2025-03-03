@@ -26,7 +26,7 @@
 <li>Выберите цвет оверлея роли</li>
 <li>Сохраните роль</li>
 </ol>
-<p><strong>Видео с примером</strong> <br>
+<p><strong>Видео с примером создания роли</strong> <br>
 <img src="@source/features_new_storm/create-assignee-rm.gif" alt="image"></p>
 <p><br>
 <br>
@@ -62,7 +62,7 @@
 <p><img src="@source/features_new_storm/edit-assignee-2.png" alt="image"></p>
 <p>Откроется <a href="#%D0%BC%D0%B5%D0%BD%D1%8E-%D1%80%D0%B5%D0%B4%D0%B0%D0%BA%D1%82%D0%B8%D1%80%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D1%8F-%D1%80%D0%BE%D0%BB%D0%B8">меню редактирования роли</a></p>
 <h2 id="удаление-ролеи" tabindex="-1"><a class="header-anchor" href="#удаление-ролеи"><span>Удаление ролей</span></a></h2>
-<p>Удалять роли можно только в справочнике ролей, по <a href="https://stormbpmn.com/app/team/assignees/" target="_blank" rel="noopener noreferrer">ссылке<ExternalLinkIcon/></a>.
+<p>Удалять роли можно только в справочнике ролей, по <a href="https://newstormbpmn.com/app/team/assignees/" target="_blank" rel="noopener noreferrer">ссылке<ExternalLinkIcon/></a>.
 <img src="@source/features_new_storm/delete-assignee.png" alt="image"></p>
 <div class="hint-container warning">
 <p class="hint-container-title">Примечание</p>
