@@ -16,7 +16,7 @@ actions:
     type: secondary  
     icon: star
   - text: Новый шторм
-    link: /features_new_storm/2) Редактор BPMN/
+    link: /features_new_storm/1_bpmn-editor/
     type: primary  
     icon: star
 
