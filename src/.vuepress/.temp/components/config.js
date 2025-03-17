@@ -1,11 +1,11 @@
 import { defineClientConfig } from "vuepress/client";
-import { hasGlobalComponent } from "D:/stormbpmn-documentation/node_modules/@vuepress/helper/lib/client/index.js";
+import { hasGlobalComponent } from "C:/StormBPMN/Stormdocs 20250317/stormbpmn-documentation/node_modules/@vuepress/helper/lib/client/index.js";
 
-import { useScriptTag } from "D:/stormbpmn-documentation/node_modules/@vueuse/core/index.mjs";
-import Badge from "D:/stormbpmn-documentation/node_modules/vuepress-plugin-components/lib/client/components/Badge.js";
-import FontIcon from "D:/stormbpmn-documentation/node_modules/vuepress-plugin-components/lib/client/components/FontIcon.js";
+import { useScriptTag } from "C:/StormBPMN/Stormdocs 20250317/stormbpmn-documentation/node_modules/@vueuse/core/index.mjs";
+import Badge from "C:/StormBPMN/Stormdocs 20250317/stormbpmn-documentation/node_modules/vuepress-plugin-components/lib/client/components/Badge.js";
+import FontIcon from "C:/StormBPMN/Stormdocs 20250317/stormbpmn-documentation/node_modules/vuepress-plugin-components/lib/client/components/FontIcon.js";
 
-import "D:/stormbpmn-documentation/node_modules/vuepress-plugin-components/lib/client/styles/sr-only.scss";
+import "C:/StormBPMN/Stormdocs 20250317/stormbpmn-documentation/node_modules/vuepress-plugin-components/lib/client/styles/sr-only.scss";
 
 export default defineClientConfig({
   enhance: ({ app }) => {
