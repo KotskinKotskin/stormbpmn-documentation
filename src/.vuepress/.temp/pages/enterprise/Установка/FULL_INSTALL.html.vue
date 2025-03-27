@@ -74,7 +74,7 @@
 <h2 id="выбрать-проваидер-почты" tabindex="-1"><a class="header-anchor" href="#выбрать-проваидер-почты"><span>Выбрать провайдер почты</span></a></h2>
 <p>На текущий момент существует 2 варианта работы с почтой под разные задачи:</p>
 <ul>
-<li><strong>Нужны красивые письма и мы готовы их составлять</strong> - тогда используется сервис Mautic, сторонее statefull docker-приложение с базой на Percona, PG Не поддерживается. Грустно, переезд на нормальное решение в будущем.</li>
+<li><strong>Нужны красивые письма и мы готовы их составлять</strong> - тогда используется сервис ListMonk, сторонее  docker-приложение с базой на PG. Грустно, переезд на нормальное решение в будущем.</li>
 <li><strong>Нужные любые письма или некому составлять красивые</strong> - тогда используется встроенный SMTP-клиент, дополнительных сервисов не требуется.</li>
 </ul>
 <p>Установите значение в административном интерфейсе:</p>
@@ -83,93 +83,107 @@
 </ul>
 <h3 id="нужны-красивые-письма" tabindex="-1"><a class="header-anchor" href="#нужны-красивые-письма"><span>Нужны красивые письма</span></a></h3>
 <ul>
-<li>Установите Mautic на последний релиз версии v.4.xxx (например v.4.2.1) из <a href="https://hub.docker.com/r/mautic/mautic" target="_blank" rel="noopener noreferrer">докера<ExternalLinkIcon/></a></li>
-<li>Залогиньтесь в веб-интерфес и подключитесь в вашему SMTP-серверу</li>
-<li>Создайте дополнительную учетную запись</li>
-<li>Включите API и Basic Auth в настройках.</li>
-<li>Перезапустите контейнер.</li>
-<li>Установите значения переменных в Stormbpmn:
-<ul>
-<li><strong>MAUTIC_URL</strong> - URL API mautic, ожидается https://marketing.local/api</li>
-<li><strong>MAUTIC_USERNAME</strong> - имя отдельной учетной записи</li>
-<li><strong>MAUTIC_PASSWORD</strong> - пароль отдельной учетной записи</li>
+<li>Скачайте актуальную версию docker-compose</li>
 </ul>
-</li>
-<li>Создайте шаблонных красивых писем с использованием плейсхолдеров, вставляйте текст в скобках на места, куда система подставит актуальные значения</li>
+<div class="language-text line-numbers-mode" data-ext="text" data-title="text"><pre v-pre class="language-text"><code>curl -LO https://github.com/knadh/listmonk/raw/master/docker-compose.yml
+</code></pre><div class="line-numbers" aria-hidden="true"><div class="line-number"></div></div></div><ul>
+<li>(Опционально) Правим содержимое. По-умолчанию в контейнере listmonk поднимаются два сервиса: само приложение на порте 9000 и его база данных на порте 5432. Если какие-то из этих портов заняты, их можно обновить на удобные вам в параметрах services.app.ports и services.db.ports соответственно.
+Обратите внимание, что менять требуется только внешний порт. Например, если на localhost порт 5432 уже занят другим инстансом Postgres, то в docker-compose можно обновить параметр services.db.ports на &quot;127.0.0.1:{НЕЗАНЯТЫЙ_ПОРТ}:5432&quot;</li>
+<li>Поднимаем контейнер:</li>
+</ul>
+<div class="language-text line-numbers-mode" data-ext="text" data-title="text"><pre v-pre class="language-text"><code>docker compose up -d
+</code></pre><div class="line-numbers" aria-hidden="true"><div class="line-number"></div></div></div><ul>
+<li>Заходим в панель администратора (по умолчанию http://localhost:9000), создаем учетную запись супер пользователя и логинимся.</li>
+<li>В Settings-General указываем email по умолчанию для отправки писем, например:
+<img src="@source/enterprise/Установка/list_monk_1.png" alt="image"></li>
+<li>В Settings-SMTP указываем настройки вашего корпоративного SMTP сервера. По кнопке &quot;Test connection&quot; можно отправить тестовое письмо с адреса, указанного в предыдущем шаге, на любой корпоративный email.
+<img src="@source/enterprise/Установка/list_monk_2.png" alt="image"></li>
+<li>Далее создаем сервисную УЗ для Storm. В Users нажимаем на New, выбираем тип учетки API, указываем ее имя (например, stormbpmn) и роль Super Admin (при желании можно кастомизировать и создать выделенную роль во вкладке User roles). Сохраняем и получаем наш API токен.
+<img src="@source/enterprise/Установка/list_monk_3.png" alt="image"></li>
+<li>В env-переменных Stormbpmn указываем следующие значения:</li>
+</ul>
+<div class="language-text line-numbers-mode" data-ext="text" data-title="text"><pre v-pre class="language-text"><code>EMAIL_PROVIDER: listmonk
+LISTMONK_BASE_URL: http://localhost:9000/api (изменить на ваш кастомный внешний URL/порт при необходимости)
+LISTMONK_USERNAME: username сервисной УЗ (см. скрин выше)
+LISTMONK_PASSWORD: API токен сервисной УЗ (см. скрин выше)
+</code></pre><div class="line-numbers" aria-hidden="true"><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div></div></div><ul>
+<li>Перезапускаем контейнер Stormbpmn</li>
+<li>Создаем <a href="https://listmonk.app/docs/templating/" target="_blank" rel="noopener noreferrer">шаблоны для писем в listmonk<ExternalLinkIcon/></a> и запоминаем их идентификаторы.</li>
+<li>При создании шаблонов можно использовать следующие подстановки:</li>
 </ul>
 <table>
 <thead>
 <tr>
-<th>№</th>
-<th>Тема шаблона</th>
-<th>Доступные плейсхолдеры</th>
-<th>Когда шлется</th>
+<th>Смысл шаблона</th>
 <th>Название настройки в административном интерфейсе</th>
+<th>Возможный заголовок</th>
+<th>Возможные подстановки</th>
+<th></th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>1</td>
-<td>Password recover</td>
-<td>{restoreCode}</td>
-<td>Когда пользователь запросил восстановление пароля</td>
-<td>restorePasswordTemplateId</td>
-</tr>
-<tr>
-<td>2</td>
-<td>You have been invited by {invite_author} to work together on business processes</td>
-<td>{invite_author},  {diagram_url}, {register_url}</td>
-<td>Отправляется после того как поделились диаграммой и у получателя ЕСТЬ учетка в системе</td>
-<td>inviteDiagramAndRegisterTemplateId</td>
-</tr>
-<tr>
-<td>3</td>
-<td>New comment from {comment_author}</td>
-<td>{comment_author}, {html_text}, {diagram_url}</td>
-<td>Отправляется после отправки комментария</td>
+<td>NEW_COMMENT</td>
 <td>commentEmailTemplateId</td>
+<td>Комментарий от {comment_author} к процессу {diagram_name}</td>
+<td>{comment_author}, {diagram_url}, {diagram_name}, {html_text}</td>
+<td></td>
 </tr>
 <tr>
-<td>4</td>
-<td>The version of the {diagram_name} diagram has been updated {change_author}</td>
-<td>{change_author},{diagram_name},{diagram_description},{version_comment} ,{diagram_url}</td>
-<td>Отправляется при обновлении версии</td>
-<td>diagramVersionUpdateEmailTemplateId</td>
-</tr>
-<tr>
-<td>5</td>
-<td>{invite_author} invited you to {team_name} and REGISTER</td>
-<td>{invite_author},{team_name}, {invite_author}, {team_name}, {register_url}</td>
-<td>Отправляется при приглашении в команду и когда у получателя НЕТ учетной записи</td>
-<td>teamInviteAndRegisterTemplateId</td>
-</tr>
-<tr>
-<td>6</td>
-<td>{invite_author} invited you to {team_name}  (USER PRESENTED IN STORM)</td>
-<td>{invite_author},{team_name},</td>
-<td>Отправляется когда поделились папкой</td>
-<td>folderTemplateId</td>
-</tr>
-<tr>
-<td>7</td>
-<td>Приглашение в команду</td>
-<td>{invite_author}, &quot;{team_name}</td>
-<td>Отправляется при приглашении в команду и когда у получателя есть учетная запись и он НЕ состоит в команде</td>
-<td>teamInviteTemplateId</td>
-</tr>
-<tr>
-<td>8</td>
-<td>Согласование</td>
-<td>{invite_author},      {diagram_url},         {diagram_name}</td>
-<td>Отправляется, когда запросили согласовании</td>
+<td>NEW_APPROVAL</td>
 <td>approvalTemplateId</td>
+<td>{invite_author} запросил согласование бизнес-процесса {diagram_name}</td>
+<td>{invite_author}, {diagram_url}, {diagram_name}</td>
+<td></td>
 </tr>
 <tr>
-<td>9</td>
-<td>Предоставлен доступ</td>
-<td>{invite_author},      {diagram_url},         {diagram_name}, {settings}</td>
-<td>Отправляется, когда изменили правда доступа к диаграмме</td>
+<td>RESTORE_PASSWORD</td>
+<td>restorePasswordTemplateId</td>
+<td>Восстановление пароля на stormbpmn.com</td>
+<td>{restoreCode}</td>
+<td></td>
+</tr>
+<tr>
+<td>APPROVAL_COMPLETED</td>
+<td>approvalCompletedTemplateId</td>
+<td>По процессу {diagram_name} завершены все согласования</td>
+<td>{diagram_name}, {diagram_url}</td>
+<td></td>
+</tr>
+<tr>
+<td>USER_ACTIVATION</td>
+<td>userActivationTemplateId</td>
+<td>Всё почти готово! Подтвердите ваш e-mail</td>
+<td>{activation_token}</td>
+<td></td>
+</tr>
+<tr>
+<td>INVITE_TO_DIAGRAM</td>
 <td>secureUpdateTemlateId</td>
+<td>{invite_author} предоставил доступ к бизнес-процессу {diagram_name}</td>
+<td>{invite_author}, {diagram_url}, {diagram_name}</td>
+<td></td>
+</tr>
+<tr>
+<td>INVITE_TO_DIAGRAM_AND_REGISTER</td>
+<td>inviteDiagramAndRegisterTemplateId</td>
+<td>{invite_author} предоставил доступ к бизнес-процессу {diagram_name}</td>
+<td>{invite_author}, {diagram_url}, {diagram_name}, {register_url}</td>
+<td></td>
+</tr>
+<tr>
+<td>INVITE_TO_TEAM</td>
+<td>teamInviteTemplateId</td>
+<td>{invite_author} пригласил вас в команду {team_name}</td>
+<td>{invite_author}, {team_name}</td>
+<td></td>
+</tr>
+<tr>
+<td>INVITE_TO_TEAM_AND_REGISTER</td>
+<td>teamInviteAndRegisterTemplateId</td>
+<td>{invite_author} пригласил вас в команду {team_name}</td>
+<td>{invite_author}, {team_name}, {register_url}</td>
+<td></td>
 </tr>
 </tbody>
 </table>
