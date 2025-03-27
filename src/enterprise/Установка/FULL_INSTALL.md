@@ -97,7 +97,7 @@ upstream storm {
 
 ## Выбрать провайдер почты
 На текущий момент существует 2 варианта работы с почтой под разные задачи:
- - **Нужны красивые письма и мы готовы их составлять** - тогда используется сервис ListMonk, сторонее  docker-приложение с базой на PG. Грустно, переезд на нормальное решение в будущем.
+ - **Нужны красивые письма и мы готовы их составлять** - тогда используется сервис ListMonk, сторонее  docker-приложение с базой на PG. 
  - **Нужные любые письма или некому составлять красивые** - тогда используется встроенный SMTP-клиент, дополнительных сервисов не требуется.
 
  Установите значение в административном интерфейсе:
@@ -132,19 +132,20 @@ LISTMONK_PASSWORD: API токен сервисной УЗ (см. скрин вы
 - Создаем [шаблоны для писем в listmonk](https://listmonk.app/docs/templating/) и запоминаем их идентификаторы.
 - При создании шаблонов можно использовать следующие подстановки:
 
-| Смысл шаблона 	| Название настройки в административном интерфейсе 	| Возможный заголовок 	| Возможные подстановки 	|  	|
-|---	|---	|---	|---	|---	|
-| NEW_COMMENT 	| commentEmailTemplateId 	| Комментарий от {comment_author} к процессу {diagram_name} 	| {comment_author}, {diagram_url}, {diagram_name}, {html_text} 	|  	|
-| NEW_APPROVAL 	| approvalTemplateId 	| {invite_author} запросил согласование бизнес-процесса {diagram_name} 	| {invite_author}, {diagram_url}, {diagram_name} 	|  	|
-| RESTORE_PASSWORD 	| restorePasswordTemplateId 	| Восстановление пароля на stormbpmn.com 	| {restoreCode} 	|  	|
-| APPROVAL_COMPLETED 	| approvalCompletedTemplateId 	| По процессу {diagram_name} завершены все согласования 	| {diagram_name}, {diagram_url} 	|  	|
-| USER_ACTIVATION 	| userActivationTemplateId 	| Всё почти готово! Подтвердите ваш e-mail 	| {activation_token} 	|  	|
-| INVITE_TO_DIAGRAM 	| secureUpdateTemlateId 	| {invite_author} предоставил доступ к бизнес-процессу {diagram_name} 	| {invite_author}, {diagram_url}, {diagram_name} 	|  	|
-| INVITE_TO_DIAGRAM_AND_REGISTER 	| inviteDiagramAndRegisterTemplateId 	| {invite_author} предоставил доступ к бизнес-процессу {diagram_name} 	| {invite_author}, {diagram_url}, {diagram_name}, {register_url} 	|  	|
-| INVITE_TO_TEAM 	| teamInviteTemplateId 	| {invite_author} пригласил вас в команду {team_name} 	| {invite_author}, {team_name} 	|  	|
-| INVITE_TO_TEAM_AND_REGISTER 	| teamInviteAndRegisterTemplateId 	| {invite_author} пригласил вас в команду {team_name} 	| {invite_author}, {team_name}, {register_url} 	|  	|
+| Смысл шаблона                     | Название настройки в административном интерфейсе     | Возможный заголовок                                                      | Возможные подстановки                                              |
+|----------------------------------|-------------------------------------------------------|---------------------------------------------------------------------------|--------------------------------------------------------------------|
+| NEW_COMMENT                      | commentEmailTemplateId                                | Комментарий от {comment_author} к процессу {diagram_name}                | {comment_author}, {diagram_url}, {diagram_name}, {html_text}      |
+| NEW_APPROVAL                     | approvalTemplateId                                    | {invite_author} запросил согласование бизнес-процесса {diagram_name}     | {invite_author}, {diagram_url}, {diagram_name}                    |
+| RESTORE_PASSWORD                 | restorePasswordTemplateId                             | Восстановление пароля на stormbpmn.com                                   | {restoreCode}                                                     |
+| APPROVAL_COMPLETED              | approvalCompletedTemplateId                           | По процессу {diagram_name} завершены все согласования                    | {diagram_name}, {diagram_url}                                     |
+| USER_ACTIVATION                 | userActivationTemplateId                              | Всё почти готово! Подтвердите ваш e-mail                                 | {activation_token}                                                |
+| INVITE_TO_DIAGRAM               | secureUpdateTemlateId                                 | {invite_author} предоставил доступ к бизнес-процессу {diagram_name}      | {invite_author}, {diagram_url}, {diagram_name}                    |
+| INVITE_TO_DIAGRAM_AND_REGISTER  | inviteDiagramAndRegisterTemplateId                    | {invite_author} предоставил доступ к бизнес-процессу {diagram_name}      | {invite_author}, {diagram_url}, {diagram_name}, {register_url}    |
+| INVITE_TO_TEAM                  | teamInviteTemplateId                                  | {invite_author} пригласил вас в команду {team_name}                      | {invite_author}, {team_name}                                      |
+| INVITE_TO_TEAM_AND_REGISTER     | teamInviteAndRegisterTemplateId                       | {invite_author} пригласил вас в команду {team_name}                      | {invite_author}, {team_name}, {register_url}                      |
 
--  Запомните идентификаторы шаблонов и установите их в административном интерфейсе в соответсвующую настройку
+
+-  Запомните идентификаторы шаблонов и установите их в административном интерфейсе Storm.
 
  ### Не нужны красивые письма
  Установите следующие настройки в административном интерфейсе:

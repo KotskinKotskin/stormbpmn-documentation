@@ -74,7 +74,7 @@
 <h2 id="выбрать-проваидер-почты" tabindex="-1"><a class="header-anchor" href="#выбрать-проваидер-почты"><span>Выбрать провайдер почты</span></a></h2>
 <p>На текущий момент существует 2 варианта работы с почтой под разные задачи:</p>
 <ul>
-<li><strong>Нужны красивые письма и мы готовы их составлять</strong> - тогда используется сервис ListMonk, сторонее  docker-приложение с базой на PG. Грустно, переезд на нормальное решение в будущем.</li>
+<li><strong>Нужны красивые письма и мы готовы их составлять</strong> - тогда используется сервис ListMonk, сторонее  docker-приложение с базой на PG.</li>
 <li><strong>Нужные любые письма или некому составлять красивые</strong> - тогда используется встроенный SMTP-клиент, дополнительных сервисов не требуется.</li>
 </ul>
 <p>Установите значение в административном интерфейсе:</p>
@@ -118,7 +118,6 @@ LISTMONK_PASSWORD: API токен сервисной УЗ (см. скрин вы
 <th>Название настройки в административном интерфейсе</th>
 <th>Возможный заголовок</th>
 <th>Возможные подстановки</th>
-<th></th>
 </tr>
 </thead>
 <tbody>
@@ -127,68 +126,59 @@ LISTMONK_PASSWORD: API токен сервисной УЗ (см. скрин вы
 <td>commentEmailTemplateId</td>
 <td>Комментарий от {comment_author} к процессу {diagram_name}</td>
 <td>{comment_author}, {diagram_url}, {diagram_name}, {html_text}</td>
-<td></td>
 </tr>
 <tr>
 <td>NEW_APPROVAL</td>
 <td>approvalTemplateId</td>
 <td>{invite_author} запросил согласование бизнес-процесса {diagram_name}</td>
 <td>{invite_author}, {diagram_url}, {diagram_name}</td>
-<td></td>
 </tr>
 <tr>
 <td>RESTORE_PASSWORD</td>
 <td>restorePasswordTemplateId</td>
 <td>Восстановление пароля на stormbpmn.com</td>
 <td>{restoreCode}</td>
-<td></td>
 </tr>
 <tr>
 <td>APPROVAL_COMPLETED</td>
 <td>approvalCompletedTemplateId</td>
 <td>По процессу {diagram_name} завершены все согласования</td>
 <td>{diagram_name}, {diagram_url}</td>
-<td></td>
 </tr>
 <tr>
 <td>USER_ACTIVATION</td>
 <td>userActivationTemplateId</td>
 <td>Всё почти готово! Подтвердите ваш e-mail</td>
 <td>{activation_token}</td>
-<td></td>
 </tr>
 <tr>
 <td>INVITE_TO_DIAGRAM</td>
 <td>secureUpdateTemlateId</td>
 <td>{invite_author} предоставил доступ к бизнес-процессу {diagram_name}</td>
 <td>{invite_author}, {diagram_url}, {diagram_name}</td>
-<td></td>
 </tr>
 <tr>
 <td>INVITE_TO_DIAGRAM_AND_REGISTER</td>
 <td>inviteDiagramAndRegisterTemplateId</td>
 <td>{invite_author} предоставил доступ к бизнес-процессу {diagram_name}</td>
 <td>{invite_author}, {diagram_url}, {diagram_name}, {register_url}</td>
-<td></td>
 </tr>
 <tr>
 <td>INVITE_TO_TEAM</td>
 <td>teamInviteTemplateId</td>
 <td>{invite_author} пригласил вас в команду {team_name}</td>
 <td>{invite_author}, {team_name}</td>
-<td></td>
 </tr>
 <tr>
 <td>INVITE_TO_TEAM_AND_REGISTER</td>
 <td>teamInviteAndRegisterTemplateId</td>
 <td>{invite_author} пригласил вас в команду {team_name}</td>
 <td>{invite_author}, {team_name}, {register_url}</td>
-<td></td>
 </tr>
 </tbody>
 </table>
 <ul>
-<li>Запомните идентификаторы шаблонов и установите их в административном интерфейсе в соответсвующую настройку</li>
+<li>Запомните идентификаторы шаблонов и установите их в административном интерфейсе Storm.</li>
 </ul>
 <h3 id="не-нужны-красивые-письма" tabindex="-1"><a class="header-anchor" href="#не-нужны-красивые-письма"><span>Не нужны красивые письма</span></a></h3>
 <p>Установите следующие настройки в административном интерфейсе:</p>
