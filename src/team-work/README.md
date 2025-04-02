@@ -1,6 +1,6 @@
 ---
 dir:
-  order: -3
+  order: 4
   link: true
   text: Работа в команде и общий доступ
   collapsible: false

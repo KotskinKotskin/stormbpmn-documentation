@@ -1,24 +1,26 @@
 ---
-order: 1
 dir:
-  text: "New Шторм. Редактор BPMN"
-  order: 1
+  order: 2
+  text: "Редактор BPMN"
   link: true
   index: true
-  icon: heart
+  icon: null
+collapsible: true
+collapsed: false
+order: 2
 ---
 
 
-# New Шторм. Редактор BPMN
+# Редактор BPMN
 
 Наш редактор BPMN имеет несколько меню для удобства работы с BPMN диаграммами.  
 ![image](bpmn-modeler.png)
 
 **Описание всех меню**
 
-## Меню навигации
+## Сервисное меню
 
-О нём рассказано в описании [главной](0_home-page.html#меню-навигации) страницы
+О нём рассказано в описании [главной](../0_home-page/main.html#сервисное_меню) страницы
 
 ## Меню действий
 

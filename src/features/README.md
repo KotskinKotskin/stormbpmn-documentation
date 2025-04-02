@@ -1,13 +1,13 @@
 ---
 dir:
-  order: 3
-  text: Функции системы
+  order: -1
+  text: Старый Шторм
   collapsible: true
   collapsed: true
 index: false
-icon: "star"
-order: 3
+icon: "earth"
+order: -1
 ---
 
-# Функции системы
+# Старый Шторм. Функции системы
 [[toc]]

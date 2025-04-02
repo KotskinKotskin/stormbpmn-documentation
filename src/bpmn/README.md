@@ -1,6 +1,6 @@
 ---
 dir:
-  order: -1
+  order: -2
   link: false
   text: Что такое BPMN
   collapsible: true
