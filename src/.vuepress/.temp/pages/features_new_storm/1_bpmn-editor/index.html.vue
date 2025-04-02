@@ -2,8 +2,8 @@
 <p>Наш редактор BPMN имеет несколько меню для удобства работы с BPMN диаграммами.<br>
 <img src="@source/features_new_storm/1_bpmn-editor/bpmn-modeler.png" alt="image"></p>
 <p><strong>Описание всех меню</strong></p>
-<h2 id="меню-навигации" tabindex="-1"><a class="header-anchor" href="#меню-навигации"><span>Меню навигации</span></a></h2>
-<p>О нём рассказано в описании <RouteLink to="/features_new_storm/1_bpmn-editor/0_home-page.html#%D0%BC%D0%B5%D0%BD%D1%8E-%D0%BD%D0%B0%D0%B2%D0%B8%D0%B3%D0%B0%D1%86%D0%B8%D0%B8">главной</RouteLink> страницы</p>
+<h2 id="сервисное-меню" tabindex="-1"><a class="header-anchor" href="#сервисное-меню"><span>Сервисное меню</span></a></h2>
+<p>О нём рассказано в описании <RouteLink to="/features_new_storm/0_home-page/main.html#%D1%81%D0%B5%D1%80%D0%B2%D0%B8%D1%81%D0%BD%D0%BE%D0%B5_%D0%BC%D0%B5%D0%BD%D1%8E">главной</RouteLink> страницы</p>
 <h2 id="меню-деиствии" tabindex="-1"><a class="header-anchor" href="#меню-деиствии"><span>Меню действий</span></a></h2>
 <p>В этом меню возможно:</p>
 <ul>
