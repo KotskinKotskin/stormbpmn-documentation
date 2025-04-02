@@ -1,6 +1,6 @@
 ---
 dir:
-  order: -3
+  order: -5
   link: false
   text: Enteprise-версия
   collapsible: true
