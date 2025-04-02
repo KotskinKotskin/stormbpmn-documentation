@@ -97,37 +97,55 @@ upstream storm {
 
 ## Выбрать провайдер почты
 На текущий момент существует 2 варианта работы с почтой под разные задачи:
- - **Нужны красивые письма и мы готовы их составлять** - тогда используется сервис Mautic, сторонее statefull docker-приложение с базой на Percona, PG Не поддерживается. Грустно, переезд на нормальное решение в будущем.
+ - **Нужны красивые письма и мы готовы их составлять** - тогда используется сервис ListMonk, сторонее  docker-приложение с базой на PG. 
  - **Нужные любые письма или некому составлять красивые** - тогда используется встроенный SMTP-клиент, дополнительных сервисов не требуется.
 
  Установите значение в административном интерфейсе:
  - **baserUrl** - используется для формирований правильных ссылок в письмах. Ожидается значение, похожее на https://stormbpmn.com
 
  ### Нужны красивые письма
- - Установите Mautic на последний релиз версии v.4.xxx (например v.4.2.1) из [докера](https://hub.docker.com/r/mautic/mautic)
- - Залогиньтесь в веб-интерфес и подключитесь в вашему SMTP-серверу
- - Создайте дополнительную учетную запись
- - Включите API и Basic Auth в настройках.
- - Перезапустите контейнер.
- - Установите значения переменных в Stormbpmn:
-    - **MAUTIC_URL** - URL API mautic, ожидается https://marketing.local/api
-    - **MAUTIC_USERNAME** - имя отдельной учетной записи
-    - **MAUTIC_PASSWORD** - пароль отдельной учетной записи
- - Создайте шаблонных красивых писем с использованием плейсхолдеров, вставляйте текст в скобках на места, куда система подставит актуальные значения
- 
- | № 	| Тема шаблона 	| Доступные плейсхолдеры 	| Когда шлется 	| Название настройки в административном интерфейсе 	|
-|---	|---	|---	|---	|---	|
-| 1 	| Password recover 	| {restoreCode} 	| Когда пользователь запросил восстановление пароля 	| restorePasswordTemplateId 	|
-| 2 	| You have been invited by {invite_author} to work together on business processes 	| {invite_author},  {diagram_url}, {register_url} 	| Отправляется после того как поделились диаграммой и у получателя ЕСТЬ учетка в системе 	| inviteDiagramAndRegisterTemplateId 	|
-| 3 	| New comment from {comment_author} 	| {comment_author}, {html_text}, {diagram_url} 	| Отправляется после отправки комментария 	| commentEmailTemplateId 	|
-| 4 	| The version of the {diagram_name} diagram has been updated {change_author} 	| {change_author},{diagram_name},{diagram_description},{version_comment} ,{diagram_url} 	| Отправляется при обновлении версии 	| diagramVersionUpdateEmailTemplateId 	|
-| 5 	| {invite_author} invited you to {team_name} and REGISTER 	| {invite_author},{team_name}, {invite_author}, {team_name}, {register_url} 	| Отправляется при приглашении в команду и когда у получателя НЕТ учетной записи 	| teamInviteAndRegisterTemplateId 	|
-| 6 	| {invite_author} invited you to {team_name}  (USER PRESENTED IN STORM) 	| {invite_author},{team_name}, 	| Отправляется когда поделились папкой 	| folderTemplateId 	|
-| 7 	| Приглашение в команду 	| {invite_author}, "{team_name} 	| Отправляется при приглашении в команду и когда у получателя есть учетная запись и он НЕ состоит в команде 	| teamInviteTemplateId 	|
-| 8 	| Согласование 	| {invite_author},      {diagram_url},         {diagram_name} 	| Отправляется, когда запросили согласовании 	| approvalTemplateId 	|
-| 9 	| Предоставлен доступ 	| {invite_author},      {diagram_url},         {diagram_name}, {settings} 	| Отправляется, когда изменили правда доступа к диаграмме 	| secureUpdateTemlateId 	|
+ - Скачайте актуальную версию docker-compose 
+ ```
+ curl -LO https://github.com/knadh/listmonk/raw/master/docker-compose.yml
+```
+ - (Опционально) Правим содержимое. По-умолчанию в контейнере listmonk поднимаются два сервиса: само приложение на порте 9000 и его база данных на порте 5432. Если какие-то из этих портов заняты, их можно обновить на удобные вам в параметрах services.app.ports и services.db.ports соответственно.
+Обратите внимание, что менять требуется только внешний порт. Например, если на localhost порт 5432 уже занят другим инстансом Postgres, то в docker-compose можно обновить параметр services.db.ports на "127.0.0.1:{НЕЗАНЯТЫЙ_ПОРТ}:5432"
+ - Поднимаем контейнер:
+ ```
+docker compose up -d
+ ```
+ - Заходим в панель администратора (по умолчанию http://localhost:9000), создаем учетную запись супер пользователя и логинимся.
+ - В Settings-General указываем email по умолчанию для отправки писем, например:
+![image](list_monk_1.png)
+ - В Settings-SMTP указываем настройки вашего корпоративного SMTP сервера. По кнопке "Test connection" можно отправить тестовое письмо с адреса, указанного в предыдущем шаге, на любой корпоративный email.
+ ![image](list_monk_2.png)
+ - Далее создаем сервисную УЗ для Storm. В Users нажимаем на New, выбираем тип учетки API, указываем ее имя (например, stormbpmn) и роль Super Admin (при желании можно кастомизировать и создать выделенную роль во вкладке User roles). Сохраняем и получаем наш API токен.
+ ![image](list_monk_3.png)
+ - В env-переменных Stormbpmn указываем следующие значения:
+```
+EMAIL_PROVIDER: listmonk
+LISTMONK_BASE_URL: http://localhost:9000/api (изменить на ваш кастомный внешний URL/порт при необходимости)
+LISTMONK_USERNAME: username сервисной УЗ (см. скрин выше)
+LISTMONK_PASSWORD: API токен сервисной УЗ (см. скрин выше)
+```
+- Перезапускаем контейнер Stormbpmn
+- Создаем [шаблоны для писем в listmonk](https://listmonk.app/docs/templating/) и запоминаем их идентификаторы.
+- При создании шаблонов можно использовать следующие подстановки:
 
--  Запомните идентификаторы шаблонов и установите их в административном интерфейсе в соответсвующую настройку
+| Смысл шаблона                     | Название настройки в административном интерфейсе     | Возможный заголовок                                                      | Возможные подстановки                                              |
+|----------------------------------|-------------------------------------------------------|---------------------------------------------------------------------------|--------------------------------------------------------------------|
+| NEW_COMMENT                      | commentEmailTemplateId                                | Комментарий от {comment_author} к процессу {diagram_name}                | {comment_author}, {diagram_url}, {diagram_name}, {html_text}      |
+| NEW_APPROVAL                     | approvalTemplateId                                    | {invite_author} запросил согласование бизнес-процесса {diagram_name}     | {invite_author}, {diagram_url}, {diagram_name}                    |
+| RESTORE_PASSWORD                 | restorePasswordTemplateId                             | Восстановление пароля на stormbpmn.com                                   | {restoreCode}                                                     |
+| APPROVAL_COMPLETED              | approvalCompletedTemplateId                           | По процессу {diagram_name} завершены все согласования                    | {diagram_name}, {diagram_url}                                     |
+| USER_ACTIVATION                 | userActivationTemplateId                              | Всё почти готово! Подтвердите ваш e-mail                                 | {activation_token}                                                |
+| INVITE_TO_DIAGRAM               | secureUpdateTemlateId                                 | {invite_author} предоставил доступ к бизнес-процессу {diagram_name}      | {invite_author}, {diagram_url}, {diagram_name}                    |
+| INVITE_TO_DIAGRAM_AND_REGISTER  | inviteDiagramAndRegisterTemplateId                    | {invite_author} предоставил доступ к бизнес-процессу {diagram_name}      | {invite_author}, {diagram_url}, {diagram_name}, {register_url}    |
+| INVITE_TO_TEAM                  | teamInviteTemplateId                                  | {invite_author} пригласил вас в команду {team_name}                      | {invite_author}, {team_name}                                      |
+| INVITE_TO_TEAM_AND_REGISTER     | teamInviteAndRegisterTemplateId                       | {invite_author} пригласил вас в команду {team_name}                      | {invite_author}, {team_name}, {register_url}                      |
+
+
+-  Запомните идентификаторы шаблонов и установите их в административном интерфейсе Storm.
 
  ### Не нужны красивые письма
  Установите следующие настройки в административном интерфейсе:
