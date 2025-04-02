@@ -1,12 +1,12 @@
 ---
 dir:
-  order: -1
+  order: -4
   link: true
   text: Тех.поддержка
   collapsible: false
 index: true
 icon: "handshake-angle"
-order: -1
+order: -4
 ---
 
 # Тех.поддержка и администрирование

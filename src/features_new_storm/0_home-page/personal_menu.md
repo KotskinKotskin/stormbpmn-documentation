@@ -14,4 +14,4 @@ icon: ""
   3) Избранные диаграммы
   4) Диаграммы, которые были удалены
   5) Мои согласования
-![image](main_personal-menu.png)
+![image](main_personal.png)

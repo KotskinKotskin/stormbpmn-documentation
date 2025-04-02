@@ -20,4 +20,4 @@ icon: ""
   9) Архитектура
   10) Аналитика
 
-![image](main_command-menu.png)
+![image](main_command.png)

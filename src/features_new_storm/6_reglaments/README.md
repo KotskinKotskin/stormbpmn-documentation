@@ -1,14 +1,14 @@
 ---
 order: 1
 dir:
-  text: "New Шторм. Регламенты"
+  text: "Регламенты"
   order: 6
   link: true
   index: true
   icon: ""
 ---
 
-# New Шторм. Регламенты
+# Регламенты
 
 
 

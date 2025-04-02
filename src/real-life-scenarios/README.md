@@ -1,12 +1,12 @@
 ---
 dir:
-  order: 1
+  order: 2
   link: true
   text: Storm в реальной жизни
   collapsible: false
 index: true
 icon: "user"
-order: 1
+order: 2
 ---
 
 # В реальной жизни

@@ -1,7 +1,7 @@
 ---
 order: 1
 dir:
-  text: "New Шторм. Главная страница"
+  text: "Главная страница"
   order: 1
   link: true
   index: true
@@ -15,7 +15,7 @@ dir:
 - Список диаграмм 
 - Сервисное меню
 
-![image](main_menu.png)
+![image](main.png)
 
 
 ## Личное меню
@@ -25,7 +25,7 @@ dir:
   3) Избранные диаграммы
   4) Диаграммы, которые были удалены
   5) Мои согласования
-![image](main_personal-menu.png)
+![image](main_personal.png)
 
 
 ## Командное меню
@@ -41,7 +41,7 @@ dir:
   9) Архитектура
   10) Аналитика
 
-![image](main_command-menu.png)
+![image](main_command.png)
 
 
 
