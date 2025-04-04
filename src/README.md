@@ -7,18 +7,19 @@ actions:
     link: /get-started.html
     type: primary
     icon: play
-  - text: Примеры реальной жизни
+  - text: Примеры из жизни
     link: /real-life-scenarios/
     type: secondary
     icon: user
-  - text: Старый шторм
-    link: /features/1_bpmn-editor.html
-    type: secondary  
-    icon: earth
   - text: Описание функций
     link: /features_new_storm/1_bpmn-editor/
     type: primary  
     icon: star
+  - text: Работа в команде
+    link: /team-work/
+    type: primary  
+    icon: "user-group"
+
 
 
 features:
@@ -34,6 +35,12 @@ features:
     details: Выгрузка в PNG, JPEG, SVG, BPMN, .DOCX позволяет поделиться процессами с коллегами, у которых нет постоянного доступа в интернет.
   - title: Сообщество профессионалов
     details: Stormbpmn - это не просто программа, это несколько тысяч аналитиков, которые с радостью делятся опытом работы с бизнес-процессами со всеми желающими. Приходите и вы!
+  - title: Старый Шторм
+    link: /features/1_bpmn-editor.html
+    type: secondary  
+    icon: earth
+    details: Описание функций StormBPMN версии 6
+    
 
 footer: GPL-3.0 Licensed (на документацию) |  © 2019 и дальше - Команда stormbpmn.com
 
