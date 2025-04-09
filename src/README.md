@@ -12,7 +12,7 @@ actions:
     type: secondary
     icon: user
   - text: Описание функций
-    link: /features_new_storm/1_bpmn-editor/
+    link: /features_new_storm/0_home-page/
     type: primary  
     icon: star
   - text: Работа в команде
