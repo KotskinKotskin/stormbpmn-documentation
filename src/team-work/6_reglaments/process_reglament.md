@@ -52,6 +52,7 @@ icon: ""
 Воспользуйтесь [базовым шаблоном](https://docs.google.com/document/d/1e9GZfWQDymoFcsF95yOTZdqkz4hXflzI2QyMUpqaFmY/edit#heading=h.bnj92bmrrns8) для быстрого старта. 
 
 Для расширения возможностей выгрузки в регламент используйте:
+- [Краткий шаблон регламента](https://disk.yandex.ru/i/A_r2pR_ma0dLPg)
 - [Расширенный шаблон регламента](https://disk.yandex.ru/i/SvPWDpMdyEpvZQ). И [пример выгрузки регламента по этому шаблону](https://disk.yandex.ru/i/kv62j46wSRE_Nw) с раскрытием источников информации.
 - [4 разных варианта описания шагов процесса](https://disk.yandex.ru/i/lSHwv4s1ZzqJ9A)
 :::
