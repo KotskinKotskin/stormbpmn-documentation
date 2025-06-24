@@ -1,4 +1,4 @@
-<template><div><h1 id="new-шторм-редактор-групп-процессов" tabindex="-1"><a class="header-anchor" href="#new-шторм-редактор-групп-процессов"><span>New Шторм. Редактор групп процессов</span></a></h1>
+<template><div><h1 id="редактор-групп-процессов" tabindex="-1"><a class="header-anchor" href="#редактор-групп-процессов"><span>Редактор групп процессов</span></a></h1>
 <div class="hint-container warning">
 <p class="hint-container-title">Примечание</p>
 <p>Группы процессов работают только на тарифах TEAM и выше.</p>

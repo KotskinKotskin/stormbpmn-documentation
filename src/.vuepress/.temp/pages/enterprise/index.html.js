@@ -1,5 +1,5 @@
 import comp from "D:/stormbpmn-documentation/src/.vuepress/.temp/pages/enterprise/index.html.vue"
-const data = JSON.parse("{\"path\":\"/enterprise/\",\"title\":\"Enterprise-версия\",\"lang\":\"ru-RU\",\"frontmatter\":{\"dir\":{\"order\":-3,\"link\":false,\"text\":\"Enteprise-версия\",\"collapsible\":true},\"index\":false,\"icon\":\"file\"},\"headers\":[],\"git\":{},\"readingTime\":{\"minutes\":0.06,\"words\":17},\"filePathRelative\":\"enterprise/README.md\",\"excerpt\":\"\\n\\n\"}")
+const data = JSON.parse("{\"path\":\"/enterprise/\",\"title\":\"Enterprise-версия\",\"lang\":\"ru-RU\",\"frontmatter\":{\"dir\":{\"order\":-5,\"link\":false,\"text\":\"Enteprise-версия\",\"collapsible\":true},\"index\":false,\"icon\":\"file\"},\"headers\":[],\"git\":{\"createdTime\":1711789490000,\"updatedTime\":1743616778000,\"contributors\":[{\"name\":\"Denis Kotov\",\"email\":\"31292696+KotskinKotskin@users.noreply.github.com\",\"commits\":9},{\"name\":\"VovaGDX\",\"email\":\"vladimir.shishkin@gmail.com\",\"commits\":1}]},\"readingTime\":{\"minutes\":0.06,\"words\":17},\"filePathRelative\":\"enterprise/README.md\",\"localizedDate\":\"30 марта 2024 г.\",\"excerpt\":\"\\n\\n\"}")
 export { comp, data }
 
 if (import.meta.webpackHot) {

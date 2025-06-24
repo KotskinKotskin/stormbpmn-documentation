@@ -1,35 +1,5 @@
 <template><div><h1 id="авторизация" tabindex="-1"><a class="header-anchor" href="#авторизация"><span>Авторизация</span></a></h1>
-<p>Поддерживается 4 типа авторизации - keycloak, oauth2, ldap, встроенная.  Рекомендуем использовать ouath2. Для встроенной авторизации дополнительных настроек не требуется.</p>
-<h2 id="настроика-keycloak" tabindex="-1"><a class="header-anchor" href="#настроика-keycloak"><span>Настройка keycloak</span></a></h2>
-<p>В данном разделе перечислены настройки, которые связаны с авторизацией с использованием keycloak:</p>
-<h4 id="переменные-окружения" tabindex="-1"><a class="header-anchor" href="#переменные-окружения"><span>Переменные окружения</span></a></h4>
-<p>Осуществляется путем задания ENV-переменных:</p>
-<ul>
-<li><strong>KEYCLOAK_ENABLED</strong> - включение интеграции. Значение по-умолчанию - false.</li>
-<li><strong>KEYCLOAK_URL</strong> - URL авторизационного сервера. Используется для формирования ссылки для endpoint-а userInfo.</li>
-<li><strong>KEYCLOAK_REALM</strong> - название REALMa. Используется для формирования ссылки для endpoint-а userInfo.</li>
-<li><strong>KEYCLOAK_FRONT_REALM</strong> - используется для отдачи на фронт и правильного формирования кнопки.</li>
-<li><strong>KEYCLOAK_FRONT_CLIENT_ID</strong> - используется для отдачи на фронт и правильного формирования кнопки.</li>
-<li><strong>KEYCLOAK_FRONT_URL</strong> - используется для отдачи на фронт и правильного формирования кнопки.</li>
-</ul>
-<h2 id="административная-панель" tabindex="-1"><a class="header-anchor" href="#административная-панель"><span>Административная панель</span></a></h2>
-<p>Осуществляется путем указания значения переменных на странице администрирования /app/admin:</p>
-<ul>
-<li><strong>showCustomSSOLoginButtonName</strong> - отображать кнопку входа через Keycloak. По умолчанию - false.</li>
-<li><strong>customSSOLoginButtonName</strong> - текст на кнопке  входа через Keycloak. По умолчанию - &quot;Войти&quot;</li>
-<li><strong>showSSOLogin</strong> - отображать кнопку входа keycloak. По умолчанию - нет.</li>
-</ul>
-<h2 id="настроика-ldap" tabindex="-1"><a class="header-anchor" href="#настроика-ldap"><span>Настройка LDAP</span></a></h2>
-<p>При использовании LDAP окно авторизации остается таким же как и при базовой авторизации, но полученные данные проходят проверку в LDAP-сервере.</p>
-<h4 id="переменные-окружения-1" tabindex="-1"><a class="header-anchor" href="#переменные-окружения-1"><span>Переменные окружения</span></a></h4>
-<ul>
-<li><strong>LDAP_ENABLE</strong> - включить LDAP. По-умолчанию - false.</li>
-<li><strong>LDAP_PRINCIPAL</strong> - учетная запись, от которой можно делать проверку (userDn) Ожидаемое значение похоже на &quot;cn=admin,dc=example, dc=org&quot;</li>
-<li><strong>LDAP_URL</strong> - адрес сервера LDAP. Ожидаемое значение похоже на &quot;ldap://localhost:389&quot;, &quot;ldaps://localhost:636&quot;</li>
-<li><strong>LDAP_BASE</strong> - местоположение в каталоге, с которого начинается поиск.  Ожидаемое значение похоже на&quot;ou=SUPERGROUP,dc=example,dc=org&quot;</li>
-<li><strong>LDAP_PASSWORD</strong> - пароль учетной записи LDAP_PRINCIPAL.</li>
-</ul>
-<p>Active directory kerberos SSO  не поддерживается, только simple bind.</p>
+<p>Поддерживается 2 типа авторизации -  oauth2 и встроенная.  Рекомендуем использовать ouath2. Для встроенной авторизации дополнительных настроек не требуется.</p>
 <h2 id="настроика-oauth2" tabindex="-1"><a class="header-anchor" href="#настроика-oauth2"><span>Настройка Oauth2</span></a></h2>
 <p>Самый простой и продвинутый способ авторизации. Задачется через административную панель:</p>
 <ul>
@@ -67,6 +37,16 @@
 <li>URL для редиректа (например https://stormbpmn.com/app/signin)\</li>
 <li>Включить кастомный провайдер Oauth - ON</li>
 </ul>
+<h3 id="проверка-claims-внутри-ответа" tabindex="-1"><a class="header-anchor" href="#проверка-claims-внутри-ответа"><span>Проверка Claims внутри ответа</span></a></h3>
+<p>Система позволяет проверить наличие и значение конкретного Claim в ответе. Чтобы это заработало, необходимо внестри 3 настройки в разделе администрирования:</p>
+<ol>
+<li>OAuthCheckClaim - true</li>
+<li>OAuthClaimName - название клейма</li>
+<li>OAuthClaimValue - значение клейма</li>
+</ol>
+<p>Таким образом можно проверять не просто авторизацию в KK, а наличие полномочий в КК.</p>
+<h3 id="вход-с-базовои-авторизациеи-даже-когда-она-отключена" tabindex="-1"><a class="header-anchor" href="#вход-с-базовои-авторизациеи-даже-когда-она-отключена"><span>Вход с базовой авторизацией, даже когда она отключена</span></a></h3>
+<p>Для админских целей можно в query параметры на странице входа указать showBasicLogin=true, тогда отобразится базовая форма входа</p>
 </div></template>
 
 
