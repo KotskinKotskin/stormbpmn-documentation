@@ -14,9 +14,9 @@ order: 8
 Актуальная информация об обновлениях и новых возможностях StormBPMN Enterprise.
 
 ::: tip Актуальная версия
-**Версия:** `stormbpmn_enterprise_experimental:6.6.1658`  
-**Дата:** 24.06.2025  
-**Образ:** `cr.selcloud.ru/stormbpmn-enterprise/stormbpmn_enterprise_experimental:6.6.1658`
+**Версия:** `6.6.1659`  
+**Дата:** 25.06.2025  
+**Образ:** `cr.selcloud.ru/stormbpmn-enterprise/stormbpmn_enterprise_experimental:6.6.1659`
 :::
 
 ---
