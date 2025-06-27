@@ -1,7 +1,7 @@
 export const redirects = JSON.parse("{}")
 
 export const routes = Object.fromEntries([
-  ["/CHANGELOG.html", { loader: () => import(/* webpackChunkName: "CHANGELOG.html" */"D:/stormbpmn-documentation/src/.vuepress/.temp/pages/CHANGELOG.html.js"), meta: {"t":"История изменений (CHANGELOG)","O":8} }],
+  ["/CHANGELOG.html", { loader: () => import(/* webpackChunkName: "CHANGELOG.html" */"D:/stormbpmn-documentation/src/.vuepress/.temp/pages/CHANGELOG.html.js"), meta: {"t":"Актуальная версия и Changelog","O":8} }],
   ["/get-started.html", { loader: () => import(/* webpackChunkName: "get-started.html" */"D:/stormbpmn-documentation/src/.vuepress/.temp/pages/get-started.html.js"), meta: {"t":"1. Схема архитектуры","O":1} }],
   ["/", { loader: () => import(/* webpackChunkName: "index.html" */"D:/stormbpmn-documentation/src/.vuepress/.temp/pages/index.html.js"), meta: {"t":"Главная страница","O":0} }],
   ["/bpmn/1_lesson.html", { loader: () => import(/* webpackChunkName: "1_lesson.html" */"D:/stormbpmn-documentation/src/.vuepress/.temp/pages/bpmn/1_lesson.html.js"), meta: {"t":"1 урок: BPM, BPMN, BPMS"} }],
@@ -20,9 +20,11 @@ export const routes = Object.fromEntries([
   ["/install/GET_STARTED.html", { loader: () => import(/* webpackChunkName: "GET_STARTED.html" */"D:/stormbpmn-documentation/src/.vuepress/.temp/pages/install/GET_STARTED.html.js"), meta: {"t":"Быстрый старт","O":1} }],
   ["/install/", { loader: () => import(/* webpackChunkName: "index.html" */"D:/stormbpmn-documentation/src/.vuepress/.temp/pages/install/index.html.js"), meta: {"t":"Установка","O":4} }],
   ["/operation/", { loader: () => import(/* webpackChunkName: "index.html" */"D:/stormbpmn-documentation/src/.vuepress/.temp/pages/operation/index.html.js"), meta: {"t":"Администрирование системы","O":5} }],
-  ["/REST%20API/", { loader: () => import(/* webpackChunkName: "index.html" */"D:/stormbpmn-documentation/src/.vuepress/.temp/pages/REST API/index.html.js"), meta: {"t":"REST API","O":7} }],
+  ["/recipes/", { loader: () => import(/* webpackChunkName: "index.html" */"D:/stormbpmn-documentation/src/.vuepress/.temp/pages/recipes/index.html.js"), meta: {"t":"Рецепты решений для ENTERPRISE клиентов","O":7} }],
   ["/support/", { loader: () => import(/* webpackChunkName: "index.html" */"D:/stormbpmn-documentation/src/.vuepress/.temp/pages/support/index.html.js"), meta: {"t":"Каналы поддержки","O":7} }],
+  ["/REST%20API/", { loader: () => import(/* webpackChunkName: "index.html" */"D:/stormbpmn-documentation/src/.vuepress/.temp/pages/REST API/index.html.js"), meta: {"t":"REST API","O":7} }],
   ["/404.html", { loader: () => import(/* webpackChunkName: "404.html" */"D:/stormbpmn-documentation/src/.vuepress/.temp/pages/404.html.js"), meta: {"t":""} }],
+  ["/recipes/ARC_REPO.html", { loader: () => import(/* webpackChunkName: "ARC_REPO.html" */"D:/stormbpmn-documentation/src/.vuepress/.temp/pages/recipes/ARC_REPO.html.js"), meta: {"t":"Архитектурный репозиторий"} }],
 ]);
 
 if (import.meta.webpackHot) {
