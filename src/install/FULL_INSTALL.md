@@ -49,18 +49,6 @@ StormBPMN ноды являются stateless, что позволяет лег�
 
 #### Конфигурация Nginx
 
-**Настройка кэширования статики:**
-
-```nginx
-# Кэширование статических ресурсов
-    location ~* \.(ico|css|js|woff2?|eot|ttf)$ {
-    expires 30d;
-    add_header Cache-Control "public, max-age=2592000, immutable";
-        add_header Pragma public;
-        add_header Vary Accept-Encoding;
-    }
-```
-
 **Конфигурация для высокой доступности:**
 
 ```nginx
@@ -85,9 +73,10 @@ server {
     }
 }
 ```
+Конфигурация выше является примерной и может потребовать уточнения в конкретной инфраструктуре тем, кто понимает как конкретная инфраструктура устроена. 
 
 ::: tip Дополнительная информация
-Подробное руководство по настройке SSL в Nginx: [Securing HTTP Traffic to Upstream Servers](https://docs.nginx.com/nginx/admin-guide/security-controls/securing-http-traffic-upstream/)
+Подробное руководство по настройке SSL в Nginx: [Securing HTTP Traffic to Upstream Servers](https://docs.nginx.com/nginx/admin-guide/security-controls/securing-http-traffic-upstream/). 
 :::
 
 ---
