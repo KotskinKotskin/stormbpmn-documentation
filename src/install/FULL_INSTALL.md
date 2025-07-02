@@ -52,27 +52,40 @@ StormBPMN ноды являются stateless, что позволяет лег�
 **Конфигурация для высокой доступности:**
 
 ```nginx
+
 upstream stormbpmn {
-    server 10.0.0.3:8081 weight=5 max_conns=500;
-    server 10.0.0.4:8081 weight=5 max_conns=500;
+    server 10.0.0.3:8081 weight=5 max_conns=500;
+    server 10.0.0.4:8081 weight=5 max_conns=500;
 }
 
 server {
-    listen 443 ssl http2;
-    server_name stormbpmn.company.com;
+    listen 443 ssl http2;
+    server_name stormbpmn.company.com;
 
-    ssl_certificate /etc/ssl/certs/stormbpmn.crt;
-    ssl_certificate_key /etc/ssl/private/stormbpmn.key;
+    ssl_certificate /etc/ssl/certs/stormbpmn.crt;
+    ssl_certificate_key /etc/ssl/private/stormbpmn.key;
 
-    location / {
-        proxy_pass http://stormbpmn;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-    }
+    # Максимальный размер тела запроса — 50 MB
+    client_max_body_size 50M;
+
+    # Максимальный размер заголовков (и буфера для заголовков)
+    large_client_header_buffers 8 32k;
+
+    location / {
+        proxy_pass http://stormbpmn;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
 }
+
+
+
+
 ```
+Обратите внимание на размер тела и размер заголовков.
+
 Конфигурация выше является примерной и может потребовать уточнения в конкретной инфраструктуре тем, кто понимает как конкретная инфраструктура устроена. 
 
 ::: tip Дополнительная информация
