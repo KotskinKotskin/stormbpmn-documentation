@@ -19,12 +19,13 @@ export const routes = Object.fromEntries([
   ["/install/FULL_INSTALL.html", { loader: () => import(/* webpackChunkName: "FULL_INSTALL.html" */"D:/stormbpmn-documentation/src/.vuepress/.temp/pages/install/FULL_INSTALL.html.js"), meta: {"t":"Production-Ready установка","O":2} }],
   ["/install/GET_STARTED.html", { loader: () => import(/* webpackChunkName: "GET_STARTED.html" */"D:/stormbpmn-documentation/src/.vuepress/.temp/pages/install/GET_STARTED.html.js"), meta: {"t":"Быстрый старт","O":1} }],
   ["/install/", { loader: () => import(/* webpackChunkName: "index.html" */"D:/stormbpmn-documentation/src/.vuepress/.temp/pages/install/index.html.js"), meta: {"t":"Установка","O":4} }],
+  ["/operation/License.html", { loader: () => import(/* webpackChunkName: "License.html" */"D:/stormbpmn-documentation/src/.vuepress/.temp/pages/operation/License.html.js"), meta: {"t":"Как работают лицензии"} }],
   ["/operation/", { loader: () => import(/* webpackChunkName: "index.html" */"D:/stormbpmn-documentation/src/.vuepress/.temp/pages/operation/index.html.js"), meta: {"t":"Администрирование системы","O":5} }],
-  ["/recipes/", { loader: () => import(/* webpackChunkName: "index.html" */"D:/stormbpmn-documentation/src/.vuepress/.temp/pages/recipes/index.html.js"), meta: {"t":"Рецепты решений для ENTERPRISE клиентов","O":7} }],
-  ["/support/", { loader: () => import(/* webpackChunkName: "index.html" */"D:/stormbpmn-documentation/src/.vuepress/.temp/pages/support/index.html.js"), meta: {"t":"Каналы поддержки","O":7} }],
-  ["/REST%20API/", { loader: () => import(/* webpackChunkName: "index.html" */"D:/stormbpmn-documentation/src/.vuepress/.temp/pages/REST API/index.html.js"), meta: {"t":"REST API","O":7} }],
-  ["/404.html", { loader: () => import(/* webpackChunkName: "404.html" */"D:/stormbpmn-documentation/src/.vuepress/.temp/pages/404.html.js"), meta: {"t":""} }],
   ["/recipes/ARC_REPO.html", { loader: () => import(/* webpackChunkName: "ARC_REPO.html" */"D:/stormbpmn-documentation/src/.vuepress/.temp/pages/recipes/ARC_REPO.html.js"), meta: {"t":"Архитектурный репозиторий"} }],
+  ["/recipes/", { loader: () => import(/* webpackChunkName: "index.html" */"D:/stormbpmn-documentation/src/.vuepress/.temp/pages/recipes/index.html.js"), meta: {"t":"Рецепты решений для ENTERPRISE клиентов","O":7} }],
+  ["/REST%20API/", { loader: () => import(/* webpackChunkName: "index.html" */"D:/stormbpmn-documentation/src/.vuepress/.temp/pages/REST API/index.html.js"), meta: {"t":"REST API","O":7} }],
+  ["/support/", { loader: () => import(/* webpackChunkName: "index.html" */"D:/stormbpmn-documentation/src/.vuepress/.temp/pages/support/index.html.js"), meta: {"t":"Каналы поддержки","O":7} }],
+  ["/404.html", { loader: () => import(/* webpackChunkName: "404.html" */"D:/stormbpmn-documentation/src/.vuepress/.temp/pages/404.html.js"), meta: {"t":""} }],
 ]);
 
 if (import.meta.webpackHot) {

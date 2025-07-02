@@ -3,7 +3,7 @@ dir:
     order: 5
     link: true
     text: 4. Обслуживание
-    collapsible: false
+    collapsible: true
 ---
 
 [[toc]]
