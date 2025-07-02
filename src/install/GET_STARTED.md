@@ -58,6 +58,7 @@ index: true
 | **JAVA_OPTS**              | Настройки памяти для JVM         | `"-Xmx8g"`                                 |
 | **SPRING_PROFILES_ACTIVE** | Профиль Spring Boot              | `prod`                                     |
 | **JWTSECRET**              | Соль для шифрования паролей      | Не менее 15 случайных символов             |
+| **TZ**              | Таймзона контейнера      |`Europe/Moscow`           |
 
 > **Примечание по JDBC_URL:**
 >
