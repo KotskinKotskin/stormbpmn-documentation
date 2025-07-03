@@ -14,14 +14,14 @@ order: 8
 Актуальная информация об обновлениях и новых возможностях StormBPMN Enterprise.
 
 ::: tip Актуальная версия
-**Версия:** `6.6.1660`  
-**Дата:** 25.06.2025  
-**Образ:** `cr.selcloud.ru/stormbpmn-enterprise/stormbpmn_enterprise_experimental:6.6.1660`
+**Версия:** `6.6.1661`  
+**Дата:** 03.07.2025  
+**Образ:** `cr.selcloud.ru/stormbpmn-enterprise/stormbpmn_enterprise_experimental:6.6.1661`
 :::
 
 ---
 
-## Последние обновления
+## Последние функциональные обновления
 
 ### v8.7.0 - Токены и цвета команды
 
