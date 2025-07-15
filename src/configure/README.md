@@ -39,7 +39,7 @@ StormBPMN использует **двухуровневую систему на�
 | **MINIO_DEFAULTBUCKET**    | Бакет по умолчанию              | `storm-uploads`                            | Файлы        |
 | **PLANTUML_SERVER**        | URL сервера PlantUML            | `http://192.168.0.5:8090/`                 | Опционально  |
 | **GOTENBERG_URL**          | URL сервиса Gotenberg           | `http://192.168.0.5:3001`                  | PDF          |
-| **EMAIL_PROVIDER**         | Тип почтового провайдера        | `listmonk` или `SMTP`                      | ✅           |
+| **EMAIL_PROVIDER**         | Тип почтового провайдера        | `listmonk` или `smtp`                      | ✅           |
 | **LISTMONK_BASE_URL**      | URL API ListMonk                | `http://localhost:9000/api`                | ✅           |
 | **LISTMONK_USERNAME**      | Имя API пользователя            | `stormbpmn`                                | ✅           |
 | **LISTMONK_PASSWORD**      | API токен                       | `api-token-here`                           | ✅           |
