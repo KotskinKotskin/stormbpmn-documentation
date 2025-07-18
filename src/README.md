@@ -1,20 +1,23 @@
 ---
 home: true
 title: Главная страница
-heroText: 📚 База знаний StormBPMN Enterprise
+heroText: База знаний Stormbpmn Enterprise
 tagline: Полная документация по установке, настройке и обслуживанию Enterprise-версии StormBPMN
 actions:
-    - text: 1. Архитектура системы
+    - text: 🏗️ 1. Архитектура системы
       link: /get-started.html
       type: primary
-    - text: 2. Быстрый старт
+    - text: 🚀 2. Быстрый старт
       link: /install/
       type: secondary
-    - text: 3. Конфигурация
+    - text: ⚙️ 3. Конфигурация
       link: /configure/
       type: secondary
-    - text: 4. Обслуживание
+    - text: 🔧 4. Обслуживание
       link: /operation/
+      type: secondary
+    - text: 📋 5. История изменений
+      link: /Changelog/
       type: secondary
 
 features:
@@ -40,7 +43,7 @@ features:
 
     - title: История изменений
       details: Актуальная информация об обновлениях, процедуры миграции и совместимость версий.
-      link: /CHANGELOG.html
+      link: /Changelog/
 
 footer: |
     <div style="text-align: center; padding: 20px 0; border-top: 1px solid #eaecef; margin-top: 40px;">
@@ -49,7 +52,7 @@ footer: |
            <a href="https://t.me/stormbpmn_bot">Telegram Bot</a> | 
            <a href="https://stormbpmn.com">stormbpmn.com</a></p>
         <p style="color: #666; font-size: 0.9em;">
-            GPL-3.0 Licensed (документация) | © 2019-2025 Команда StormbPMN
+            GPL-3.0 Licensed (документация) | © 2019-2025 Команда Stormbpmn
         </p>
     </div>
 

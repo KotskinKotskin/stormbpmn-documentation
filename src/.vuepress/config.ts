@@ -51,6 +51,7 @@ export default defineUserConfig({
 
         navbar: [
             "/",
+
             "/get-started",
             {
                 text: "🚀 Установка",
@@ -63,12 +64,17 @@ export default defineUserConfig({
             "/operation/",
             "/REST%20API/",
             "/support/",
-            "/CHANGELOG.html",
+            "/Changelog/",
+            {
+                text: "💼 Обсудить покупку",
+                link: "https://stormbpmn.com/contact-sales",
+                ariaLabel: "Обсудить покупку Enterprise версии",
+            },
         ],
     }),
     plugins: [
         yandexMetrikaPlugin({
-            id: 96951202,
+            id: "96951202",
             config: {
                 clickmap: false,
                 trackLinks: true,

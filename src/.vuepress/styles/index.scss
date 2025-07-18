@@ -7,10 +7,10 @@
     /* Menu */
     --rightAnchorMenuTextColor: var(--rightAnchorTextColor);
     --rightAnchorMenuBgColor: var(--c-bg);
-  }
-  
-  /* dark theme */
-  .dark .right-anchor {
+}
+
+/* dark theme */
+.dark .right-anchor {
     --rightAnchorTextColor: var(--c-text);
     --rightAnchorFontSize: 14px;
     /* Btn */
@@ -19,4 +19,56 @@
     /* Menu */
     --rightAnchorMenuTextColor: var(--rightAnchorTextColor);
     --rightAnchorMenuBgColor: var(--c-bg);
-  }
+}
+
+/* Стили для кнопки "Обсудить покупку" в навбаре */
+.navbar-nav a[href="https://stormbpmn.com/contact-sales"],
+.navbar-items a[href="https://stormbpmn.com/contact-sales"],
+.nav-link[href="https://stormbpmn.com/contact-sales"],
+a[href="https://stormbpmn.com/contact-sales"]
+{
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    color: white !important;
+    padding: 4px 16px !important;
+    border-radius: 20px !important;
+    font-weight: bold !important;
+    text-decoration: none !important;
+    margin-left: 10px !important;
+    transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+    box-shadow: 0 2px 10px rgba(102, 126, 234, 0.3) !important;
+    border: none !important;
+    display: inline-block !important;
+    position: relative !important;
+    overflow: hidden !important;
+}
+
+.navbar-nav a[href="https://stormbpmn.com/contact-sales"]:hover,
+.navbar-items a[href="https://stormbpmn.com/contact-sales"]:hover,
+.nav-link[href="https://stormbpmn.com/contact-sales"]:hover,
+a[href="https://stormbpmn.com/contact-sales"]:hover
+{
+    background: linear-gradient(135deg, #764ba2 0%, #667eea 100%) !important;
+    transform: translateY(-2px) scale(1.05) !important;
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6) !important;
+}
+
+/* Для темной темы */
+.dark .navbar-nav a[href="https://stormbpmn.com/contact-sales"],
+.dark .navbar-items a[href="https://stormbpmn.com/contact-sales"],
+.dark .nav-link[href="https://stormbpmn.com/contact-sales"],
+.dark a[href="https://stormbpmn.com/contact-sales"]
+{
+    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%) !important;
+    box-shadow: 0 2px 10px rgba(255, 107, 107, 0.3) !important;
+    transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+}
+
+.dark .navbar-nav a[href="https://stormbpmn.com/contact-sales"]:hover,
+.dark .navbar-items a[href="https://stormbpmn.com/contact-sales"]:hover,
+.dark .nav-link[href="https://stormbpmn.com/contact-sales"]:hover,
+.dark a[href="https://stormbpmn.com/contact-sales"]:hover
+{
+    background: linear-gradient(135deg, #ee5a52 0%, #ff6b6b 100%) !important;
+    transform: translateY(-2px) scale(1.05) !important;
+    box-shadow: 0 8px 25px rgba(255, 107, 107, 0.6) !important;
+}
