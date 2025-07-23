@@ -35,6 +35,8 @@ export const routes = Object.fromEntries([
   ["/REST%20API/", { loader: () => import(/* webpackChunkName: "index.html" */"D:/stormbpmn-documentation/src/.vuepress/.temp/pages/REST API/index.html.js"), meta: {"t":"REST API","O":7} }],
   ["/support/", { loader: () => import(/* webpackChunkName: "index.html" */"D:/stormbpmn-documentation/src/.vuepress/.temp/pages/support/index.html.js"), meta: {"t":"Каналы поддержки","O":7} }],
   ["/404.html", { loader: () => import(/* webpackChunkName: "404.html" */"D:/stormbpmn-documentation/src/.vuepress/.temp/pages/404.html.js"), meta: {"t":""} }],
+  ["/Changelog/6.6.1275.html", { loader: () => import(/* webpackChunkName: "6.6.1275.html" */"D:/stormbpmn-documentation/src/.vuepress/.temp/pages/Changelog/6.6.1275.html.js"), meta: {"t":"Версия 6.6.1275 от 22.07.2025"} }],
+  ["/Changelog/6.6.1248.html", { loader: () => import(/* webpackChunkName: "6.6.1248.html" */"D:/stormbpmn-documentation/src/.vuepress/.temp/pages/Changelog/6.6.1248.html.js"), meta: {"t":"Версия 6.6.1248 от 18.07.2025"} }],
 ]);
 
 if (import.meta.webpackHot) {
