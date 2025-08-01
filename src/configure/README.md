@@ -122,6 +122,7 @@ StormBPMN использует **двухуровневую систему на�
 | **simpleSmtpUsername** | SMTP пользователь     | `stormbpmn@company.com` |
 | **simpleSmtpPassword** | SMTP пароль           | `secure-password`       |
 | **simpleSmtpFrom**     | Email отправителя     | `stormbpmn@company.com` |
+| **smtpProtocol**     | Протокол SMTP, возможные значения SMTP(без шифрования), STARTTLS, SMTPS    | `STARTTLS` |
 
 ### Настройки шаблонов ListMonk
 
