@@ -33,12 +33,15 @@ index: true
 -   [ ] **Масштабирование** - несколько экземпляров приложения
 
 ---
+
 ## Особенности установки в k8s
+
 В некоторых ситуациях, например при явном требовании 1 процесса в контейнере (PID 1), может потребоваться разделить контейнеры по их ролям.
 Передайте ENV переменную CONTAINER_ROLE (возможные значения FRONT, BACK, FULLSTACK).
-- FRONT: запустится nginx со статикой.
-- BACK: запустится java как API-сервер.
-- FULLSTACK: запустится supervisord, который запустит nginx и java
+
+-   FRONT: запустится nginx со статикой.
+-   BACK: запустится java как API-сервер.
+-   FULLSTACK: запустится supervisord, который запустит nginx и java
 
 ## Настройка балансировщика и SSL
 
@@ -90,12 +93,13 @@ server {
 
 
 ```
+
 Обратите внимание на размер тела и размер заголовков.
 
-Конфигурация выше является примерной и может потребовать уточнения в конкретной инфраструктуре тем, кто понимает как конкретная инфраструктура устроена. 
+Конфигурация выше является примерной и может потребовать уточнения в конкретной инфраструктуре тем, кто понимает как конкретная инфраструктура устроена.
 
 ::: tip Дополнительная информация
-Подробное руководство по настройке SSL в Nginx: [Securing HTTP Traffic to Upstream Servers](https://docs.nginx.com/nginx/admin-guide/security-controls/securing-http-traffic-upstream/). 
+Подробное руководство по настройке SSL в Nginx: [Securing HTTP Traffic to Upstream Servers](https://docs.nginx.com/nginx/admin-guide/security-controls/securing-http-traffic-upstream/).
 :::
 
 ---
@@ -211,7 +215,6 @@ docker run -d \
 | ----------- | -------------------------------- | ------------------------------- |
 | **baseUrl** | Базовый URL для ссылок в письмах | `https://stormbpmn.company.com` |
 
-
 ### Вариант 1: ListMonk (красивые письма)
 
 #### Установка ListMonk
@@ -260,6 +263,10 @@ LISTMONK_PASSWORD=api-token-here  # API токен
 
 #### Шаблоны писем
 
+Создайте шаблоны писем в listmonk по данным темам, используйте подстановку в шаблонах и зафиксируйте ID шаблона:
+
+![Шаблоны](list_monk_4.png)
+
 | Тип уведомления                         | Настройка в админке                  | Возможные подстановки                                                  |
 | --------------------------------------- | ------------------------------------ | ---------------------------------------------------------------------- |
 | **Новый комментарий**                   | `commentEmailTemplateId`             | `{comment_author}`, `{diagram_name}`, `{diagram_url}`, `{html_text}`   |
@@ -271,6 +278,10 @@ LISTMONK_PASSWORD=api-token-here  # API токен
 | **Приглашение + регистрация**           | `inviteDiagramAndRegisterTemplateId` | `{invite_author}`, `{diagram_name}`, `{diagram_url}`, `{register_url}` |
 | **Приглашение в команду**               | `teamInviteTemplateId`               | `{invite_author}`, `{team_name}`                                       |
 | **Приглашение в команду + регистрация** | `teamInviteAndRegisterTemplateId`    | `{invite_author}`, `{team_name}`, `{register_url}`                     |
+
+#### Укажите ID шаблон в адмнике Stormbpmn
+
+![Шаблоны в админке](list_monk_5.png)
 
 ### Вариант 2: Простой SMTP
 
