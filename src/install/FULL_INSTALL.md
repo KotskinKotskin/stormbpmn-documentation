@@ -285,21 +285,29 @@ LISTMONK_PASSWORD=api-token-here  # API токен
 
 ### Вариант 2: Простой SMTP
 
-#### Настройки в административном интерфейсе
+#### Переменные окружения
 
 | Параметр               | Описание              | Пример                  |
 | ---------------------- | --------------------- | ----------------------- |
-| **simpleEmailEnabled** | Включить простой SMTP | `true`                  |
-| **simpleSmtpHost**     | SMTP хост             | `smtp.company.com`      |
-| **simpleSmtpPort**     | SMTP порт             | `587`                   |
-| **simpleSmtpUsername** | SMTP пользователь     | `stormbpmn@company.com` |
-| **simpleSmtpPassword** | SMTP пароль           | `secure-password`       |
-| **simpleSmtpFrom**     | Email отправителя     | `stormbpmn@company.com` |
+| **EMAIL_PROVIDER** | Включить простой SMTP | `smtp`                  |
+| **SMTP_HOST**     | SMTP хост             | `smtp.company.com`      |
+| **SMTP_PORT**     | SMTP порт             | `587`                   |
+| **SMTP_USERNAME** | SMTP пользователь     | `stormbpmn@company.com` |
+| **SMTP_PASSWORD** | SMTP пароль           | `secure-password`       |
+| **SMTP_FROM**     | Email отправителя     | `stormbpmn@company.com` |
+| **SMTP_PROTOCOL**     | SMTP/STARTTLS/SMTPS. STARTTLS - по-умолчанию  | `STARTTLS` |
 
-#### Переменная окружения
+#### Переменные окружения
 
 ```bash
-EMAIL_PROVIDER=SMTP
+EMAIL_PROVIDER=smtp
+SMTP_PROTOCOL=
+SMTP_HOST=
+SMTP_PORT=
+SMTP_USERNAME=
+SMTP_PASSWORD=
+SMTP_FROM=
+
 ```
 
 ::: tip Требуется перезагрузка
