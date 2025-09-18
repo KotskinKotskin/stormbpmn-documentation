@@ -281,7 +281,7 @@ StormBPMN ожидает следующие claims в токене:
 | **OAuthIsEnabled**           | `true`                              | Включение OAuth2                                          |
 | **OAuthRedirectUri**         | `https://your-storm-url/app/signin` | URL вашего StormBPMN                                      |
 | **OAuthResponseType**        | `code`                              | Тип ответа                                                |
-| **OAuthScope**               | `"openid profile email"`            | Области доступа                                           |
+| **OAuthScope**               | `openid profile email`            | Области доступа                                           |
 | **OAuthCodeChallengeMethod** | `S256`                              | Метод challenge                                           |
 | **OAuthFlowMode**            | `PKCE`                              | Режим потока                                              |
 | **OAuthResource**            | Ваш Resource identifier             | Из Web API приложения                                     |
