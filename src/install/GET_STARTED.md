@@ -48,6 +48,43 @@ index: true
 
 Скачайте образ приложения из репозитория (запросите ссылку и параметры авторизации у нашей команды).
 
+### Перенос образа в приватный репозиторий 
+В некоторых организациях запрещено использовать внешние хранилища контейнеров, значит нужно переложить образ из нашего хранилище в хранилище организации.
+
+
+#### Шаги
+
+0. Убедиться, что:
+   - есть права администратора
+   - компьютер имеет доступ в интернет
+   - есть сетевой доступ к локальному registry
+
+1. Установить Docker Desktop для Windows:
+https://docs.docker.com/desktop/setup/install/windows-install/
+
+2. Открыть cmd или PowerShell.
+
+3. Авторизоваться в нашем Docker Registry:
+docker login cr.selcloud.ru
+(ввести логин и пароль, выданные ранее)
+
+4. Скачать образ:
+docker pull cr.selcloud.ru/stormbpmn-enterprise/stormbpmn_fullstack_enterprise:6.6.1879
+
+5. Авторизоваться в приватном registry КБ (например, Harbor):
+docker login <адрес_вашего_registry>
+(ввести логин и пароль, которые предоставили КБ)
+
+6. Сделать ретег образа под их registry:
+docker tag cr.selcloud.ru/stormbpmn-enterprise/stormbpmn_fullstack_enterprise:6.6.1879 <адрес_вашего_registry>/<проект>/stormbpmn_fullstack_enterprise:6.6.1879
+
+7. Загрузить образ в приватный registry:
+docker push <адрес_вашего_registry>/<проект>/stormbpmn_fullstack_enterprise:6.6.1879
+
+8. Проверить, что образ появился в интерфейсе Harbor.
+
+
+
 ### Настройка ENV переменных
 
 | Переменная                 | Описание                         | Пример значения                            |
