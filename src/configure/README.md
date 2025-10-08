@@ -126,19 +126,23 @@ StormBPMN использует **двухуровневую систему на�
 
 ### Настройки шаблонов ListMonk
 
-При использовании ListMonk для красивых писем:
+Используйте в шаблоне выражение `{{ .Tx.Data.storm_placeholder }}`, где `storm_placeholder` - это название подстановки из таблицы.
 
-| Параметр                               | Тип уведомления                     | Подстановки                                                            |
-| -------------------------------------- | ----------------------------------- | ---------------------------------------------------------------------- |
-| **commentEmailTemplateId**             | Новый комментарий                   | `{comment_author}`, `{diagram_name}`, `{diagram_url}`, `{html_text}`   |
-| **approvalTemplateId**                 | Запрос на согласование              | `{invite_author}`, `{diagram_name}`, `{diagram_url}`                   |
-| **restorePasswordTemplateId**          | Восстановление пароля               | `{restoreCode}`                                                        |
-| **approvalCompletedTemplateId**        | Согласование завершено              | `{diagram_name}`, `{diagram_url}`                                      |
-| **userActivationTemplateId**           | Активация пользователя              | `{activation_token}`                                                   |
-| **secureUpdateTemplateId**             | Приглашение к диаграмме             | `{invite_author}`, `{diagram_name}`, `{diagram_url}`                   |
-| **inviteDiagramAndRegisterTemplateId** | Приглашение + регистрация           | `{invite_author}`, `{diagram_name}`, `{diagram_url}`, `{register_url}` |
-| **teamInviteTemplateId**               | Приглашение в команду               | `{invite_author}`, `{team_name}`                                       |
-| **teamInviteAndRegisterTemplateId**    | Приглашение в команду + регистрация | `{invite_author}`, `{team_name}`, `{register_url}`                     |
+::: tip Пример
+Выражение `{{ .Tx.Data.diagram_name }}` отобразит в письме название диаграммы.
+:::
+
+| Параметр                               | Тип уведомления                     | Подстановки                                                    |
+| -------------------------------------- | ----------------------------------- | -------------------------------------------------------------- |
+| **commentEmailTemplateId**             | Новый комментарий                   | `comment_author`, `diagram_name`, `diagram_url`, `html_text`   |
+| **approvalTemplateId**                 | Запрос на согласование              | `invite_author`, `diagram_name`, `diagram_url`                 |
+| **restorePasswordTemplateId**          | Восстановление пароля               | `restoreCode`                                                  |
+| **approvalCompletedTemplateId**        | Согласование завершено              | `diagram_name`, `diagram_url`                                  |
+| **userActivationTemplateId**           | Активация пользователя              | `activation_token`                                             |
+| **secureUpdateTemplateId**             | Приглашение к диаграмме             | `invite_author`, `diagram_name`, `diagram_url`                 |
+| **inviteDiagramAndRegisterTemplateId** | Приглашение + регистрация           | `invite_author`, `diagram_name`, `diagram_url`, `register_url` |
+| **teamInviteTemplateId**               | Приглашение в команду               | `invite_author`, `team_name`                                   |
+| **teamInviteAndRegisterTemplateId**    | Приглашение в команду + регистрация | `invite_author`, `team_name`, `register_url`                   |
 
 ### Дополнительные настройки
 
