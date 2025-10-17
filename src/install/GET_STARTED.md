@@ -139,7 +139,7 @@ docker push <адрес_вашего_registry>/<проект>/stormbpmn_fullstac
 
 2. **Создание команды**:
 
-    - Перейдите по ссылке: `/app/team/participants`
+    - Перейдите по ссылке: `/app/team-settings/general`
     - Создайте новую команду
 
 3. **Активация административных прав**:
