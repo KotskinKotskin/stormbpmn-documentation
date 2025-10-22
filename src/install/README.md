@@ -2,7 +2,7 @@
 order: 4
 dir:
     text: "2. Установка"
-    order: 4
+    order: 2
     link: true
 index: true
 ---
