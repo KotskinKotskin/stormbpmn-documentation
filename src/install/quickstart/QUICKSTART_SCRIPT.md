@@ -18,11 +18,11 @@ index: true
 ```bash
 curl -O https://raw.githubusercontent.com/KotskinKotskin/stormbpmn-documentation/main/src/install/quickstart/script/install.env
 ```
-|       Ключ        |                             Описание                             |                    Пример                    |
-|:-----------------:|:----------------------------------------------------------------:|:--------------------------------------------:|
-|     TIMEZONE      |          Часовой пояс для сервера и всей инфраструктуры          |                Europe/Moscow                 |
-| STORMBPMN_VERSION | Версия приложения [(см. Журнал изменений)](/Changelog/README.md) |                   6.6.2229                   |
-|  SELECTEL_TOKEN   |                    Токен Stormbpmn CR из п. 1                    | CRgAAAAAcmVhbGx5LWxvbmctc3Rvcm1icG1uLXRva2Vu |
+|       Ключ        |                             Описание                             |                                            Пример                                            |
+|:-----------------:|:----------------------------------------------------------------:|:--------------------------------------------------------------------------------------------:|
+|     TIMEZONE      |          Часовой пояс для сервера и всей инфраструктуры          |                                        Europe/Moscow                                         |
+| STORMBPMN_VERSION | Версия приложения [(см. Журнал изменений)](/Changelog/README.md) |                                           6.6.2229                                           |
+|  SELECTEL_TOKEN   |                    Токен Stormbpmn CR из п. 1                    | **(нерабочий, исключительно для демонстрации)** CRgAAAAAcmVhbGx5LWxvbmctc3Rvcm1icG1uLXRva2Vu |
 
 
 3. Скачайте bash скрипт и сделайте его исполняемым.
