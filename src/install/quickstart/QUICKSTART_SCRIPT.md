@@ -28,7 +28,7 @@ curl -O https://raw.githubusercontent.com/KotskinKotskin/stormbpmn-documentation
 3. Скачайте bash скрипт и сделайте его исполняемым.
 
 ```bash
-curl -O https://raw.githubusercontent.com/KotskinKotskin/stormbpmn-documentation/main/src/install/quickstart/script/install.env
+curl -O https://raw.githubusercontent.com/KotskinKotskin/stormbpmn-documentation/main/src/install/quickstart/script/install.sh
 sudo chmod +x install.sh
 ```
 
