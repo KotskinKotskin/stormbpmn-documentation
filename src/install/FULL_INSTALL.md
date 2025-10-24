@@ -287,15 +287,16 @@ LISTMONK_PASSWORD=api-token-here  # API токен
 
 #### Переменные окружения
 
-| Параметр           | Описание                                     | Пример                  |
-| ------------------ | -------------------------------------------- | ----------------------- |
-| **EMAIL_PROVIDER** | Включить простой SMTP                        | `smtp`                  |
-| **SMTP_HOST**      | SMTP хост                                    | `smtp.company.com`      |
-| **SMTP_PORT**      | SMTP порт                                    | `587`                   |
-| **SMTP_USERNAME**  | SMTP пользователь                            | `stormbpmn@company.com` |
-| **SMTP_PASSWORD**  | SMTP пароль                                  | `secure-password`       |
-| **SMTP_FROM**      | Email отправителя                            | `stormbpmn@company.com` |
-| **SMTP_PROTOCOL**  | SMTP/STARTTLS/SMTPS. STARTTLS - по-умолчанию | `STARTTLS`              |
+| Параметр           | Описание                                                  | Пример                  |
+| ------------------ | --------------------------------------------------------- | ----------------------- |
+| **EMAIL_PROVIDER** | Включить простой SMTP                                     | `smtp`                  |
+| **SMTP_HOST**      | SMTP хост                                                 | `smtp.company.com`      |
+| **SMTP_PORT**      | SMTP порт                                                 | `587`                   |
+| **SMTP_USERNAME**  | SMTP пользователь                                         | `stormbpmn@company.com` |
+| **SMTP_PASSWORD**  | SMTP пароль                                               | `secure-password`       |
+| **SMTP_FROM**      | Email отправителя                                         | `stormbpmn@company.com` |
+| **SMTP_PROTOCOL**  | SMTP/STARTTLS/SMTPS. STARTTLS - по-умолчанию              | `STARTTLS`              |
+| **SMTP_USE_AUTH**  | true/false. Использовать авторизацию. true - по-умолчанию | `true`                  |
 
 #### Переменные окружения
 
@@ -307,6 +308,7 @@ SMTP_PORT=
 SMTP_USERNAME=
 SMTP_PASSWORD=
 SMTP_FROM=
+SMTP_USE_AUTH=
 
 ```
 
