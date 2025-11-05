@@ -59,7 +59,8 @@ sudo ./install.sh
 
 6. Получив от менеджера лицензионный ключ, его необходимо добавить в приложение.
 
-- Зайдите в Portainer [https://localhost:9443](https://localhost:9443) с учетными данными из таблицы выше
+- Зайдите в Portainer [https://localhost:9080](https://localhost:9080) с учетными данными из таблицы выше
+- Нажмите на иконку "PORTAINER.IO" в левом верхнем углу, чтобы перейти на домашнюю страницу
 - Перейдите в **Environments -> local -> Containers -> stormbpmn**
 - Нажмите **Duplicate/Edit**
 - В **Advanced container settings** выберите вкладку **Env**
