@@ -106,8 +106,7 @@ services:
     container_name: portainer
     restart: always
     ports:
-      - "8000:8000"
-      - "9443:9443"
+      - "9080:9000"
     volumes:
       - portainer_data:/data
       - /var/run/docker.sock:/var/run/docker.sock
@@ -153,8 +152,6 @@ services:
     image: plantuml/plantuml-server:jetty
     container_name: plantuml
     restart: always
-    ports:
-      - "8090:8080"
     volumes:
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
@@ -163,8 +160,6 @@ services:
     image: gotenberg/gotenberg:8
     container_name: gotenberg
     restart: always
-    ports:
-      - "3001:3000"
     volumes:
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
@@ -190,8 +185,8 @@ services:
       MINIO_ACCESSKEY: stormbpmn
       MINIO_SECRETKEY: $MINIO_ROOT_PASSWORD
       MINIO_DEFAULTBUCKET: storm-uploads
-      PLANTUML_SERVER: http://plantuml:8090
-      GOTENBERG_URL: http://gotenberg:3001
+      PLANTUML_SERVER: http://plantuml:8080/
+      GOTENBERG_URL: http://gotenberg:3000
       EMAIL_PROVIDER: nop
     volumes:
       - /etc/timezone:/etc/timezone:ro
@@ -208,22 +203,22 @@ docker compose -f "$DOCKER_COMPOSE_FILE" up -d || abort "Failed to start contain
 
 ### CONFIGURE PORTAINER
 log "Waiting for Portainer to be ready..."
-timeout 30 bash -c 'until curl -sk http://localhost:9443/api/status > /dev/null 2>&1; do sleep 2; done' || abort "Portainer failed to start."
+timeout 30 bash -c 'until curl -sk http://localhost:9080/api/status > /dev/null 2>&1; do sleep 2; done' || abort "Portainer failed to start."
 
 log "Initializing Portainer admin..."
-curl -sSfk -X POST https://localhost:9443/api/users/admin/init \
+curl -sSfk -X POST http://localhost:9080/api/users/admin/init \
   -H 'Content-Type: application/json' \
   -d "{\"Username\": \"admin\", \"Password\": \"$PORTAINER_PASSWORD\"}" \
   && echo || abort "Failed to initialize Portainer admin"
 
 log "Retrieving Portainer admin JWT..."
-PORTAINER_TOKEN=$(curl -sSfk -X POST https://localhost:9443/api/auth \
+PORTAINER_TOKEN=$(curl -sSfk -X POST http://localhost:9080/api/auth \
   -H 'Content-Type: application/json' \
   -d "{\"Username\":\"admin\",\"Password\":\"$PORTAINER_PASSWORD\"}" \
   | jq -r .jwt) || abort "Failed to retrieve Portainer admin JWT"
 
 log "Adding Selectel to Portainer registries..."
-curl -sSfk -X POST https://localhost:9443/api/registries \
+curl -sSfk -X POST http://localhost:9080/api/registries \
   -H "Authorization: Bearer $PORTAINER_TOKEN" \
   -H 'Content-Type: application/json' \
   -d '{
