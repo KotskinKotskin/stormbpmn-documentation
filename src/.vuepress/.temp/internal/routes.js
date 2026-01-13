@@ -3,6 +3,8 @@ export const redirects = JSON.parse("{}")
 export const routes = Object.fromEntries([
   ["/get-started.html", { loader: () => import(/* webpackChunkName: "get-started.html" */"C:/Users/Lenovo/stormbpmn-documentation/src/.vuepress/.temp/pages/get-started.html.js"), meta: {"t":"1. Схема архитектуры","O":1} }],
   ["/", { loader: () => import(/* webpackChunkName: "index.html" */"C:/Users/Lenovo/stormbpmn-documentation/src/.vuepress/.temp/pages/index.html.js"), meta: {"t":"Главная страница","O":0} }],
+  ["/configure/", { loader: () => import(/* webpackChunkName: "index.html" */"C:/Users/Lenovo/stormbpmn-documentation/src/.vuepress/.temp/pages/configure/index.html.js"), meta: {"t":"Конфигурация системы","O":5} }],
+  ["/configure/SECURE.html", { loader: () => import(/* webpackChunkName: "SECURE.html" */"C:/Users/Lenovo/stormbpmn-documentation/src/.vuepress/.temp/pages/configure/SECURE.html.js"), meta: {"t":"Безопасность","O":4} }],
   ["/Changelog/6.6.1861.html", { loader: () => import(/* webpackChunkName: "6.6.1861.html" */"C:/Users/Lenovo/stormbpmn-documentation/src/.vuepress/.temp/pages/Changelog/6.6.1861.html.js"), meta: {"t":"Версия 6.6.1861 от 18.09.2025"} }],
   ["/Changelog/6.6.1863.html", { loader: () => import(/* webpackChunkName: "6.6.1863.html" */"C:/Users/Lenovo/stormbpmn-documentation/src/.vuepress/.temp/pages/Changelog/6.6.1863.html.js"), meta: {"t":"Версия 6.6.1863 от 19.09.2025"} }],
   ["/Changelog/6.6.1870.html", { loader: () => import(/* webpackChunkName: "6.6.1870.html" */"C:/Users/Lenovo/stormbpmn-documentation/src/.vuepress/.temp/pages/Changelog/6.6.1870.html.js"), meta: {"t":"Версия 6.6.1870 от 19.09.2025"} }],
@@ -21,9 +23,8 @@ export const routes = Object.fromEntries([
   ["/Changelog/6.6.3136.html", { loader: () => import(/* webpackChunkName: "6.6.3136.html" */"C:/Users/Lenovo/stormbpmn-documentation/src/.vuepress/.temp/pages/Changelog/6.6.3136.html.js"), meta: {"t":"Версия 6.6.3136 от 24.12.2025"} }],
   ["/Changelog/6.6.3236.html", { loader: () => import(/* webpackChunkName: "6.6.3236.html" */"C:/Users/Lenovo/stormbpmn-documentation/src/.vuepress/.temp/pages/Changelog/6.6.3236.html.js"), meta: {"t":"Версия 6.6.3236 от 26.12.2025"} }],
   ["/Changelog/6.6.3238.html", { loader: () => import(/* webpackChunkName: "6.6.3238.html" */"C:/Users/Lenovo/stormbpmn-documentation/src/.vuepress/.temp/pages/Changelog/6.6.3238.html.js"), meta: {"t":"Версия 6.6.3238 от 26.12.2025"} }],
+  ["/Changelog/6.6.3284.html", { loader: () => import(/* webpackChunkName: "6.6.3284.html" */"C:/Users/Lenovo/stormbpmn-documentation/src/.vuepress/.temp/pages/Changelog/6.6.3284.html.js"), meta: {"t":"Версия 6.6.3284"} }],
   ["/Changelog/", { loader: () => import(/* webpackChunkName: "index.html" */"C:/Users/Lenovo/stormbpmn-documentation/src/.vuepress/.temp/pages/Changelog/index.html.js"), meta: {"t":"Changelog","O":8} }],
-  ["/configure/", { loader: () => import(/* webpackChunkName: "index.html" */"C:/Users/Lenovo/stormbpmn-documentation/src/.vuepress/.temp/pages/configure/index.html.js"), meta: {"t":"Конфигурация системы","O":5} }],
-  ["/configure/SECURE.html", { loader: () => import(/* webpackChunkName: "SECURE.html" */"C:/Users/Lenovo/stormbpmn-documentation/src/.vuepress/.temp/pages/configure/SECURE.html.js"), meta: {"t":"Безопасность","O":4} }],
   ["/bpmn/1_lesson.html", { loader: () => import(/* webpackChunkName: "1_lesson.html" */"C:/Users/Lenovo/stormbpmn-documentation/src/.vuepress/.temp/pages/bpmn/1_lesson.html.js"), meta: {"t":"1 урок: BPM, BPMN, BPMS"} }],
   ["/bpmn/2_lesson.html", { loader: () => import(/* webpackChunkName: "2_lesson.html" */"C:/Users/Lenovo/stormbpmn-documentation/src/.vuepress/.temp/pages/bpmn/2_lesson.html.js"), meta: {"t":"2 урок:  Понятие бизнес-процесса и экзепляра процесса"} }],
   ["/bpmn/3_lesson.html", { loader: () => import(/* webpackChunkName: "3_lesson.html" */"C:/Users/Lenovo/stormbpmn-documentation/src/.vuepress/.temp/pages/bpmn/3_lesson.html.js"), meta: {"t":"3 урок:  3 уровня моделирования BPMN-схем"} }],
@@ -41,15 +42,14 @@ export const routes = Object.fromEntries([
   ["/recipes/Time_limit_user.html", { loader: () => import(/* webpackChunkName: "Time_limit_user.html" */"C:/Users/Lenovo/stormbpmn-documentation/src/.vuepress/.temp/pages/recipes/Time_limit_user.html.js"), meta: {"t":"Временная работа в системе"} }],
   ["/operation/License.html", { loader: () => import(/* webpackChunkName: "License.html" */"C:/Users/Lenovo/stormbpmn-documentation/src/.vuepress/.temp/pages/operation/License.html.js"), meta: {"t":"Как работают лицензии"} }],
   ["/operation/", { loader: () => import(/* webpackChunkName: "index.html" */"C:/Users/Lenovo/stormbpmn-documentation/src/.vuepress/.temp/pages/operation/index.html.js"), meta: {"t":"Администрирование системы","O":5} }],
-  ["/REST%20API/", { loader: () => import(/* webpackChunkName: "index.html" */"C:/Users/Lenovo/stormbpmn-documentation/src/.vuepress/.temp/pages/REST API/index.html.js"), meta: {"t":"REST API","O":7} }],
   ["/install/FULL_INSTALL.html", { loader: () => import(/* webpackChunkName: "FULL_INSTALL.html" */"C:/Users/Lenovo/stormbpmn-documentation/src/.vuepress/.temp/pages/install/FULL_INSTALL.html.js"), meta: {"t":"Production-Ready установка","O":2} }],
   ["/install/", { loader: () => import(/* webpackChunkName: "index.html" */"C:/Users/Lenovo/stormbpmn-documentation/src/.vuepress/.temp/pages/install/index.html.js"), meta: {"t":"Установка","O":2} }],
   ["/support/", { loader: () => import(/* webpackChunkName: "index.html" */"C:/Users/Lenovo/stormbpmn-documentation/src/.vuepress/.temp/pages/support/index.html.js"), meta: {"t":"Каналы поддержки","O":7} }],
+  ["/REST%20API/", { loader: () => import(/* webpackChunkName: "index.html" */"C:/Users/Lenovo/stormbpmn-documentation/src/.vuepress/.temp/pages/REST API/index.html.js"), meta: {"t":"REST API","O":7} }],
   ["/install/quickstart/QUICKSTART_MANUAL.html", { loader: () => import(/* webpackChunkName: "QUICKSTART_MANUAL.html" */"C:/Users/Lenovo/stormbpmn-documentation/src/.vuepress/.temp/pages/install/quickstart/QUICKSTART_MANUAL.html.js"), meta: {"t":"Ручная установка","O":2} }],
   ["/install/quickstart/QUICKSTART_SCRIPT.html", { loader: () => import(/* webpackChunkName: "QUICKSTART_SCRIPT.html" */"C:/Users/Lenovo/stormbpmn-documentation/src/.vuepress/.temp/pages/install/quickstart/QUICKSTART_SCRIPT.html.js"), meta: {"t":"Установка скриптом","O":1} }],
   ["/install/quickstart/", { loader: () => import(/* webpackChunkName: "index.html" */"C:/Users/Lenovo/stormbpmn-documentation/src/.vuepress/.temp/pages/install/quickstart/index.html.js"), meta: {"t":"Быстрый старт","O":1} }],
   ["/404.html", { loader: () => import(/* webpackChunkName: "404.html" */"C:/Users/Lenovo/stormbpmn-documentation/src/.vuepress/.temp/pages/404.html.js"), meta: {"t":""} }],
-  ["/Changelog/6.6.3284.html", { loader: () => import(/* webpackChunkName: "6.6.3284.html" */"C:/Users/Lenovo/stormbpmn-documentation/src/.vuepress/.temp/pages/Changelog/6.6.3284.html.js"), meta: {"t":"Версия 6.6.3284"} }],
 ]);
 
 if (import.meta.webpackHot) {
