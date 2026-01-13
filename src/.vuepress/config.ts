@@ -15,15 +15,22 @@ function getLatestRelease() {
         .map((file) => {
             const version = file.replace(".md", "");
             const filePath = path.join(changelogDir, file);
+            const content = fs.readFileSync(filePath, "utf-8");
             
-            // Берём дату создания файла
-            const stats = fs.statSync(filePath);
-            const fileDate = stats.birthtime || stats.mtime;
-            const date = fileDate.toLocaleDateString("ru-RU", {
-                day: "2-digit",
-                month: "2-digit", 
-                year: "numeric"
-            });
+            // Пытаемся извлечь дату из заголовка "Версия X.X.X от DD.MM.YYYY"
+            const dateMatch = content.match(/от\s+(\d{2}\.\d{2}\.\d{4})/);
+            let date = dateMatch ? dateMatch[1] : null;
+            
+            // Fallback: дата создания/модификации файла
+            if (!date) {
+                const stats = fs.statSync(filePath);
+                const fileDate = stats.birthtime || stats.mtime;
+                date = fileDate.toLocaleDateString("ru-RU", {
+                    day: "2-digit",
+                    month: "2-digit", 
+                    year: "numeric"
+                });
+            }
 
             // Парсим версию для сортировки
             const [major, minor, patch] = version.split(".").map(Number);
