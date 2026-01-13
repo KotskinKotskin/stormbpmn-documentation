@@ -1,11 +1,13 @@
 import { defineClientConfig } from "vuepress/client";
-import { hasGlobalComponent } from "D:/stormbpmn-documentation/node_modules/@vuepress/helper/lib/client/index.js";
+import { hasGlobalComponent } from "C:/Users/Lenovo/stormbpmn-documentation/node_modules/@vuepress/helper/lib/client/index.js";
+import { h } from "vue";
 
-import { useScriptTag } from "D:/stormbpmn-documentation/node_modules/@vueuse/core/index.mjs";
-import Badge from "D:/stormbpmn-documentation/node_modules/vuepress-plugin-components/lib/client/components/Badge.js";
-import FontIcon from "D:/stormbpmn-documentation/node_modules/vuepress-plugin-components/lib/client/components/FontIcon.js";
+import { useScriptTag } from "C:/Users/Lenovo/stormbpmn-documentation/node_modules/@vueuse/core/index.mjs";
+import Badge from "C:/Users/Lenovo/stormbpmn-documentation/node_modules/vuepress-plugin-components/lib/client/components/Badge.js";
+import FontIcon from "C:/Users/Lenovo/stormbpmn-documentation/node_modules/vuepress-plugin-components/lib/client/components/FontIcon.js";
+import Notice from "C:/Users/Lenovo/stormbpmn-documentation/node_modules/vuepress-plugin-components/lib/client/components/Notice.js";
 
-import "D:/stormbpmn-documentation/node_modules/vuepress-plugin-components/lib/client/styles/sr-only.scss";
+import "C:/Users/Lenovo/stormbpmn-documentation/node_modules/vuepress-plugin-components/lib/client/styles/sr-only.scss";
 
 export default defineClientConfig({
   enhance: ({ app }) => {
@@ -28,6 +30,6 @@ export default defineClientConfig({
 
   },
   rootComponents: [
-
+    () => h(Notice, { config: [] }),
   ],
 });

@@ -66,6 +66,7 @@
 <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" id="task-item-5" disabled="disabled"><label class="task-list-item-label" for="task-item-5"> <strong>Email пользователя</strong> <em>(при проблемах с аккаунтом)</em></label></li>
 <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" id="task-item-6" disabled="disabled"><label class="task-list-item-label" for="task-item-6"> <strong>Ссылка на диаграмму</strong> <em>(если проблема с конкретной диаграммой)</em></label></li>
 <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" id="task-item-7" disabled="disabled"><label class="task-list-item-label" for="task-item-7"> <strong>Конфигурация системы</strong> <em>(docker-compose.yml, ENV переменные)</em></label></li>
+<li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" id="task-item-8" disabled="disabled"><label class="task-list-item-label" for="task-item-8"> <strong>Содержимое таблицы sm_settings</strong></label></li>
 </ul>
 <div class="hint-container tip">
 <p class="hint-container-title">HAR-архив</p>
