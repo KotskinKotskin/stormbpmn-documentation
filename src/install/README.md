@@ -128,12 +128,23 @@ StormBPMN + Nginx + интеграция с:
 #### Поддерживаемые ОС:
 
 Любые, где работает докер, например (не ограничиваясь):
--   **Ubuntu**: 20.04 LTS, 22.04 LTS
+-   **Ubuntu**: 20.04 LTS, 22.04 LTS, 24.04 LTS
 -   **CentOS**: 8+, Stream 9
 -   **RHEL**: 8+, 9+
 -   **Debian**: 11+, 12+
 -   **Amazon Linux**: 2, 2023
--   **Русские ОС, где работает Docker**
+
+#### Российские ОС:
+
+-   **Astra Linux**: 1.7+, 1.8 (SE, CE)
+-   **ALT Linux**: 10+, Simply Linux
+-   **РЕД ОС**: 7.3+, 8
+-   **ROSA Linux**: 12+
+-   Любые другие российские ОС с поддержкой Docker или Podman
+
+::: tip Импортозамещение контейнеризации
+Для соответствия требованиям реестра отечественного ПО вместо Docker можно использовать **Podman** — OCI-совместимую альтернативу, входящую в реестр российского ПО. Подробнее см. раздел [Альтернативы Docker](#альтернативы-docker-импортозамещение).
+:::
 
 ### Рекомендации по дискам
 
@@ -196,6 +207,50 @@ StormBPMN + Nginx + интеграция с:
 -   **stormbpmn.company.com** - основной домен приложения. Должен вести на 8081
 -   **stormbpmn-api.company.com** - API endpoints (опционально). Должен вести на 8082
 
+## Альтернативы Docker (импортозамещение)
+
+StormBPMN поставляется как **OCI-совместимые контейнерные образы**, что позволяет использовать альтернативные инструменты контейнеризации вместо Docker.
+
+### Podman (рекомендуется для импортозамещения)
+
+**Podman** — полностью совместимая с Docker альтернатива, входящая в реестр российского ПО. Команды Podman идентичны командам Docker.
+
+#### Установка на Astra Linux / ALT Linux / РЕД ОС
+
+```bash
+# Astra Linux 1.8
+sudo apt install podman podman-compose
+
+# ALT Linux
+sudo apt-get install podman podman-compose
+
+# РЕД ОС
+sudo dnf install podman podman-compose
 ```
 
+#### Использование
+
+```bash
+# Вместо docker используйте podman
+podman pull cr.stormbpmn.com/stormbpmn:latest
+podman run -d --name stormbpmn ...
+
+# Вместо docker-compose используйте podman-compose
+podman-compose up -d
 ```
+
+::: tip Совместимость команд
+Для удобства можно создать алиас: `alias docker=podman`
+:::
+
+### CRI-O (для Kubernetes)
+
+При развёртывании в Kubernetes можно использовать **CRI-O** — легковесный container runtime, полностью совместимый с OCI-образами.
+
+### Containerd
+
+**Containerd** — низкоуровневый runtime, используемый в Kubernetes и совместимый со всеми OCI-образами StormBPMN.
+
+::: warning Важно
+Независимо от выбранного инструмента контейнеризации, OCI-образы StormBPMN работают одинаково. Все инструкции с `docker` в документации применимы к `podman` без изменений.
+:::
