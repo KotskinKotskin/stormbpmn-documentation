@@ -7,8 +7,12 @@ index: true
 
 # Установка скриптом
 
-:::info
-Протестировано на чистой Ubuntu 24.04 LTS 64-bit с доступом в интернет.
+:::info Тестовое окружение
+Скрипт протестирован на Ubuntu 24.04 LTS 64-bit с доступом в интернет.
+
+**Совместимые ОС:** Ubuntu 20.04+, Debian 11+, Astra Linux 1.7+, ALT Linux 10+, РЕД ОС 7.3+ и другие Linux-дистрибутивы с поддержкой Docker или Podman.
+
+При использовании **Podman** вместо Docker замените команды `docker` на `podman` и `docker-compose` на `podman-compose`.
 :::
 
 1. Запросите у менеджера токен для доступа к Stormbpmn Container Registry.
