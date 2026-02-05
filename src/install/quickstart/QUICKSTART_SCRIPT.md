@@ -26,7 +26,7 @@ curl -O https://raw.githubusercontent.com/KotskinKotskin/stormbpmn-documentation
 |:-----------------:|:----------------------------------------------------------------:|:--------------------------------------------------------------------------------------------:|
 |     TIMEZONE      |          Часовой пояс для сервера и всей инфраструктуры          |                                        Europe/Moscow                                         |
 | STORMBPMN_VERSION | Версия приложения [(см. Журнал изменений)](/Changelog/README.md) |                                           6.6.2229                                           |
-|  SELECTEL_TOKEN   |                    Токен Stormbpmn CR из п. 1                    | **(нерабочий, исключительно для демонстрации)** CRgAAAAAcmVhbGx5LWxvbmctc3Rvcm1icG1uLXRva2Vu |
+|  SELECTEL_TOKEN   |                    Токен Stormbpmn CR из п. 1                    | ** ваш ключ из 1 пункта (от менеджера), вида CRg.............. **  |
 
 
 3. Скачайте bash скрипт и сделайте его исполняемым.
