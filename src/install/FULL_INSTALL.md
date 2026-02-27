@@ -146,19 +146,42 @@ docker run -d \
   -p 9001:9001 \
   --name minio \
   -v /mnt/data:/data \
-  -e "MINIO_ROOT_USER=admin" \
-  -e "MINIO_ROOT_PASSWORD=password123" \
+  -e "MINIO_ROOT_USER=stormbpmn-s3-user" \
+  -e "MINIO_ROOT_PASSWORD=stormbpmn-s3-password" \
   quay.io/minio/minio server /data --console-address ":9001"
 ```
 
+#### Создание дефолтного бакета
+
+curl -fO https://dl.min.io/client/mc/release/linux-amd64/mc
+chmod +x mc
+mv mc /usr/local/bin/
+mc alias set minio http://localhost:9000 "stormbpmn-s3-user" "stormbpmn-s3-password"
+mc mb minio/storm-uploads
+
 #### Настройка переменных окружения
 
-| Переменная              | Описание           | Пример значения           |
-| ----------------------- | ------------------ | ------------------------- |
-| **MINIO_ENDPOINT**      | URL хранилища      | `http://192.168.0.4:9000` |
-| **MINIO_ACCESSKEY**     | Ключ доступа       | `stormbpmn-user`          |
-| **MINIO_SECRETKEY**     | Секретный ключ     | `secure-password-123`     |
-| **MINIO_DEFAULTBUCKET** | Бакет по умолчанию | `storm-uploads`           |
+| Переменная                 | Описание                               | Пример значения           |
+|----------------------------|----------------------------------------|---------------------------|
+| **S3_ENDPOINT**            | URL хранилища                          | `http://192.168.0.4:9000` |
+| **S3_ACCESS_KEY**          | Ключ доступа                           | `stormbpmn-s3-user`       |
+| **S3_SECRET_KEY**          | Секретный ключ                         | `stormbpmn-s3-password`   |
+| **S3_BUCKET_UPLOADS**      | Бакет по умолчанию                     | `storm-uploads`           |
+| **S3_BUCKET_USERS**        | Бакет для пользователей                | `storm-users`             |
+| **S3_BUCKET_IMPORTS**      | Бакет для импортов                     | `storm-imports`           |
+| **S3_SINGLE_USERS_BUCKET** | Режим единого бакета для пользователей | `true`                    |
+
+При использовании другого S3-хранилища, совместимого с AWS SDK v2, может также понадобиться:
+- Установить переменную `S3_REGION`, соответствующую конфигурации вашего хранилища
+- Установить переменную `S3_VIRTUAL_HOST=true` для vHosted типа адресации (по умолчанию `false` для Path-Style)
+
+:::info Единый пользовательский бакет
+- Для свежей установки рекомендуем использовать `S3_SINGLE_USERS_BUCKET=true`.
+- Если у вас уже установлен Storm и подключен к S3-хранилищу, в котором каждый пользователь имеет свой бакет (вида `user123`),
+вы можете смигрировать их в единый бакет (например, `storm-users`), указать его в переменной `S3_BUCKET_USERS`
+и переключить режим работы на `S3_SINGLE_USERS_BUCKET=true`. В таком случае путь до пользовательских файлов будет
+выглядеть как `s3://storm-users/user123/...`
+:::
 
 #### Проверка работоспособности
 
