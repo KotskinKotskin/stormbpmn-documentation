@@ -153,11 +153,13 @@ docker run -d \
 
 #### Создание дефолтного бакета
 
+```bash
 curl -fO https://dl.min.io/client/mc/release/linux-amd64/mc
 chmod +x mc
 mv mc /usr/local/bin/
 mc alias set minio http://localhost:9000 "stormbpmn-s3-user" "stormbpmn-s3-password"
 mc mb minio/storm-uploads
+```
 
 #### Настройка переменных окружения
 
