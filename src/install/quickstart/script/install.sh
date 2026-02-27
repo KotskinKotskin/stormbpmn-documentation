@@ -181,10 +181,13 @@ services:
       JAVA_OPTS: -Xmx2g -Duser.timezone=$TIMEZONE
       SPRING_PROFILES_ACTIVE: prod
       JWTSECRET: $JWTSECRET
-      MINIO_ENDPOINT: http://minio:9000
-      MINIO_ACCESSKEY: stormbpmn
-      MINIO_SECRETKEY: $MINIO_ROOT_PASSWORD
-      MINIO_DEFAULTBUCKET: storm-uploads
+      S3_ENDPOINT: http://minio:9000
+      S3_ACCESS_KEY: stormbpmn
+      S3_SECRET_KEY: $MINIO_ROOT_PASSWORD
+      S3_BUCKET_UPLOADS: storm-uploads
+      S3_BUCKET_USERS: storm-users
+      S3_BUCKET_IMPORTS: storm-imports
+      S3_SINGLE_USERS_BUCKET: true
       PLANTUML_SERVER: http://plantuml:8080/
       GOTENBERG_URL: http://gotenberg:3000
       EMAIL_PROVIDER: nop
