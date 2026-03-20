@@ -94,10 +94,19 @@ EOF
 log "Writing Docker Compose file..."
 cat > "$DOCKER_COMPOSE_FILE" <<EOF
 
+name: stormbpmn
+
 volumes:
   postgres_data:
+    name: postgres_data
   minio_data:
+    name: minio_data
   portainer_data:
+    name: portainer_data
+
+networks:
+  default:
+    name: stormbpmn-network
 
 services:
 
