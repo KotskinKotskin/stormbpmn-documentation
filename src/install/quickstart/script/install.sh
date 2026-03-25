@@ -77,7 +77,7 @@ log "Generating credentials..."
 PORTAINER_PASSWORD=$(openssl rand -base64 12 | tr -dc 'a-zA-Z0-9' | head -c16)
 POSTGRES_PASSWORD=$(openssl rand -base64 12 | tr -dc 'a-zA-Z0-9' | head -c16)
 MINIO_ROOT_PASSWORD=$(openssl rand -base64 12 | tr -dc 'a-zA-Z0-9' | head -c16)
-JWTSECRET=$(openssl rand -base64 32 | tr -dc 'a-zA-Z0-9' | head -c32)
+JWTSECRET=$(openssl rand -base64 64 | tr -dc 'a-zA-Z0-9' | head -c64)
 
 # Save to file
 cat > "$CREDENTIALS_FILE" <<EOF
