@@ -377,21 +377,30 @@ LISTMONK_PASSWORD=api-token-here  # API токен
 
 #### Шаблоны писем
 
-Создайте шаблоны писем в listmonk по данным темам, используйте подстановку в шаблонах и зафиксируйте ID шаблона:
+Создайте шаблоны писем в listmonk по данным темам и зафиксируйте ID каждого шаблона в админке Stormbpmn.
+
+::: warning Синтаксис подстановок
+Listmonk использует синтаксис Go-шаблонов: переменные доступны через `{{ .Tx.Data.имя }}`, а не `{имя}`. Например, `{{ .Tx.Data.diagram_name }}`.
+:::
 
 ![Шаблоны](list_monk_4.png)
 
-| Тип уведомления                         | Настройка в админке                  | Возможные подстановки                                                  |
-| --------------------------------------- | ------------------------------------ | ---------------------------------------------------------------------- |
-| **Новый комментарий**                   | `commentEmailTemplateId`             | `{comment_author}`, `{diagram_name}`, `{diagram_url}`, `{html_text}`   |
-| **Запрос на согласование**              | `approvalTemplateId`                 | `{invite_author}`, `{diagram_name}`, `{diagram_url}`                   |
-| **Восстановление пароля**               | `restorePasswordTemplateId`          | `{restoreCode}`                                                        |
-| **Согласование завершено**              | `approvalCompletedTemplateId`        | `{diagram_name}`, `{diagram_url}`                                      |
-| **Активация пользователя**              | `userActivationTemplateId`           | `{activation_token}`                                                   |
-| **Приглашение к диаграмме**             | `secureUpdateTemplateId`             | `{invite_author}`, `{diagram_name}`, `{diagram_url}`                   |
-| **Приглашение + регистрация**           | `inviteDiagramAndRegisterTemplateId` | `{invite_author}`, `{diagram_name}`, `{diagram_url}`, `{register_url}` |
-| **Приглашение в команду**               | `teamInviteTemplateId`               | `{invite_author}`, `{team_name}`                                       |
-| **Приглашение в команду + регистрация** | `teamInviteAndRegisterTemplateId`    | `{invite_author}`, `{team_name}`, `{register_url}`                     |
+| Тип уведомления                         | Настройка в админке                  | Возможные подстановки                                                                                                       |
+| --------------------------------------- | ------------------------------------ | --------------------------------------------------------------------------------------------------------------------------- |
+| **Новый комментарий**                   | `commentEmailTemplateId`             | `{{ .Tx.Data.comment_author }}`, `{{ .Tx.Data.diagram_name }}`, `{{ .Tx.Data.diagram_url }}`, `{{ .Tx.Data.html_text }}`     |
+| **Запрос на согласование**              | `approvalTemplateId`                 | `{{ .Tx.Data.invite_author }}`, `{{ .Tx.Data.diagram_name }}`, `{{ .Tx.Data.diagram_url }}`                                 |
+| **Восстановление пароля**               | `restorePasswordTemplateId`          | `{{ .Tx.Data.restoreCode }}`                                                                                                |
+| **Согласование завершено**              | `approvalCompletedTemplateId`        | `{{ .Tx.Data.diagram_name }}`, `{{ .Tx.Data.diagram_url }}`                                                                 |
+| **Активация пользователя**              | `userActivationTemplateId`           | `{{ .Tx.Data.activation_token }}`                                                                                           |
+| **Приглашение к диаграмме**             | `secureUpdateTemlateId`              | `{{ .Tx.Data.invite_author }}`, `{{ .Tx.Data.diagram_name }}`, `{{ .Tx.Data.diagram_url }}`                                 |
+| **Приглашение + регистрация**           | `inviteDiagramAndRegisterTemplateId` | `{{ .Tx.Data.invite_author }}`, `{{ .Tx.Data.diagram_name }}`, `{{ .Tx.Data.diagram_url }}`, `{{ .Tx.Data.register_url }}`   |
+| **Приглашение в команду**               | `teamInviteTemplateId`               | `{{ .Tx.Data.invite_author }}`, `{{ .Tx.Data.team_name }}`                                                                  |
+| **Приглашение в команду + регистрация** | `teamInviteAndRegisterTemplateId`    | `{{ .Tx.Data.invite_author }}`, `{{ .Tx.Data.team_name }}`, `{{ .Tx.Data.register_url }}`                                   |
+| **Запрос доступа к диаграмме**          | `accessRequestTemplateId`            | `{{ .Tx.Data.requester_name }}`, `{{ .Tx.Data.diagram_name }}`, `{{ .Tx.Data.diagram_url }}`, `{{ .Tx.Data.request_message }}` |
+
+::: tip Опечатка в ключе
+Ключ `secureUpdateTemlateId` указан **с опечаткой намеренно** — именно так он называется в настройках системы (без `p` в `Temlate`).
+:::
 
 #### Укажите ID шаблон в адмнике Stormbpmn
 
