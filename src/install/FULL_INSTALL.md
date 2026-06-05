@@ -130,6 +130,13 @@ server {
 -   **Шаблоны документов** - для генерации отчетов
 -   **Вложения** - файлы, прикрепленные к процессам
 
+::: tip Что выбрать, если нет корпоративного S3
+StormBPMN работает с любым S3-совместимым хранилищем. Два простых варианта для self-host:
+
+- **MinIO** — привычный вариант (см. ниже). Учтите: в свежих релизах community-консоль MinIO урезали до простого браузера объектов — управление бакетами/политиками из веб-интерфейса убрали.
+- **[SeaweedFS](#альтернатива-seaweedfs-простое-s3-со-встроенным-ui)** — лёгкое S3-хранилище одним контейнером со **встроенным веб-интерфейсом** (Filer). Рекомендуем, если нужен простой UI и минимум возни.
+:::
+
 ### Рекомендуемое решение: MinIO
 
 :::info
@@ -191,6 +198,84 @@ mc mb minio/storm-uploads
 
 ::: tip Документация MinIO
 Полное руководство по установке: [MinIO Documentation](https://min.io/docs/minio/linux/index.html)
+:::
+
+### Альтернатива: SeaweedFS (простое S3 со встроенным UI)
+
+[SeaweedFS](https://github.com/seaweedfs/seaweedfs) — лёгкое S3-совместимое хранилище. Запускается **одним контейнером**, имеет встроенный веб-интерфейс (Filer) и совместимо с адресацией path-style, которую использует StormBPMN. Хороший выбор, если корпоративного S3 нет, а MinIO не устраивает.
+
+#### Шаг 1. Учётные данные доступа
+
+S3 в SeaweedFS по умолчанию открыт без пароля — обязательно задайте ключи доступа через конфиг. Создайте файл `s3-config.json`:
+
+```json
+{
+  "identities": [
+    {
+      "name": "stormbpmn",
+      "credentials": [
+        { "accessKey": "stormbpmn-s3-user", "secretKey": "stormbpmn-s3-password" }
+      ],
+      "actions": ["Admin", "Read", "Write", "List", "Tagging"]
+    }
+  ]
+}
+```
+
+#### Шаг 2. Запуск контейнера
+
+```bash
+docker run -d \
+  --name seaweedfs \
+  --restart unless-stopped \
+  -p 8333:8333 \
+  -p 8888:8888 \
+  -v /mnt/seaweedfs:/data \
+  -v "$(pwd)/s3-config.json:/etc/seaweedfs/s3-config.json:ro" \
+  chrislusf/seaweedfs server \
+    -dir=/data \
+    -s3 \
+    -s3.port=8333 \
+    -s3.config=/etc/seaweedfs/s3-config.json
+```
+
+Команда `server` поднимает master, volume, filer и S3-шлюз в одном процессе.
+
+| Порт     | Назначение                                  |
+| -------- | ------------------------------------------- |
+| **8333** | S3 API (его указываем в `S3_ENDPOINT`)      |
+| **8888** | Filer — веб-интерфейс для просмотра файлов  |
+
+#### Шаг 3. Создание бакета
+
+```bash
+docker exec -i seaweedfs weed shell <<< "s3.bucket.create -name storm-uploads"
+```
+
+Либо любым S3-клиентом с теми же ключами (например, AWS CLI):
+
+```bash
+aws --endpoint-url http://localhost:8333 s3 mb s3://storm-uploads
+```
+
+#### Шаг 4. Переменные окружения StormBPMN
+
+```bash
+S3_ENDPOINT=http://<хост-seaweedfs>:8333
+S3_ACCESS_KEY=stormbpmn-s3-user
+S3_SECRET_KEY=stormbpmn-s3-password
+S3_BUCKET_UPLOADS=storm-uploads
+S3_SINGLE_USERS_BUCKET=true
+# Адресация path-style включена по умолчанию (S3_VIRTUAL_HOST=false) — менять не нужно.
+```
+
+#### Шаг 5. Проверка
+
+- Откройте веб-интерфейс Filer: `http://<хост-seaweedfs>:8888` — там видны бакеты и файлы.
+- В StormBPMN сохраните диаграмму — в карточном представлении должна появиться её миниатюра, а в бакете `storm-uploads` (в Filer) — соответствующий объект.
+
+::: tip Документация SeaweedFS
+S3 API и его настройка: [SeaweedFS — Amazon S3 API](https://github.com/seaweedfs/seaweedfs/wiki/Amazon-S3-API).
 :::
 
 ---
@@ -297,6 +382,19 @@ docker run -d \
   --name gotenberg \
   gotenberg/gotenberg:8
 ```
+
+::: tip Можно использовать наш образ Gotenberg
+Если в организации запрещены внешние реестры (Docker Hub), используйте зеркало Gotenberg в нашем приватном реестре — это официальный образ `gotenberg/gotenberg:8`, **подписанный той же подписью Cosign**, что и основной образ StormBPMN, и доступный по **тем же** учётным данным `cr.selcloud.ru`:
+
+```bash
+docker run -d \
+  -p 3001:3000 \
+  --name gotenberg \
+  cr.selcloud.ru/stormbpmn-enterprise/gotenberg:8
+```
+
+Подпись проверяется так же, как у основного образа (см. [Changelog → «Проверка подписи образа (Cosign)»](/Changelog/README.md)). Перенос образа в корпоративный реестр — по инструкции из [Быстрого старта](/install/quickstart/QUICKSTART_MANUAL.md).
+:::
 
 ### Настройка
 

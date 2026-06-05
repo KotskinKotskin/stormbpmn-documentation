@@ -42,6 +42,27 @@ index: true
 6. **Обеспечьте сетевую доступность**:
     - Настройте соединение между базой данных и контейнером приложения
 
+::: warning Расширения PostgreSQL и кодировка — обязательно
+База должна быть создана в кодировке **UTF8**, а в сборке PostgreSQL должны быть доступны расширения: **pgvector** (`vector`), **pg_trgm**, **pgcrypto**, **uuid-ossp**, **hstore**.
+
+- `vector`, `uuid-ossp`, `hstore`, `pgcrypto` приложение создаёт само при первом запуске (если пакеты установлены и у пользователя БД есть право `CREATE EXTENSION`).
+- **`pg_trgm` создайте вручную** — без него поиск пользователей по части имени/почты работать не будет.
+
+Стандартный образ `postgres:17` **не содержит pgvector**. Используйте образ **`pgvector/pgvector:pg17`** (тот же PostgreSQL + pgvector + стандартные contrib-модули) или установите pgvector в свою сборку/DBaaS.
+
+Полный набор одной командой — выполнить от суперпользователя **в базе приложения**:
+
+```sql
+CREATE EXTENSION IF NOT EXISTS vector;
+CREATE EXTENSION IF NOT EXISTS pg_trgm;
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+CREATE EXTENSION IF NOT EXISTS hstore;
+```
+
+Подробнее — в разделе [«Требования к PostgreSQL»](/install/README.md).
+:::
+
 ## Настройка приложения через переменные окружения
 
 ### Получение образа
@@ -92,6 +113,16 @@ docker push <адрес_вашего_registry>/<проект>/stormbpmn_fullstac
 ```
 
 8. Проверить, что образ появился в интерфейсе Harbor.
+
+::: tip Gotenberg тоже можно взять из нашего реестра
+Если внешние реестры (Docker Hub) закрыты, не обязательно тянуть `gotenberg/gotenberg:8` извне — мы зеркалим официальный образ Gotenberg в наш приватный реестр и **подписываем его той же подписью Cosign**, что и основной образ StormBPMN. Он доступен по **тем же** учётным данным `cr.selcloud.ru`:
+
+```bash
+docker pull cr.selcloud.ru/stormbpmn-enterprise/gotenberg:8
+```
+
+Дальше — перетегируйте и загрузите в свой корпоративный реестр теми же шагами 5–8, что и для основного образа. Проверка подписи — так же, как у основного образа (см. [Changelog → «Проверка подписи образа (Cosign)»](/Changelog/README.md)).
+:::
 
 
 
