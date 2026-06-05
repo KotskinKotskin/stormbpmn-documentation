@@ -1,4 +1,3 @@
-
 name: Deploy Docs
 
 on:
@@ -37,7 +36,7 @@ jobs:
         run: tar czf docs.tar.gz -C ./src/.vuepress/dist/ .
         
       - name: copy file via ssh key
-        uses: appleboy/scp-action@v0.1.7
+        uses: appleboy/scp-action@v1.0.0
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
@@ -61,4 +60,3 @@ jobs:
               mkdir docs
               tar -xzvf docs.tar.gz -C /etc/nginx/sites-available/docs
               mv docs.tar.gz docs_release_$(date '+%Y_%m_%d_%H_%M')_tar.gz
-              
