@@ -123,7 +123,10 @@ services:
       - /etc/localtime:/etc/localtime:ro
 
   postgres:
-    image: postgres:17
+    # pgvector/pgvector:pg17 = тот же PostgreSQL 17 + стандартные contrib-модули (pg_trgm,
+    # pgcrypto, uuid-ossp, hstore) + расширение pgvector. pgvector нужен базе знаний AI-чата
+    # и в ближайших версиях станет обязательным. Официальный postgres:17 pgvector НЕ содержит.
+    image: pgvector/pgvector:pg17
     container_name: postgres
     restart: always
     ports:
@@ -166,6 +169,8 @@ services:
       - /etc/localtime:/etc/localtime:ro
 
   gotenberg:
+    # Можно заменить на наше подписанное зеркало (тот же токен Selectel, что и у основного образа):
+    #   image: cr.selcloud.ru/stormbpmn-enterprise/gotenberg:8
     image: gotenberg/gotenberg:8
     container_name: gotenberg
     restart: always
@@ -250,6 +255,18 @@ log "Creating 'stormbpmn' database in Postgres..."
 docker exec -u postgres postgres psql -tc "SELECT 1 FROM pg_database WHERE datname = 'stormbpmn'" | grep -q 1 \
   || docker exec -u postgres postgres psql -c "CREATE DATABASE stormbpmn" \
   || abort "Failed to create database 'stormbpmn' in Postgres."
+
+# Расширения в базе приложения. vector/uuid-ossp/hstore/pgcrypto приложение создаёт само миграциями,
+# но pg_trgm оно НЕ создаёт (без него индексы автодополнения молча пропускаются). Заводим заранее —
+# образ pgvector/pgvector содержит все эти модули, права суперпользователя postgres достаточно.
+log "Enabling required PostgreSQL extensions in 'stormbpmn' database..."
+docker exec -u postgres postgres psql -d stormbpmn -c "
+  CREATE EXTENSION IF NOT EXISTS vector;
+  CREATE EXTENSION IF NOT EXISTS pg_trgm;
+  CREATE EXTENSION IF NOT EXISTS pgcrypto;
+  CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\";
+  CREATE EXTENSION IF NOT EXISTS hstore;" \
+  || abort "Failed to enable PostgreSQL extensions in 'stormbpmn'."
 
 ### CONFIGURE MINIO
 log "Waiting for MinIO to be ready..."

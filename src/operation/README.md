@@ -208,6 +208,22 @@ CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
 :::
 
+::: danger База знаний AI-чата — потребуется pgvector
+В ближайших версиях база знаний AI-чата (RAG) станет частью enterprise-сборки, а расширение **pgvector** — **жёсткой зависимостью**: без него миграция не выполнится и бэкенд не запустится. **Готовьтесь заранее** (можно уже сейчас):
+
+1. Перейдите на сборку PostgreSQL с pgvector — например, образ **`pgvector/pgvector:pg17`** (тот же PostgreSQL + стандартные contrib-модули + pgvector), либо установите pgvector в свою сборку/DBaaS.
+2. Убедитесь, что в **базе приложения** доступны нужные расширения. Достаточно прав суперпользователя или роли с правом `CREATE EXTENSION`:
+
+```sql
+CREATE EXTENSION IF NOT EXISTS vector;
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+CREATE EXTENSION IF NOT EXISTS hstore;
+CREATE EXTENSION IF NOT EXISTS pg_trgm;   -- для автодополнения, приложение его не создаёт само
+```
+
+Полный список расширений и кодировка БД — в разделе [«Требования к PostgreSQL»](/install/README.md).
+:::
+
 ---
 
 ## Disaster Recovery
