@@ -1,6 +1,7 @@
 import { defineUserConfig } from "vuepress";
 import { hopeTheme } from "vuepress-theme-hope";
 import yandexMetrikaPlugin from "vuepress-plugin-yandex-metrika";
+import { redirectPlugin } from "@vuepress/plugin-redirect";
 import { viteBundler } from "@vuepress/bundler-vite";
 import fs from "fs";
 import path from "path";
@@ -108,11 +109,15 @@ export default defineUserConfig({
         navbar: [
             {
                 text: "🚀 Установка",
-                children: ["/install/", "/install/FULL_INSTALL.html"],
+                children: ["/install/", "/install/production/"],
             },
             {
                 text: "⚙️ Конфигурация",
-                children: ["/configure/", "/configure/SECURE.html", "/configure/AI_CHAT.html", "/configure/VLLM.html"],
+                children: ["/configure/", "/configure/security/"],
+            },
+            {
+                text: "🤖 AI-ассистент",
+                children: ["/ai/", "/ai/AI_CHAT.html", "/ai/KnowledgeBase.html", "/ai/self-hosted-llm/"],
             },
             "/operation/",
             "/support/",
@@ -125,6 +130,9 @@ export default defineUserConfig({
         ],
     }),
     plugins: [
+        // Старые URL остаются живыми после переноса страниц (см. frontmatter redirectFrom).
+        // Важно для ссылок из автопубликуемого Changelog и из приложения.
+        redirectPlugin({}),
         yandexMetrikaPlugin({
             id: "96951202",
             config: {

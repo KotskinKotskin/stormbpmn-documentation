@@ -1,6 +1,8 @@
 ---
-order: 3
+order: 2
 title: База знаний AI-чата
+redirectFrom:
+    - /operation/KnowledgeBase.html
 ---
 
 # База знаний AI-чата (RAG)
