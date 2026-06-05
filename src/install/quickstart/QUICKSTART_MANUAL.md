@@ -48,7 +48,7 @@ index: true
 - `vector`, `uuid-ossp`, `hstore`, `pgcrypto` приложение создаёт само при первом запуске (если пакеты установлены и у пользователя БД есть право `CREATE EXTENSION`).
 - **`pg_trgm` создайте вручную** — без него поиск пользователей по части имени/почты работать не будет.
 
-Стандартный образ `postgres:17` **не содержит pgvector**. Используйте образ **`pgvector/pgvector:pg17`** (тот же PostgreSQL + pgvector + стандартные contrib-модули) или установите pgvector в свою сборку/DBaaS.
+Стандартный образ `postgres:17` **не содержит pgvector**. Используйте образ **`pgvector/pgvector:pg17`** (тот же PostgreSQL + pgvector + стандартные contrib-модули) или установите pgvector в свою сборку/DBaaS. Если Docker Hub закрыт — берите образ из нашего реестра: `cr.selcloud.ru/stormbpmn-enterprise/pgvector:pg17` (подписан той же Cosign-подписью, доступен по тем же кредам Selectel).
 
 Полный набор одной командой — выполнить от суперпользователя **в базе приложения**:
 

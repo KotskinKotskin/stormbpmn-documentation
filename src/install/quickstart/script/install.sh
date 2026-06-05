@@ -124,8 +124,11 @@ services:
 
   postgres:
     # pgvector/pgvector:pg17 = тот же PostgreSQL 17 + стандартные contrib-модули (pg_trgm,
-    # pgcrypto, uuid-ossp, hstore) + расширение pgvector. pgvector нужен базе знаний AI-чата
-    # и в ближайших версиях станет обязательным. Официальный postgres:17 pgvector НЕ содержит.
+    # pgcrypto, uuid-ossp, hstore) + расширение pgvector. pgvector — базовое требование
+    # платформы (быстрый универсальный поиск + база знаний AI-чата), в ближайших версиях
+    # станет обязательным. Официальный postgres:17 pgvector НЕ содержит.
+    # Можно заменить на наше подписанное зеркало (тот же токен Selectel, что и у основного образа):
+    #   image: cr.selcloud.ru/stormbpmn-enterprise/pgvector:pg17
     image: pgvector/pgvector:pg17
     container_name: postgres
     restart: always
