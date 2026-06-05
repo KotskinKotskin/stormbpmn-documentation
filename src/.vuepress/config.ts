@@ -112,7 +112,7 @@ export default defineUserConfig({
             },
             {
                 text: "⚙️ Конфигурация",
-                children: ["/configure/", "/configure/SECURE.html"],
+                children: ["/configure/", "/configure/SECURE.html", "/configure/AI_CHAT.html"],
             },
             "/operation/",
             "/support/",
