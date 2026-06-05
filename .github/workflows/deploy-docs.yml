@@ -46,7 +46,7 @@ jobs:
           target: /etc/nginx/sites-available
 
       - name: ssh
-        uses: appleboy/ssh-action@v1.0.3
+        uses: appleboy/ssh-action@v1.2.5
         env:
           SHA: ${{ github.sha }}
         with:
