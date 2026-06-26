@@ -37,6 +37,7 @@ Enterprise ([install](https://enterprise.stormbpmn.com/install/),
 
 ---
 
+
 ## 2. Подготовка (pre-flight)
 
 - [ ] Согласовать **окно даунтайма** (приложение останавливается на время dump → restore;
@@ -46,12 +47,18 @@ Enterprise ([install](https://enterprise.stormbpmn.com/install/),
 - [ ] Проверить, что нужная UTF-8-локаль установлена в ОС: `locale -a | grep -i utf`.
       Если `ru_RU.UTF-8` нет — подойдёт `C.UTF-8` (есть почти всегда) или `en_US.UTF-8`.
       При необходимости: `localedef -i ru_RU -f UTF-8 ru_RU.UTF-8` (Debian/RHEL).
-- [ ] **PostgreSQL 12+**; на приёмнике рекомендуется образ `pgvector/pgvector:pg17`
-      (PG17 + pgvector + ICU; зеркало `cr.selcloud.ru/stormbpmn-enterprise/pgvector:pg17`).
-      По возможности — та же мажорная версия на источнике и приёмнике.
-- [ ] На приёмнике доступны **обязательные расширения** Storm: `pgvector`, `pg_trgm`,
-      `pgcrypto`, `uuid-ossp`, `hstore`. Поэтому базовый образ `postgres` не подойдёт — нужен
-      `pgvector/pgvector:pg17` (содержит пакеты pgvector и пр.). Создание — на шаге 4.
+- [ ] **Приёмник** (новый сервер/контейнер БД, куда переедет база) — PostgreSQL **12+**.
+      Проще всего взять готовый образ `pgvector/pgvector:pg17` (зеркало
+      `cr.selcloud.ru/stormbpmn-enterprise/pgvector:pg17`): в нём **уже есть** PostgreSQL 17,
+      пакет pgvector и поддержка ICU — отдельно их ставить или собирать **не нужно**. Конкретно
+      PG17 не обязателен (минимум — 12), но этот образ — самый простой способ получить сборку,
+      где pgvector и ICU уже на месте.
+- [ ] **Обязательные расширения** Storm — `pgvector`, `pg_trgm`, `pgcrypto`, `uuid-ossp`,
+      `hstore`. Их пакеты уже в образе `pgvector/pgvector:pg17`; ставить ничего не надо —
+      включаются командами `CREATE EXTENSION` на шаге 4 (поэтому базовый образ `postgres` без
+      pgvector не подойдёт). ICU — это не расширение, а провайдер коллаций, он встроен в образ.
+- [ ] Версии PG источника и приёмника совпадать **не обязаны**: дамп со старой версии
+      нормально восстанавливается в более новую (PG17).
 - [ ] Выполняет **DBA** — особенно если на шаге 3 обнаружатся «битые» байты.
 
 ---
