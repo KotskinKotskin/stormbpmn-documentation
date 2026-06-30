@@ -153,9 +153,9 @@ GRANT SET ON PARAMETER session_replication_role TO <db_user>;
 
 | Переменная | Значение |
 |---|---|
-| `S3_BUCKET_UPLOADS` | имя бакета, которое предоставит Storm |
-| `S3_BUCKET_USERS` | имя бакета, которое предоставит Storm |
-| `S3_BUCKET_IMPORTS` | имя бакета, которое предоставит Storm |
+| `S3_BUCKET_UPLOADS` | storm-prod-uploads |
+| `S3_BUCKET_USERS` | storm-prod-users |
+| `S3_BUCKET_IMPORTS` | storm-prod-imports |
 | `S3_SINGLE_USERS_BUCKET` | `true` |
 | `SPRING_PROFILES_ACTIVE` | `prod,handover-import` |
 
