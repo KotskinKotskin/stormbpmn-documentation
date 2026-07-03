@@ -135,7 +135,7 @@ docker pull cr.selcloud.ru/stormbpmn-enterprise/gotenberg:8
 | **JDBC_PASSWORD**          | Пароль пользователя              | `your_secure_password`                     |
 | **JAVA_OPTS**              | Настройки памяти для JVM         | `"-Xmx8g"`                                 |
 | **SPRING_PROFILES_ACTIVE** | Профиль Spring Boot              | `prod`                                     |
-| **JWTSECRET**              | Соль для шифрования паролей      | Не менее 32 случайных символов             |
+| **JWTSECRET**              | Соль для шифрования паролей      | Не менее 64 случайных символов             |
 | **TZ**              | Таймзона контейнера      |`Europe/Moscow`           |
 
 > **Примечание по JDBC_URL:**

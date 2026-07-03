@@ -39,7 +39,7 @@ CREATE EXTENSION IF NOT EXISTS pg_trgm;     -- автодополнение по
 ::: warning Миграция на Spring Boot 3 (версия 6.6.3748+)
 С версии 6.6.3748 выполнен переход на Spring Boot 3 и Java 21. Перед обновлением проверьте:
 - **PATH**: Должен указывать на `/opt/java/openjdk/bin` вместо `/usr/local/openjdk-11/bin`
-- **JWTSECRET**: Минимум 32 символа (рекомендуется 64)
+- **JWTSECRET**: Минимум 64 символа (ключ HS512, 512 бит) — с коротким ключом вход упадёт с `WeakKeyException`
 
 Подробнее см. [Версия 6.6.3748](./6.6.3748.md#%EF%B8%8F-%D0%B8%D0%B7%D0%BC%D0%B5%D0%BD%D0%B5%D0%BD%D0%B8%D1%8F-%D0%B4%D0%BB%D1%8F-enterprise-%D0%BA%D0%BB%D0%B8%D0%B5%D0%BD%D1%82%D0%BE%D0%B2)
 :::
