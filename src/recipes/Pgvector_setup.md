@@ -82,9 +82,16 @@ WHERE collversion IS NOT NULL AND collversion <> pg_collation_actual_version(oid
 
 **3. Проверить расширение:**
 
+Выберите в зависимости от схемы приложения. Она указана в `JDBC_URL` контейнера Storm,
+параметр `currentSchema` (параметра нет → `public`).
+
 ```sql
+-- public
 CREATE EXTENSION IF NOT EXISTS vector;
 SELECT '[1,2,3]'::vector;
+-- custom
+CREATE EXTENSION IF NOT EXISTS vector SCHEMA <schema>;
+SELECT '[1,2,3]'::<schema>.vector;
 ```
 
 **4. Убедиться, что в логах нет collation-warning:**
@@ -132,9 +139,16 @@ docker build -t storm-postgres:pgvector .
 
 **4. Проверить** — collation-warning'а не будет, reindex не нужен:
 
+Выберите в зависимости от схемы приложения. Она указана в `JDBC_URL` контейнера Storm,
+параметр `currentSchema` (параметра нет → `public`).
+
 ```sql
+-- public
 CREATE EXTENSION IF NOT EXISTS vector;
 SELECT '[1,2,3]'::vector;
+-- custom
+CREATE EXTENSION IF NOT EXISTS vector SCHEMA <schema>;
+SELECT '[1,2,3]'::<schema>.vector;
 ```
 
 ---
@@ -155,7 +169,15 @@ sudo systemctl restart postgresql
 ```bash
 sudo -u postgres psql -d <db>
 ```
+
+Выберите в зависимости от схемы приложения. Она указана в `JDBC_URL` контейнера Storm,
+параметр `currentSchema` (параметра нет → `public`).
+
 ```sql
+-- public
 CREATE EXTENSION IF NOT EXISTS vector;
 SELECT '[1,2,3]'::vector;
+-- custom
+CREATE EXTENSION IF NOT EXISTS vector SCHEMA <schema>;
+SELECT '[1,2,3]'::<schema>.vector;
 ```
