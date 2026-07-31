@@ -74,6 +74,7 @@ apt-get install -y jq
 
 ### GENERATE PASSWORDS
 log "Generating credentials..."
+PORTAINER_SETUP_TOKEN=$(openssl rand -hex 24)
 PORTAINER_PASSWORD=$(openssl rand -base64 12 | tr -dc 'a-zA-Z0-9' | head -c16)
 POSTGRES_PASSWORD=$(openssl rand -base64 12 | tr -dc 'a-zA-Z0-9' | head -c16)
 MINIO_ROOT_PASSWORD=$(openssl rand -base64 12 | tr -dc 'a-zA-Z0-9' | head -c16)
@@ -111,9 +112,11 @@ networks:
 services:
 
   portainer:
-    image: portainer/portainer-ce:lts
+    image: portainer/portainer-ce:2.39.5
     container_name: portainer
     restart: always
+    environment:
+      PORTAINER_SETUP_TOKEN: $PORTAINER_SETUP_TOKEN
     ports:
       - "9080:9000"
     volumes:
@@ -228,6 +231,7 @@ timeout 30 bash -c 'until curl -sk http://localhost:9080/api/status > /dev/null 
 log "Initializing Portainer admin..."
 curl -sSfk -X POST http://localhost:9080/api/users/admin/init \
   -H 'Content-Type: application/json' \
+  -H "X-Setup-Token: $PORTAINER_SETUP_TOKEN" \
   -d "{\"Username\": \"admin\", \"Password\": \"$PORTAINER_PASSWORD\"}" \
   && echo || abort "Failed to initialize Portainer admin"
 
@@ -276,7 +280,7 @@ log "Waiting for MinIO to be ready..."
 timeout 30 bash -c 'until curl -s http://localhost:9000/minio/health/live > /dev/null 2>&1; do sleep 2; done' || abort "MinIO did not start in time"
 
 log "Setting up MinIO client and creating bucket 'storm-uploads'..."
-curl -fO https://dl.min.io/client/mc/release/linux-amd64/mc || abort "Failed to download mc client"
+curl -fLO https://dl.min.io/client/mc/release/linux-amd64/mc || abort "Failed to download mc client"
 chmod +x mc
 mv mc /usr/local/bin/
 mc alias set minio http://localhost:9000 stormbpmn "$MINIO_ROOT_PASSWORD" || abort "Failed to configure mc alias"
