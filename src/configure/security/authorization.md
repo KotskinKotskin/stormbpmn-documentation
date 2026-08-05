@@ -21,6 +21,38 @@ order: 2
 | **OAuthTokenUri**     | URL получения токена                    | `https://keycloak.company.com/auth/realms/master/protocol/openid-connect/token`    |
 | **OAuthButtonLabel**  | Текст на кнопке входа                   | `"Войти через корпоративный аккаунт"`                                              |
 | **OAuthRedirectUri**  | URL возврата после авторизации          | `https://stormbpmn.company.com/app/signin`                                         |
+| **OAuthFlowMode**     | Режим потока: `PKCE` или `implicit_flow` | `PKCE`                                                                            |
+
+#### Режим потока: PKCE или implicit
+
+StormBPMN умеет работать в двух режимах, переключает их параметр **OAuthFlowMode**:
+
+| Режим                     | Что происходит                                                                                                              | Когда выбирать                                                                       |
+| ------------------------- | --------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| `PKCE` (рекомендуется)    | Authorization Code Flow с PKCE: провайдер возвращает `code`, сервер меняет его на токен по защищённому каналу                | Всегда, если провайдер умеет Authorization Code Flow. Implicit flow включать не нужно |
+| `implicit_flow` (legacy)  | `response_type=token`, access token приходит в браузер во фрагменте URL, данные пользователя берутся из `/userinfo`          | Провайдер выдаёт непрозрачный (не JWT) access token или не поддерживает PKCE          |
+
+Если параметр не задан, используется `implicit_flow` — это сделано ради обратной совместимости со старыми установками.
+
+##### Параметры режима PKCE
+
+| Параметр                     | Значение              | Примечание                                                          |
+| ---------------------------- | --------------------- | -------------------------------------------------------------------- |
+| **OAuthFlowMode**            | `PKCE`                | Включает Authorization Code Flow                                     |
+| **OAuthResponseType**        | `code`                | Обязательно задать вместе с `OAuthFlowMode`                          |
+| **OAuthScope**               | `openid profile email` | Должен давать доступ к email пользователя                           |
+| **OAuthCodeChallengeMethod** | `S256`                | Оставляйте `S256`, `plain` — только для древних провайдеров          |
+| **OAuthResource**            | Идентификатор Web API | Только для ADFS, остальные провайдеры параметр игнорируют            |
+
+::: danger OAuthFlowMode и OAuthResponseType меняются вместе
+Если включить `OAuthFlowMode = PKCE`, но не заполнить `OAuthResponseType`, страница входа уйдёт к провайдеру со старым `response_type=token` и будет ждать `code`, которого не будет. Вход зависнет без внятной ошибки. Для PKCE нужны оба параметра.
+:::
+
+::: warning Требования к клиенту в режиме PKCE
+- Клиент должен быть **конфиденциальным**: `OAuthClientSecret` обязателен и отправляется при обмене кода на токен.
+- Access token должен быть **JWT** и содержать `email` (либо `upn`, либо `unique_name`). Провайдерам с непрозрачными токенами оставляйте `implicit_flow`.
+- `OAuthRedirectUri` должен совпадать с зарегистрированным у провайдера символ в символ.
+:::
 
 ::: tip Настройка Keycloak
 **Пошаговая инструкция для Keycloak 26.0.7:**
@@ -30,9 +62,10 @@ order: 2
 3. **Valid redirect URIs:** `https://stormbpmn.company.com/app/signin`
 4. **Web origins:** `https://stormbpmn.company.com`
 5. **Client authentication:** ON
-6. **Standard flow:** ON, **Implicit flow:** ON
-7. **Client Scopes:** email и profile должны быть default
-8. **Получить Client Secret** на вкладке Credentials
+6. **Standard flow:** ON. **Implicit flow** оставьте OFF, если в StormBPMN выбран `OAuthFlowMode = PKCE`; включать его нужно только для legacy-режима `implicit_flow`
+7. Для PKCE: вкладка **Advanced** → **Proof Key for Code Exchange Code Challenge Method** → `S256`
+8. **Client Scopes:** email и profile должны быть default
+9. **Получить Client Secret** на вкладке Credentials
 
 :::
 
@@ -172,6 +205,10 @@ StormBPMN ожидает следующие claims в токене:
 | **OAuthCheckClaim** | Включить проверку  | `true`            |
 | **OAuthClaimName**  | Название claim     | `groups`          |
 | **OAuthClaimValue** | Требуемое значение | `stormbpmn-users` |
+
+::: warning Откуда берётся claim
+Источник значения зависит от режима потока: при `OAuthFlowMode = PKCE` claim читается из access token, при `implicit_flow` — из ответа `/userinfo`. Переключая режим, проверьте, что нужный claim попадает именно туда: в Keycloak за это отвечает соответствующий mapper в client scope.
+:::
 
 ### Встроенная авторизация
 
