@@ -6,3 +6,7 @@ npm-debug.log
 target
 src/.vuepress/.cache/
 src/.vuepress/.temp/
+
+# Индекс релизов для таймлайна на /Changelog/ — генерируется из src/Changelog/*.md
+# на каждой сборке (см. config.ts)
+src/.vuepress/public/changelog-index.json

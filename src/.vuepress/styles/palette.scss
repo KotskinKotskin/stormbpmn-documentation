@@ -1,5 +1,73 @@
+// =============================================================================
+// STORM · ДОКУМЕНТАЦИЯ — палитра под маркетинговый дизайн-язык
+// «Process-Architecture Editorial».
+//
+// Канон токенов живёт во фронте:
+//   stormfullstack/frontend/src/shared/ui/marketing/_design-language.scss
+// Здесь — только то, что vuepress-theme-hope принимает через палитру: гарнитуры,
+// цвета, ширины. Форма (радиусы/тени), @font-face и --mkt-* токены — в index.scss.
+// =============================================================================
 
-    $theme-color: #6366f1;
-    $content-width: 1000px;
-    $sidebar-width: 300px;
-    
+// -----------------------------------------------------------------------------
+// Типографика
+// -----------------------------------------------------------------------------
+// Тело И заголовки — Onest. Display-гарнитура (HS Luna Obscura) вешается точечно
+// на h1/h2 в index.scss: она капсовая, и на h3–h6, в сайдбаре и оглавлении
+// убивает скан длинной технической страницы.
+$font-family:
+    'Onest, "Inter var", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"';
+$font-family-heading: $font-family;
+
+// Моноширинный — JetBrains Mono. По дизайн-языку он остаётся только для кодовых
+// контекстов; в доках это код-блоки и inline-code, то есть ровно его зона.
+$font-family-mono: '"JetBrains Mono", Consolas, Monaco, "Andale Mono", "Ubuntu Mono", monospace';
+
+// -----------------------------------------------------------------------------
+// Цвет
+// -----------------------------------------------------------------------------
+// Бренд-якорь — индиго из лого (--mkt-color-brand). Только один цвет: тема
+// прогоняет $theme-color через color.adjust() в градиенте херо, и на map
+// сборка падает («$color: (light: …) is not a color»). Тёмный вариант (индиго-400,
+// 500-й на тёмном фоне проваливается) задан переменными --theme-color* в index.scss.
+$theme-color: #6366f1;
+
+$text-color: (
+    light: #1e293b,
+    dark: #cbd5e1,
+);
+
+// Тёмные фоны взяты из --mkt-panel-dark маркетинга: #1b1f3a → #0b0d1a.
+$bg-color: (
+    light: #fff,
+    dark: #0b0d1a,
+);
+$bg-color-secondary: (
+    light: #f8fafc,
+    dark: #12152a,
+);
+$bg-color-tertiary: (
+    light: #eef1f6,
+    dark: #1b1f3a,
+);
+
+// Сплошной эквивалент --mkt-border-color (rgba(15, 23, 42, 0.17) на белом).
+$border-color: (
+    light: #dfe2ea,
+    dark: #262b45,
+);
+
+// Тени — здесь только цвет; чертёжная offset-геометрия задаётся в index.scss.
+$box-shadow: (
+    light: rgba(15, 23, 42, 0.08),
+    dark: rgba(0, 0, 0, 0.3),
+);
+$card-shadow: (
+    light: rgba(15, 23, 42, 0.1),
+    dark: rgba(0, 0, 0, 0.35),
+);
+
+// -----------------------------------------------------------------------------
+// Раскладка
+// -----------------------------------------------------------------------------
+$content-width: 1000px;
+$sidebar-width: 300px;
