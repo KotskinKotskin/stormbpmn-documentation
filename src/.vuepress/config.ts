@@ -152,6 +152,15 @@ export default defineUserConfig({
             "link",
             { rel: "preload", href: "/assets/fonts/HS_LunaObscura.woff2", as: "font", type: "font/woff2", crossorigin: "" },
         ],
+        // AI-помощник по документации: плавающая кнопка «Спросить AI» (Ctrl/⌘+I), отвечает
+        // строго по содержимому этого сайта и даёт ссылки на разделы.
+        //
+        // Скрипт самодостаточный — ни сборки, ни зависимостей. Ручку он дёргает по адресу
+        // /ai/ask НА ЭТОМ ЖЕ домене (nginx проксирует её в сервис), поэтому запрос
+        // same-origin и CORS не участвует. Ключей в разметке нет и быть не может.
+        //
+        // Горячая клавиша НЕ Ctrl+K: её занимает встроенный поиск (search-pro).
+        ["script", { src: "https://stormbpmn.com/docs-chat/widget.js", defer: "" }],
     ],
 
     theme: hopeTheme({
