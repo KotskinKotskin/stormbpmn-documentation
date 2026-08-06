@@ -40,6 +40,8 @@ dir:
 
 <LatestChangelog />
 
+<ChangelogTimeline :limit="5" :skip="1" :open-first="false" caption="Что было до этого" />
+
 ::: warning Важно
 Эта документация предназначена для **Enterprise-версии** StormBPMN. Для облачной версии обратитесь к [основной документации](https://docs.stormbpmn.com).
 :::

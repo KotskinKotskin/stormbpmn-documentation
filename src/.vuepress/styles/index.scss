@@ -1,74 +1,413 @@
-.right-anchor {
-    --rightAnchorTextColor: var(--c-text);
-    --rightAnchorFontSize: 14px;
-    /* Btn */
-    --rightAnchorBtnTextColor: var(--rightAnchorTextColor);
-    --rightAnchorBtnBgColor: var(--c-bg);
-    /* Menu */
-    --rightAnchorMenuTextColor: var(--rightAnchorTextColor);
-    --rightAnchorMenuBgColor: var(--c-bg);
+// =============================================================================
+// STORM · ДОКУМЕНТАЦИЯ — маркетинговый дизайн-язык поверх vuepress-theme-hope
+// «Process-Architecture Editorial».
+//
+// Канон токенов живёт во фронте:
+//   stormfullstack/frontend/src/shared/ui/marketing/_design-language.scss
+// Всё, что тема умеет забрать из палитры (гарнитуры, цвета, ширины), задано в
+// palette.scss. Здесь — шрифтовые файлы, --mkt-* токены и чертёжная форма.
+//
+// Селектор тёмной темы у hope 2.0.0-rc.38 — html[data-theme="dark"], НЕ .dark
+// (класс .dark остался от vuepress v1 и ни во что не попадает).
+// =============================================================================
+
+// -----------------------------------------------------------------------------
+// Шрифты — те же файлы и те же метрики, что в приложении
+// -----------------------------------------------------------------------------
+// HS Luna Obscura — display-гарнитура заголовков (Headspace Agency, SIL OFL).
+// Один мастер (Regular), строчные рендерятся капителью → заголовки визуально
+// капсом. Диапазон весов 100–900 объявлен на единственном мастере, чтобы жирный
+// заголовок брал реальные глифы без faux-bold. Лицензия лежит рядом с файлом.
+@font-face {
+    font-family: "HS Luna Obscura";
+    font-weight: 100 900;
+    font-display: swap;
+    font-style: normal;
+
+    // Cap-height Luna (0.78 к em) выше нейтральных гротесков → в том же
+    // font-size она читается крупнее; size-adjust ужимает глиф к em на весь
+    // display-строй разом, не трогая размеры фолбэка.
+    size-adjust: 92%;
+    src: url("/assets/fonts/HS_LunaObscura.woff2") format("woff2");
 }
 
-/* dark theme */
-.dark .right-anchor {
-    --rightAnchorTextColor: var(--c-text);
-    --rightAnchorFontSize: 14px;
-    /* Btn */
-    --rightAnchorBtnTextColor: var(--rightAnchorTextColor);
-    --rightAnchorBtnBgColor: var(--c-bg);
-    /* Menu */
-    --rightAnchorMenuTextColor: var(--rightAnchorTextColor);
-    --rightAnchorMenuBgColor: var(--c-bg);
+// Onest — тело маркетинга (Onest Project, SIL OFL). Российский нейтрально-
+// гуманистический гротеск с кириллицей в основе, читаемая пара к капсовому
+// дисплею Luna. Variable 100–900, сабсет cyr+lat одним файлом.
+@font-face {
+    font-family: Onest;
+    font-weight: 100 900;
+    font-display: swap;
+    font-style: normal;
+    src: url("/assets/fonts/Onest-cyr-lat.woff2") format("woff2");
 }
 
-/* Стили для кнопки "Обсудить покупку" в навбаре */
-.navbar-nav a[href="https://stormbpmn.com/contact-sales"],
-.navbar-items a[href="https://stormbpmn.com/contact-sales"],
-.nav-link[href="https://stormbpmn.com/contact-sales"],
-a[href="https://stormbpmn.com/contact-sales"]
-{
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
-    color: white !important;
-    padding: 4px 16px !important;
-    border-radius: 20px !important;
-    font-weight: bold !important;
-    text-decoration: none !important;
-    margin-left: 10px !important;
-    transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
-    box-shadow: 0 2px 10px rgba(102, 126, 234, 0.3) !important;
-    border: none !important;
-    display: inline-block !important;
-    position: relative !important;
-    overflow: hidden !important;
+// JetBrains Mono — по дизайн-языку живёт только в кодовых контекстах. В доках
+// это код-блоки и inline-code, то есть ровно его зона. Разбит по unicode-range:
+// латиница нужна почти везде, кириллица — только в комментариях внутри примеров.
+@font-face {
+    font-family: "JetBrains Mono";
+    font-weight: 400 700;
+    font-display: swap;
+    font-style: normal;
+    unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+    src: url("/assets/fonts/JetBrainsMono-cyrillic.woff2") format("woff2");
+}
+@font-face {
+    font-family: "JetBrains Mono";
+    font-weight: 400 700;
+    font-display: swap;
+    font-style: normal;
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308,
+        U+0329, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+    src: url("/assets/fonts/JetBrainsMono-latin.woff2") format("woff2");
 }
 
-.navbar-nav a[href="https://stormbpmn.com/contact-sales"]:hover,
-.navbar-items a[href="https://stormbpmn.com/contact-sales"]:hover,
-.nav-link[href="https://stormbpmn.com/contact-sales"]:hover,
-a[href="https://stormbpmn.com/contact-sales"]:hover
-{
-    background: linear-gradient(135deg, #764ba2 0%, #667eea 100%) !important;
-    transform: translateY(-2px) scale(1.05) !important;
-    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6) !important;
+// -----------------------------------------------------------------------------
+// ТОКЕНЫ — крути отсюда
+// -----------------------------------------------------------------------------
+:root {
+    // Гарнитуры. Тело и h3–h6 берут --font-family из палитры; display нужен
+    // точечно, поэтому вынесен отдельным токеном.
+    --mkt-font-display: "HS Luna Obscura", "Onest", "Inter var", sans-serif;
+
+    // Цвет
+    --mkt-color-brand: #6366f1; // бренд-якорь (индиго из лого)
+    --mkt-color-brand-strong: #4f46e5; // насыщенный бренд (кнопки/акценты)
+    --mkt-color-token: #0e9e6e; // «живой токен» из симуляции — сигнатурный акцент
+    --mkt-color-token-glow: #55d88d; // свечение токен-грина
+    --mkt-ink: #0f172a; // near-black — крупные display-заголовки на светлом
+
+    // Семантические статус-цвета — ТОЛЬКО по смыслу
+    --mkt-status-error: #ef4444;
+    --mkt-status-warning: #f59e0b;
+    --mkt-status-success: #10b981;
+
+    // Форма — чертёжная (drafting): жёсткие 1px-края, ВИДИМЫЕ offset-тени,
+    // острый радиус. Тень смещённая, а не размытая — это подпись языка.
+    --mkt-radius: 5px;
+    --mkt-radius-sm: 3px;
+    --mkt-shadow: 2px 2px 0 rgba(15, 23, 42, 0.08);
+    --mkt-shadow-hover: 3px 3px 0 rgba(79, 70, 229, 0.16);
+
+    // Тёмная панель — акцентный блок посреди светлой страницы (карточка релиза).
+    --mkt-panel-dark: radial-gradient(circle at 15% 0%, #1b1f3a 0%, #0b0d1a 45%, #07080f 100%);
+    --mkt-hairline-on-dark: rgba(255, 255, 255, 0.12);
 }
 
-/* Для темной темы */
-.dark .navbar-nav a[href="https://stormbpmn.com/contact-sales"],
-.dark .navbar-items a[href="https://stormbpmn.com/contact-sales"],
-.dark .nav-link[href="https://stormbpmn.com/contact-sales"],
-.dark a[href="https://stormbpmn.com/contact-sales"]
-{
-    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%) !important;
-    box-shadow: 0 2px 10px rgba(255, 107, 107, 0.3) !important;
-    transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+html[data-theme="dark"] {
+    // Бренд на тёмном фоне: индиго-500 в него проваливается, ссылки и активные
+    // пункты сайдбара становятся мутными. Сдвигаем всю четвёрку на шаг светлее.
+    // Задаётся здесь, а не в палитре: $theme-color обязан остаться одним цветом
+    // (тема гоняет его через color.adjust() в градиенте херо).
+    --theme-color: #818cf8; // indigo-400
+    --theme-color-light: #a5b4fc; // indigo-300
+    --theme-color-dark: #6366f1; // indigo-500
+    --theme-color-mask: rgba(129, 140, 248, 0.15);
+
+    --mkt-color-token: #38d99a;
+    --mkt-color-token-glow: #38d99a;
+    --mkt-ink: #f8fafc;
+    --mkt-shadow: 2px 2px 0 rgba(0, 0, 0, 0.3);
+    --mkt-shadow-hover: 3px 3px 0 rgba(0, 0, 0, 0.4);
+
+    // На тёмной теме исходная панель сливается с фоном страницы (#0b0d1a) —
+    // поднимаем её на пару ступеней, чтобы карточка осталась отдельным объектом.
+    --mkt-panel-dark: radial-gradient(circle at 15% 0%, #232a4d 0%, #141830 45%, #0f1222 100%);
 }
 
-.dark .navbar-nav a[href="https://stormbpmn.com/contact-sales"]:hover,
-.dark .navbar-items a[href="https://stormbpmn.com/contact-sales"]:hover,
-.dark .nav-link[href="https://stormbpmn.com/contact-sales"]:hover,
-.dark a[href="https://stormbpmn.com/contact-sales"]:hover
-{
-    background: linear-gradient(135deg, #ee5a52 0%, #ff6b6b 100%) !important;
-    transform: translateY(-2px) scale(1.05) !important;
-    box-shadow: 0 8px 25px rgba(255, 107, 107, 0.6) !important;
+// -----------------------------------------------------------------------------
+// Типографика страницы
+// -----------------------------------------------------------------------------
+// Display только на h1/h2 контента: Luna капсовая и широкая, на h3–h6, в
+// сайдбаре и оглавлении она ломает скан длинной технической страницы.
+.theme-hope-content {
+    h1,
+    h2 {
+        font-family: var(--mkt-font-display);
+        letter-spacing: -0.02em;
+        line-height: 1.25;
+    }
+}
+
+.vp-page-title h1 {
+    font-family: var(--mkt-font-display);
+    letter-spacing: -0.02em;
+    line-height: 1.25;
+}
+
+// Luna сидит высоко в строке: капитель почти упирается в верх line-box, и
+// штатного 1rem под навбаром не хватает — заголовок читается прижатым.
+// Воздух добавляем контейнерам, а не самому h1: у него margin-top/padding-top
+// заняты якорным трюком темы (-navbar-height + navbar-height) и стоят !important.
+.vp-hero-info-wrapper {
+    padding-top: 2.5rem;
+
+    @media (max-width: 959px) {
+        padding-top: 1.5rem;
+    }
+}
+
+.vp-breadcrumb {
+    padding-top: 2rem;
+
+    @media (max-width: 959px) {
+        padding-top: 1rem;
+    }
+}
+
+.vp-page-title {
+    padding-top: 1.5rem;
+
+    @media (max-width: 959px) {
+        padding-top: 0.75rem;
+    }
+}
+
+// Цитаты — бренд-хайрлайн вместо серой полосы (тема хардкодит #eee/#333).
+.theme-hope-content blockquote {
+    border-color: color-mix(in srgb, var(--mkt-color-brand) 45%, transparent);
+    color: var(--text-color-light);
+}
+
+// В доках таблицы почти всегда с числами (порты, таймауты, лимиты) — моноширинные
+// цифры не дают колонкам «плясать» при скролле.
+.theme-hope-content td {
+    font-variant-numeric: tabular-nums;
+}
+
+// -----------------------------------------------------------------------------
+// Форма: код в чертёжной подаче
+// -----------------------------------------------------------------------------
+// Тема даёт мягкие 6px без границы — заменяем на острый радиус, 1px-край и
+// смещённую тень.
+.theme-hope-content div[class*="language-"] {
+    border: 1px solid var(--border-color);
+    border-radius: var(--mkt-radius);
+    box-shadow: var(--mkt-shadow);
+}
+
+.theme-hope-content :not(pre) > code {
+    border-radius: var(--mkt-radius-sm);
+}
+
+// -----------------------------------------------------------------------------
+// Каллауты (::: tip / warning / danger / details)
+// -----------------------------------------------------------------------------
+// Плагин hint красит блоки пастельными заливками с мутными тёмными заголовками
+// и мягкими 8px — самое заметное расхождение с чертёжной формой. Цвет правим
+// через его же переменные (это дешевле и переживает обновление плагина), форму —
+// точечными правилами ниже.
+//
+// Оба селектора обязательны: плагин переобъявляет эти переменные под
+// html[data-theme="dark"], и одного :root не хватило бы по специфичности.
+// Значения при этом одни и те же — они собраны из тем-зависимых токенов.
+:root,
+html[data-theme="dark"] {
+    // Заголовок каллаута — обычные чернила. Акцент несут левая линейка и иконка:
+    // цветной жирный заголовок на светлой подложке (особенно жёлтый warning)
+    // не вытягивает контраст для текста нормального кегля.
+    --important-title-color: var(--text-color);
+    --info-title-color: var(--text-color);
+    --note-title-color: var(--text-color);
+    --tip-title-color: var(--text-color);
+    --warning-title-color: var(--text-color);
+    --caution-title-color: var(--text-color);
+
+    --important-border-color: var(--mkt-color-brand-strong);
+    --info-border-color: var(--mkt-color-brand);
+    --note-border-color: var(--text-color-lighter);
+    --tip-border-color: var(--mkt-color-token); // «живой токен» — сигнатурный акцент
+    --warning-border-color: var(--mkt-status-warning);
+    --caution-border-color: var(--mkt-status-error);
+
+    // Подложка — не пастель, а 7% акцента поверх фона страницы: одинаково
+    // работает в светлой и тёмной теме, без отдельного набора значений.
+    --important-bg-color: color-mix(in srgb, var(--mkt-color-brand-strong) 7%, var(--bg-color));
+    --info-bg-color: color-mix(in srgb, var(--mkt-color-brand) 7%, var(--bg-color));
+    --note-bg-color: var(--bg-color-secondary);
+    --tip-bg-color: color-mix(in srgb, var(--mkt-color-token) 7%, var(--bg-color));
+    --warning-bg-color: color-mix(in srgb, var(--mkt-status-warning) 8%, var(--bg-color));
+    --caution-bg-color: color-mix(in srgb, var(--mkt-status-error) 7%, var(--bg-color));
+
+    --important-code-bg-color: color-mix(in srgb, var(--mkt-color-brand-strong) 14%, transparent);
+    --info-code-bg-color: color-mix(in srgb, var(--mkt-color-brand) 14%, transparent);
+    --note-code-bg-color: color-mix(in srgb, var(--text-color-lighter) 16%, transparent);
+    --tip-code-bg-color: color-mix(in srgb, var(--mkt-color-token) 14%, transparent);
+    --warning-code-bg-color: color-mix(in srgb, var(--mkt-status-warning) 16%, transparent);
+    --caution-code-bg-color: color-mix(in srgb, var(--mkt-status-error) 14%, transparent);
+
+    --detail-bg-color: var(--bg-color-secondary);
+    --detail-text-color: inherit;
+    --detail-code-bg-color: color-mix(in srgb, var(--text-color-lighter) 16%, transparent);
+}
+
+// Форма каллаутов: 1px-рамка по кругу, акцентная линейка слева, острый радиус,
+// смещённая тень. border-color по кругу задаём поштучно (block + inline-end),
+// чтобы левая грань осталась на акцентном цвете из переменной плагина.
+.hint-container.important,
+.hint-container.info,
+.hint-container.note,
+.hint-container.tip,
+.hint-container.warning,
+.hint-container.caution {
+    padding-block: 0.5rem;
+    border-width: 1px;
+    border-style: solid;
+    border-inline-start-width: 3px;
+    border-block-color: var(--border-color);
+    border-inline-end-color: var(--border-color);
+    border-radius: var(--mkt-radius);
+
+    box-shadow: var(--mkt-shadow);
+}
+
+.hint-container.details {
+    border: 1px solid var(--border-color);
+    border-radius: var(--mkt-radius);
+    box-shadow: var(--mkt-shadow);
+
+    // Кружок-маркер темы — на нейтрали палитры вместо хардкод-#ccc/#555.
+    summary::before {
+        background: var(--bg-color-tertiary);
+    }
+}
+
+// -----------------------------------------------------------------------------
+// Херо главной
+// -----------------------------------------------------------------------------
+// Тема клипает заголовок градиентом (indigo → +60° по тону). Дизайн-язык это
+// прямо запрещает: акцент в заголовке = плоский цвет, а не градиент.
+#main-title {
+    background: none;
+    background-clip: border-box;
+    -webkit-background-clip: border-box;
+    -webkit-text-fill-color: currentcolor;
+
+    color: var(--mkt-ink);
+
+    font-family: var(--mkt-font-display);
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+}
+
+#main-description {
+    color: var(--text-color-light);
+    font-weight: 400;
+}
+
+// Кнопки херо — из «таблеток» (radius 2rem) в чертёжные плашки со смещённой
+// тенью: hover уводит плашку на пиксель к курсору, тень подрастает.
+.vp-hero-action {
+    border: 1px solid var(--border-color-dark);
+    border-radius: var(--mkt-radius);
+    box-shadow: var(--mkt-shadow);
+
+    font-size: 1.05rem;
+
+    transition:
+        transform 0.15s ease,
+        box-shadow 0.15s ease,
+        background var(--color-transition);
+
+    &:hover {
+        transform: translate(-1px, -1px);
+        box-shadow: var(--mkt-shadow-hover);
+    }
+
+    &.primary {
+        border-color: var(--mkt-color-brand-strong);
+        background: var(--mkt-color-brand);
+        color: #fff;
+
+        &:hover {
+            background: var(--mkt-color-brand-strong);
+        }
+    }
+}
+
+// -----------------------------------------------------------------------------
+// Навбар: словознак + квалификатор «Enterprise»
+// -----------------------------------------------------------------------------
+// Логотип теперь со словом STORM (storm-logo.svg / storm-logo-dark.svg,
+// переключение light↔dark делает сама тема по классам .light/.dark на <img>).
+// Имя сайта в навбаре сведено к «Enterprise» через navbarTitle в config.ts —
+// иначе рядом со словознаком читалось бы «STORM Storm Enterprise».
+// Тема раскладывает бренд инлайном и ловит логотип на vertical-align: top —
+// словознак и чип при этом садятся на разные линии. Flex выравнивает их по
+// оптическому центру независимо от высоты картинки и кегля чипа.
+.vp-brand {
+    display: inline-flex;
+    align-items: center;
+}
+
+.vp-nav-logo {
+    height: 1.6rem;
+    width: auto;
+    margin-inline-end: 0.6rem;
+
+    @media (max-width: 719px) {
+        height: 1.4rem;
+    }
+}
+
+// Квалификатор — плоский чип в инженерной подаче (uppercase + трекинг), без
+// градиентов. Живёт на бренд-цвете, поэтому читается и на светлой, и на тёмной.
+.vp-site-name {
+    padding: 0.1rem 0.45rem;
+    border: 1px solid color-mix(in srgb, var(--mkt-color-brand) 45%, transparent);
+    border-radius: var(--mkt-radius-sm);
+
+    background: color-mix(in srgb, var(--mkt-color-brand) 10%, transparent);
+    color: var(--mkt-color-brand);
+
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+
+    .vp-brand:hover & {
+        border-color: var(--mkt-color-brand);
+        color: var(--mkt-color-brand-strong);
+    }
+}
+
+// -----------------------------------------------------------------------------
+// CTA «Обсудить покупку»
+// -----------------------------------------------------------------------------
+// Было: фиолетовый градиент 667eea→764ba2 + красный градиент в тёмной теме +
+// scale на hover — ровно тот дженерик-SaaS-телл, который дизайн-язык вычищает.
+// Стало: плоская бренд-плашка чертёжной формы. Селектор по .nav-link, чтобы
+// правило не цепляло ссылки на contact-sales внутри текста страниц (раньше
+// цеплял голый a[href=...] — под стиль кнопки попадал любой такой линк).
+.nav-link[href="https://stormbpmn.com/contact-sales"] {
+    display: inline-block;
+    margin-inline-start: 0.5rem;
+    padding: 0.25rem 0.85rem;
+    border: 1px solid var(--mkt-color-brand-strong);
+    border-radius: var(--mkt-radius);
+
+    background: var(--mkt-color-brand);
+    box-shadow: var(--mkt-shadow);
+
+    color: #fff !important; // тема красит .nav-link в --grey-dark
+    font-weight: 600;
+    text-decoration: none;
+
+    transition:
+        transform 0.15s ease,
+        box-shadow 0.15s ease,
+        background var(--color-transition);
+
+    // Тема подчёркивает активный пункт полоской ::after — на плашке она лишняя.
+    &::after {
+        display: none;
+    }
+
+    &:hover {
+        background: var(--mkt-color-brand-strong);
+        box-shadow: var(--mkt-shadow-hover);
+        transform: translate(-1px, -1px);
+    }
 }
