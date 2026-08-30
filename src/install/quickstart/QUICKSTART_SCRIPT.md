@@ -72,7 +72,9 @@ sudo ./install.sh
 - В **Advanced container settings** выберите вкладку **Env**
 - Внизу списка нажмите **Add an environment variable**
 - В поле **name** укажите `LICENSE_KEY_V2`, а в поле **value** — переданный вам ключ v2.
-  Переменная `LICENSE_KEY` и лицензии v1 больше не принимаются
+  Существующий `LICENSE_KEY` временно поддерживается, но устарел из-за известного ограничения
+  безопасности. Если заданы обе переменные, непустой `LICENSE_KEY_V2` используется
+  исключительно; неверный v2 не приводит к возврату на v1
 - Над **Advanced container settings** нажмите **Deploy the container**, а затем **Replace**
 - Дождитесь перезапуска приложения и проверьте лицензию на странице
   [http://localhost:8081/admin-onboarding](http://localhost:8081/admin-onboarding), затем
