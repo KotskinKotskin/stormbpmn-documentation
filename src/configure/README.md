@@ -32,7 +32,7 @@ StormBPMN использует **двухуровневую систему на�
 | **JAVA_OPTS**              | Настройки памяти для JVM                         | `"-Xmx8g"`                                 | ✅            |
 | **SPRING_PROFILES_ACTIVE** | Профиль Spring Boot                              | `prod`                                     | ✅            |
 | **JWTSECRET**              | Соль для шифрования паролей                      | Не менее 64 случайных символов             | ✅            |
-| **LICENSE_KEY**            | Лицензионный ключ Enterprise                     | `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...`  | ✅            |
+| **LICENSE_KEY_V2**         | Подписанный JWS-ключ Enterprise v2                | Получите по полному коду активации инсталляции | ✅         |
 | **S3_ENDPOINT**            | URL S3-совместимого хранилища                    | `http://192.168.0.4:9000`                  | Файлы        |
 | **S3_ACCESS_KEY**          | Ключ доступа к S3                                | `stormbpmn-s3-user`                        | Файлы        |
 | **S3_SECRET_KEY**          | Секретный ключ S3                                | `stormbpmn-s3-password`                    | Файлы        |
@@ -202,7 +202,7 @@ StormBPMN использует **двухуровневую систему на�
     JAVA_OPTS="-Xmx8g"
     SPRING_PROFILES_ACTIVE=prod
     JWTSECRET=your-secret-key-here
-    LICENSE_KEY=your-license-key
+    LICENSE_KEY_V2=your-license-v2
     ```
 
 2. **Дополнительные сервисы** (по необходимости):
@@ -260,7 +260,7 @@ StormBPMN использует **двухуровневую систему на�
 | Приложение не запускается | Неверные JDBC параметры     | Проверьте подключение к БД                    |
 | Нет миниатюр диаграмм     | Неверные MINIO параметры    | Проверьте доступность S3                      |
 | Не приходят письма        | Неверные почтовые настройки | Проверьте EMAIL_PROVIDER и параметры          |
-| Ошибки лицензии           | Неверный LICENSE_KEY        | Обратитесь к менеджеру                        |
+| Ошибки лицензии           | Нет или неверен `LICENSE_KEY_V2` | Скопируйте полный код с `/admin-onboarding` и обратитесь к менеджеру |
 | Не скачивается PDF        | Ненастроен Gotenberg        | Проверьте GOTENBERG_URL и доступность сервиса |
 | Нет совместного редактирования | REDIS_ENABLED=false или Redis недоступен | Проверьте REDIS_ENABLED, REDIS_HOST и подключение |
 
