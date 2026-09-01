@@ -1,8 +1,8 @@
 ---
 dir:
-    order: 8
+    order: 9
     link: true
-    text: 8. Гайды
+    text: 9. Гайды
     collapsible: true
 ---
 

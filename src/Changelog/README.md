@@ -1,10 +1,10 @@
 ---
 dir:
-    order: 9
+    order: 10
     link: true
-    text: 9. Последняя версия и история изменений
+    text: 10. Последняя версия и история изменений
     collapsible: true
-order: 9
+order: 10
 ---
 
 # Changelog

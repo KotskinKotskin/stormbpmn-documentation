@@ -228,6 +228,10 @@ export default defineUserConfig({
                 text: "🤖 AI-ассистент",
                 children: ["/ai/", "/ai/AI_CHAT.html", "/ai/KnowledgeBase.html", "/ai/self-hosted-llm/", "/ai/voice-input.html"],
             },
+            {
+                text: "📊 Симуляции",
+                children: ["/simulation/", "/simulation/install.html", "/simulation/operation.html"],
+            },
             "/operation/",
             "/support/",
             "/Changelog/",

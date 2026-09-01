@@ -1,10 +1,10 @@
 ---
 dir:
-    order: 7
+    order: 8
     link: true
-    text: 7. Техническая поддержка
+    text: 8. Техническая поддержка
     collapsible: false
-order: 7
+order: 8
 ---
 
 [[toc]]
