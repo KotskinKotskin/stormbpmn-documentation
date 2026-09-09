@@ -61,7 +61,44 @@ order: 11
 
 ## Компонентная схема
 
-![Компонентная схема развёртывания StormBPMN](./components.svg)
+```mermaid
+%%{init: {"flowchart": {"useMaxWidth": true, "htmlLabels": true, "nodeSpacing": 45, "rankSpacing": 60}, "themeVariables": {"fontSize": "13px", "edgeLabelBackground": "#ffffff"}} }%%
+flowchart LR
+    classDef role fill:#d9f2d9,stroke:#2f7d32,stroke-width:1.5px,color:#111827
+    classDef system fill:#dbeafe,stroke:#1d4ed8,stroke-width:1.5px,color:#111827
+    classDef proc fill:#ffffff,stroke:#1f2937,stroke-width:1.5px,color:#111827
+
+    users(["Пользователи<br/>(браузер)"]):::role
+    admins(["Администраторы"]):::role
+
+    nginx["1. Балансировщик nginx:<br/>HTTPS, WebSocket"]:::proc
+    app["2. Приложение<br/>StormBPMN"]:::proc
+    des["3. Модуль симуляций<br/>Storm DES"]:::proc
+    aux["4. PlantUML, Gotenberg,<br/>ListMonk"]:::proc
+
+    pg(["PostgreSQL 12+<br/>с расширениями"]):::system
+    s3(["S3-совместимое<br/>хранилище"]):::system
+    redis(["Redis — для нескольких<br/>экземпляров"]):::system
+    idp(["Keycloak или<br/>корпоративный OIDC"]):::system
+    smtp(["SMTP-сервер"]):::system
+    llm(["LLM-провайдер —<br/>только с AI-модулем"]):::system
+    mon(["Prometheus, Grafana"]):::system
+    siem(["SIEM, коллектор логов"]):::system
+
+    users -- "HTTPS, WSS" --> nginx
+    admins -- "HTTPS" --> nginx
+    nginx -- "HTTP, WebSocket" --> app
+    app -- "HTTP" --> des
+    app -- "HTTP" --> aux
+    app -- "JDBC" --> pg
+    app -- "S3 API" --> s3
+    app -- "pub/sub" --> redis
+    app -- "OIDC" --> idp
+    app -- "SMTP" --> smtp
+    app -- "HTTPS" --> llm
+    app -- "метрики" --> mon
+    app -- "syslog" --> siem
+```
 
 | № | Компонент | Назначение | Обязательность |
 | --- | --- | --- | --- |

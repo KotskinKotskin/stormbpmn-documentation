@@ -24,21 +24,65 @@ order: 1
 
 ## Условные обозначения
 
-Схемы выполнены в нотации диаграмм потоков данных (DFD, нотация Йордана — Де Марко).
+Схемы построены как диаграммы потоков данных (DFD) в упрощённых обозначениях.
 
 | Обозначение | Смысл |
 | --- | --- |
 | Прямоугольник с номером | Процесс — действие, которое преобразует данные |
-| Прямоугольник, открытый справа | Хранилище данных |
+| Цилиндр | Хранилище данных |
 | Зелёная скруглённая фигура | Внешняя сущность: роль пользователя |
 | Синяя скруглённая фигура | Внешняя сущность: смежная система |
 | Стрелка с подписью | Поток данных и его содержание |
+
+::: tip Схемы можно перерисовать под свою нотацию
+Если у вас принята строгая нотация DFD — Йордана — Де Марко, Гейна — Сарсона или другая, —
+перерисуйте схемы в ней: состав процессов, хранилищ и потоков от этого не изменится. Исходники
+диаграмм лежат прямо в тексте страницы (блоки `mermaid`) — их удобно скопировать и править.
+Полный перечень потоков продублирован таблицами: по ним схему можно собрать заново в любом
+редакторе.
 
 ## Контекстная диаграмма (уровень 0)
 
 Система целиком, её пользователи и смежные системы.
 
-![Контекстная диаграмма потоков данных StormBPMN](./dfd-context.svg)
+```mermaid
+%%{init: {"flowchart": {"useMaxWidth": true, "htmlLabels": true, "nodeSpacing": 45, "rankSpacing": 60}, "themeVariables": {"fontSize": "13px", "edgeLabelBackground": "#ffffff"}} }%%
+flowchart LR
+    classDef role fill:#d9f2d9,stroke:#2f7d32,stroke-width:1.5px,color:#111827
+    classDef system fill:#dbeafe,stroke:#1d4ed8,stroke-width:1.5px,color:#111827
+    classDef proc fill:#ffffff,stroke:#1f2937,stroke-width:1.5px,color:#111827
+
+    analyst(["Аналитик, методолог"]):::role
+    approver(["Согласующий"]):::role
+    reader(["Читатель"]):::role
+    teamadmin(["Администратор команды"]):::role
+    sysadmin(["Администратор системы"]):::role
+    security(["Служба ИБ"]):::role
+
+    storm["0. Система StormBPMN:<br/>моделирование процессов, реестр процессов,<br/>архитектура, оргструктура, вики,<br/>управление доступом"]:::proc
+
+    idp(["Корпоративный IdP<br/>OIDC / OAuth2"]):::system
+    smtp(["Почтовый сервер SMTP"]):::system
+    s3(["S3-совместимое хранилище"]):::system
+    pg(["PostgreSQL"]):::system
+    siem(["SIEM, коллектор логов"]):::system
+    mon(["Prometheus, Grafana"]):::system
+
+    analyst -- "модели процессов, атрибуты" --> storm
+    storm -- "запрос на согласование" --> approver
+    approver -- "решение по согласованию" --> storm
+    storm -- "модели и карточки на чтение" --> reader
+    teamadmin -- "права, группы, справочники" --> storm
+    sysadmin -- "конфигурация, обновления" --> storm
+    storm -- "события аудита" --> security
+
+    storm <-- "аутентификация, атрибуты пользователя" --> idp
+    storm -- "письма и приглашения" --> smtp
+    storm <-- "файлы, превью, вложения" --> s3
+    storm <-- "данные платформы" --> pg
+    storm -- "журнал действий (syslog)" --> siem
+    storm -- "метрики /actuator" --> mon
+```
 
 | Внешняя сущность | Тип | Что передаёт в систему | Что получает из системы |
 | --- | --- | --- | --- |
@@ -60,7 +104,82 @@ order: 1
 Основной сценарий работы аналитика: создать модель, обсудить, согласовать, опубликовать и через
 время отправить в архив.
 
-![Жизненный цикл модели процесса](./dfd-modeling.svg)
+**Создание и правка модели.**
+
+```mermaid
+%%{init: {"flowchart": {"useMaxWidth": true, "htmlLabels": true, "nodeSpacing": 45, "rankSpacing": 60}, "themeVariables": {"fontSize": "13px", "edgeLabelBackground": "#ffffff"}} }%%
+flowchart LR
+    classDef role fill:#d9f2d9,stroke:#2f7d32,stroke-width:1.5px,color:#111827
+    classDef system fill:#dbeafe,stroke:#1d4ed8,stroke-width:1.5px,color:#111827
+    classDef proc fill:#ffffff,stroke:#1f2937,stroke-width:1.5px,color:#111827
+    classDef store fill:#f3f4f6,stroke:#1f2937,stroke-width:1.5px,color:#111827
+
+    analyst(["Аналитик, автор модели"]):::role
+    approver(["Согласующий"]):::role
+
+    p1["1.1 Создание модели<br/>в редакторе"]:::proc
+    p2["1.2 Редактирование<br/>и автосохранение"]:::proc
+    p3["1.3 Обсуждение<br/>в комментариях"]:::proc
+
+    d1[("D1 Модели процессов")]:::store
+    d2[("D2 Версии моделей")]:::store
+    d4[("D4 Комментарии")]:::store
+    d6[("D6 Файлы, превью,<br/>вложения")]:::store
+
+    analyst -- "название, папка, шаблон" --> p1
+    analyst -- "элементы схемы" --> p2
+    approver -- "замечания" --> p3
+
+    p1 -- "модель в статусе «Новый»" --> d1
+    p2 -- "тело схемы" --> d1
+    p2 -- "снимок версии" --> d2
+    p2 -- "превью, вложения" --> d6
+    p3 -- "комментарий" --> d4
+```
+
+**Согласование, публикация и чтение.**
+
+```mermaid
+%%{init: {"flowchart": {"useMaxWidth": true, "htmlLabels": true, "nodeSpacing": 45, "rankSpacing": 60}, "themeVariables": {"fontSize": "13px", "edgeLabelBackground": "#ffffff"}} }%%
+flowchart LR
+    classDef role fill:#d9f2d9,stroke:#2f7d32,stroke-width:1.5px,color:#111827
+    classDef system fill:#dbeafe,stroke:#1d4ed8,stroke-width:1.5px,color:#111827
+    classDef proc fill:#ffffff,stroke:#1f2937,stroke-width:1.5px,color:#111827
+    classDef store fill:#f3f4f6,stroke:#1f2937,stroke-width:1.5px,color:#111827
+
+    analyst(["Аналитик, автор модели"]):::role
+    approver(["Согласующий"]):::role
+    reader(["Читатель"]):::role
+    smtp(["Почтовый сервер"]):::system
+
+    p4["1.4 Отправка<br/>на согласование"]:::proc
+    p5["1.5 Решение<br/>согласующего"]:::proc
+    p6["1.6 Перевод<br/>в статус «Готов»"]:::proc
+    p7["1.7 Архивирование<br/>модели"]:::proc
+    p8["1.8 Просмотр,<br/>поиск, выгрузка"]:::proc
+
+    d1[("D1 Модели процессов")]:::store
+    d3[("D3 Согласования")]:::store
+    d5[("D5 Права доступа<br/>к моделям")]:::store
+    d7[("D7 Уведомления")]:::store
+
+    analyst -- "список согласующих" --> p4
+    approver -- "решение и комментарий" --> p5
+    analyst -- "решение о публикации" --> p6
+    analyst -- "решение об архивации" --> p7
+    reader -- "поисковый запрос" --> p8
+
+    p4 -- "запрос на текущую версию" --> d3
+    p4 -- "доступ согласующим" --> d5
+    p4 -- "оповещение" --> d7
+    p5 -- "статус, время, комментарий" --> d3
+    p5 -- "оповещение автору" --> d7
+    p6 -- "статус «Готов»" --> d1
+    p7 -- "статус «Архив»" --> d1
+    d7 -- "письмо" --> smtp
+    d1 -- "модели по правам" --> p8
+    d5 -- "проверка прав" --> p8
+```
 
 ### Процессы
 
@@ -103,7 +222,6 @@ order: 1
 
 ```mermaid
 stateDiagram-v2
-    direction LR
     state "Новый" as new
     state "В работе" as progress
     state "На согласовании" as approval
@@ -157,7 +275,74 @@ stateDiagram-v2
 Реестр процессов — каталог процессов организации с атрибутами, статусами и связями. Модели
 привязываются к карточкам процессов, а не заменяют их.
 
-![Ведение реестра процессов](./dfd-registry.svg)
+**Ведение карточек процессов.**
+
+```mermaid
+%%{init: {"flowchart": {"useMaxWidth": true, "htmlLabels": true, "nodeSpacing": 45, "rankSpacing": 60}, "themeVariables": {"fontSize": "13px", "edgeLabelBackground": "#ffffff"}} }%%
+flowchart LR
+    classDef role fill:#d9f2d9,stroke:#2f7d32,stroke-width:1.5px,color:#111827
+    classDef system fill:#dbeafe,stroke:#1d4ed8,stroke-width:1.5px,color:#111827
+    classDef proc fill:#ffffff,stroke:#1f2937,stroke-width:1.5px,color:#111827
+    classDef store fill:#f3f4f6,stroke:#1f2937,stroke-width:1.5px,color:#111827
+
+    owner(["Владелец процесса"]):::role
+    analyst(["Аналитик, методолог"]):::role
+    admin(["Администратор команды"]):::role
+
+    p1["2.1 Создание<br/>карточки процесса"]:::proc
+    p2["2.2 Заполнение<br/>атрибутов и полей"]:::proc
+    p3["2.3 Привязка моделей<br/>к процессу"]:::proc
+    p4["2.4 Настройка<br/>структуры реестра"]:::proc
+    p5["2.5 Смена статуса<br/>процесса"]:::proc
+
+    d8[("D8 Реестр процессов")]:::store
+    d9[("D9 Структура реестра")]:::store
+    d10[("D10 Поля<br/>и справочники")]:::store
+    d1[("D1 Модели процессов")]:::store
+
+    owner -- "название, владелец, границы" --> p1
+    owner -- "новый статус" --> p5
+    analyst -- "значения атрибутов" --> p2
+    analyst -- "ссылки на модели" --> p3
+    admin -- "уровни, статусы, поля" --> p4
+
+    p1 -- "карточка процесса" --> d8
+    p2 -- "атрибуты карточки" --> d8
+    p2 -- "значения полей" --> d10
+    p3 -- "связь «процесс — модель»" --> d1
+    p4 -- "конфигурация реестра" --> d9
+    p5 -- "статус, проверка полей" --> d8
+```
+
+**Связи, представления и витрины.**
+
+```mermaid
+%%{init: {"flowchart": {"useMaxWidth": true, "htmlLabels": true, "nodeSpacing": 45, "rankSpacing": 60}, "themeVariables": {"fontSize": "13px", "edgeLabelBackground": "#ffffff"}} }%%
+flowchart LR
+    classDef role fill:#d9f2d9,stroke:#2f7d32,stroke-width:1.5px,color:#111827
+    classDef system fill:#dbeafe,stroke:#1d4ed8,stroke-width:1.5px,color:#111827
+    classDef proc fill:#ffffff,stroke:#1f2937,stroke-width:1.5px,color:#111827
+    classDef store fill:#f3f4f6,stroke:#1f2937,stroke-width:1.5px,color:#111827
+
+    reader(["Читатель, руководитель"]):::role
+
+    p6["2.6 Просмотр реестра,<br/>поиск, выгрузка"]:::proc
+    p7["2.7 Связывание процесса<br/>с ролями и системами"]:::proc
+    p8["2.8 Витрины, отчёты,<br/>метрики"]:::proc
+
+    d8[("D8 Реестр процессов")]:::store
+    d11[("D11 Элементы<br/>архитектуры")]:::store
+    d12[("D12 Оргструктура<br/>и роли")]:::store
+    d13[("D13 Вики<br/>и регламенты")]:::store
+
+    reader -- "фильтры, поиск" --> p6
+    d8 -- "срез по правам" --> p6
+    d8 -- "карточки процессов" --> p7
+    p7 -- "связи с системами" --> d11
+    p7 -- "связи с ролями" --> d12
+    d8 -- "данные реестра" --> p8
+    p8 -- "витрины и страницы" --> d13
+```
 
 | № | Процесс | Что происходит |
 | --- | --- | --- |
@@ -191,7 +376,80 @@ stateDiagram-v2
 
 ## DFD-3. Управление пользователями и правами
 
-![Управление пользователями, правами и лицензионными местами](./dfd-user-management.svg)
+**Появление пользователя и выдача прав.**
+
+```mermaid
+%%{init: {"flowchart": {"useMaxWidth": true, "htmlLabels": true, "nodeSpacing": 45, "rankSpacing": 60}, "themeVariables": {"fontSize": "13px", "edgeLabelBackground": "#ffffff"}} }%%
+flowchart LR
+    classDef role fill:#d9f2d9,stroke:#2f7d32,stroke-width:1.5px,color:#111827
+    classDef system fill:#dbeafe,stroke:#1d4ed8,stroke-width:1.5px,color:#111827
+    classDef proc fill:#ffffff,stroke:#1f2937,stroke-width:1.5px,color:#111827
+    classDef store fill:#f3f4f6,stroke:#1f2937,stroke-width:1.5px,color:#111827
+
+    employee(["Сотрудник"]):::role
+    hr(["Кадровая служба"]):::role
+    teamadmin(["Администратор команды"]):::role
+    idp(["Корпоративный IdP"]):::system
+    smtp(["Почтовый сервер"]):::system
+
+    p1["3.1 Аутентификация<br/>пользователя"]:::proc
+    p2["3.2 Создание<br/>учётной записи"]:::proc
+    p3["3.3 Приглашение<br/>в команду"]:::proc
+    p4["3.4 Назначение<br/>прав и групп"]:::proc
+
+    d14[("D14 Пользователи")]:::store
+    d15[("D15 Участники команд")]:::store
+    d16[("D16 Группы прав<br/>и привилегии")]:::store
+
+    employee -- "вход в систему" --> p1
+    hr -- "заведение, блокировка" --> idp
+    teamadmin -- "адреса приглашаемых" --> p3
+    teamadmin -- "право, группы" --> p4
+
+    p1 -- "запрос аутентификации" --> idp
+    idp -- "токен, атрибуты пользователя" --> p2
+    p1 -- "отметка о входе" --> d14
+    p2 -- "учётная запись" --> d14
+    p3 -- "приглашение" --> d15
+    p3 -- "письмо с приглашением" --> smtp
+    p4 -- "членство в группах" --> d16
+```
+
+**Ограничения, отзыв доступа и учёт мест.**
+
+```mermaid
+%%{init: {"flowchart": {"useMaxWidth": true, "htmlLabels": true, "nodeSpacing": 45, "rankSpacing": 60}, "themeVariables": {"fontSize": "13px", "edgeLabelBackground": "#ffffff"}} }%%
+flowchart LR
+    classDef role fill:#d9f2d9,stroke:#2f7d32,stroke-width:1.5px,color:#111827
+    classDef system fill:#dbeafe,stroke:#1d4ed8,stroke-width:1.5px,color:#111827
+    classDef proc fill:#ffffff,stroke:#1f2937,stroke-width:1.5px,color:#111827
+    classDef store fill:#f3f4f6,stroke:#1f2937,stroke-width:1.5px,color:#111827
+
+    teamadmin(["Администратор команды"]):::role
+    sysadmin(["Администратор системы"]):::role
+    security(["Служба ИБ"]):::role
+    siem(["SIEM"]):::system
+
+    p5["3.5 Ограничение доступа<br/>к папкам и вики"]:::proc
+    p6["3.6 Блокировка и удаление<br/>учётной записи"]:::proc
+    p7["3.7 Учёт<br/>лицензионных мест"]:::proc
+
+    d14[("D14 Пользователи")]:::store
+    d15[("D15 Участники команд")]:::store
+    d17[("D17 Правила доступа<br/>к папкам")]:::store
+    d18[("D18 Лицензионные места<br/>и сессии")]:::store
+    d19[("D19 Журнал действий")]:::store
+
+    teamadmin -- "правила доступа" --> p5
+    sysadmin -- "решение о деактивации" --> p6
+    security -- "запрос отчёта" --> p7
+
+    p5 -- "правило с наследованием" --> d17
+    p6 -- "исключение из команды" --> d15
+    p6 -- "признак удаления" --> d14
+    p7 -- "выдача и освобождение места" --> d18
+    d19 -- "поток событий по syslog" --> siem
+```
 
 Процессы 3.1–3.7 подробно описаны на отдельной странице —
 [Управление пользователями](./user-management.md), включая жизненный цикл учётной записи,
