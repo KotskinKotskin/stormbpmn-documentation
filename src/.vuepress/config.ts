@@ -182,6 +182,9 @@ export default defineUserConfig({
                 tasklist: true,
                 hint: true,
                 component: true,
+                // Диаграммы прямо в тексте страницы: ```mermaid. Рендерятся на клиенте и
+                // грузятся динамически — на страницах без диаграмм библиотека не подтягивается.
+                mermaid: true,
             },
         },
         repo: "KotskinKotskin/stormbpmn-documentation",

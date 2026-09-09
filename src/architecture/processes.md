@@ -101,6 +101,30 @@ order: 1
 
 ### Статусы модели
 
+```mermaid
+stateDiagram-v2
+    direction LR
+    state "Новый" as new
+    state "В работе" as progress
+    state "На согласовании" as approval
+    state "Готов" as done
+    state "Архив" as archive
+
+    [*] --> new: создание модели
+    new --> progress: начало проработки
+    progress --> approval: отправка согласующим
+    approval --> progress: получено отклонение
+    approval --> done: все решения получены
+    done --> progress: требуется изменение
+    done --> archive: модель устарела
+    archive --> progress: возврат в работу
+
+    note right of approval
+        Статусы «На согласовании», «Готов» и «Архив»
+        понижают доступ к модели до чтения
+    end note
+```
+
 | Статус | Что означает | Максимальный доступ |
 | --- | --- | --- |
 | Новый | Модель создана, работа не начиналась | По правам пользователя |
