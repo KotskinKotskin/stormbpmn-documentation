@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1420 780" width="1420" height="780" role="img" aria-label="Компонентная схема развёртывания StormBPMN">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#4b5563"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="1420" height="780" fill="#ffffff"/>
+  <text x="24" y="30" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="700" fill="#111827">Компонентная схема развёртывания StormBPMN</text>
+<rect x="30" y="300" width="190" height="56" rx="28.0" fill="#d9f2d9" stroke="#2f7d32" stroke-width="1.6"/>
+<text x="125.0" y="332.8" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#111827" text-anchor="middle">Пользователи (браузер)</text>
+<rect x="30" y="420" width="190" height="56" rx="28.0" fill="#d9f2d9" stroke="#2f7d32" stroke-width="1.6"/>
+<text x="125.0" y="452.8" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#111827" text-anchor="middle">Администраторы</text>
+<rect x="270" y="300" width="200" height="76" rx="4" fill="#ffffff" stroke="#1f2937" stroke-width="1.6"/>
+<line x1="270" y1="322" x2="470" y2="322" stroke="#1f2937" stroke-width="1"/>
+<text x="370.0" y="316" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="600" fill="#1f2937" text-anchor="middle">1</text>
+<text x="370.0" y="346.0" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="normal" fill="#111827" text-anchor="middle">Балансировщик nginx: HTTPS,</text>
+<text x="370.0" y="362.0" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="normal" fill="#111827" text-anchor="middle">WebSocket</text>
+<rect x="540" y="160" width="230" height="110" rx="4" fill="#ffffff" stroke="#1f2937" stroke-width="1.6"/>
+<line x1="540" y1="182" x2="770" y2="182" stroke="#1f2937" stroke-width="1"/>
+<text x="655.0" y="176" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="600" fill="#1f2937" text-anchor="middle">2</text>
+<text x="655.0" y="231.0" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="normal" fill="#111827" text-anchor="middle">Приложение StormBPMN</text>
+<rect x="540" y="320" width="230" height="80" rx="4" fill="#ffffff" stroke="#1f2937" stroke-width="1.6"/>
+<line x1="540" y1="342" x2="770" y2="342" stroke="#1f2937" stroke-width="1"/>
+<text x="655.0" y="336" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="600" fill="#1f2937" text-anchor="middle">3</text>
+<text x="655.0" y="376.0" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="normal" fill="#111827" text-anchor="middle">Модуль симуляций Storm DES</text>
+<rect x="540" y="450" width="230" height="90" rx="4" fill="#ffffff" stroke="#1f2937" stroke-width="1.6"/>
+<line x1="540" y1="472" x2="770" y2="472" stroke="#1f2937" stroke-width="1"/>
+<text x="655.0" y="466" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="600" fill="#1f2937" text-anchor="middle">4</text>
+<text x="655.0" y="511.0" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="normal" fill="#111827" text-anchor="middle">PlantUML, Gotenberg, ListMonk</text>
+<rect x="940" y="120" width="230" height="62" rx="31.0" fill="#dbeafe" stroke="#1d4ed8" stroke-width="1.6"/>
+<text x="1055.0" y="155.8" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#111827" text-anchor="middle">PostgreSQL 12+ с расширениями</text>
+<rect x="940" y="200" width="230" height="62" rx="31.0" fill="#dbeafe" stroke="#1d4ed8" stroke-width="1.6"/>
+<text x="1055.0" y="235.8" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#111827" text-anchor="middle">S3-совместимое хранилище</text>
+<rect x="940" y="280" width="230" height="62" rx="31.0" fill="#dbeafe" stroke="#1d4ed8" stroke-width="1.6"/>
+<text x="1055.0" y="315.8" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#111827" text-anchor="middle">Redis (для нескольких экземпляров)</text>
+<rect x="940" y="360" width="230" height="62" rx="31.0" fill="#dbeafe" stroke="#1d4ed8" stroke-width="1.6"/>
+<text x="1055.0" y="395.8" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#111827" text-anchor="middle">Keycloak или корпоративный OIDC</text>
+<rect x="940" y="440" width="230" height="62" rx="31.0" fill="#dbeafe" stroke="#1d4ed8" stroke-width="1.6"/>
+<text x="1055.0" y="475.8" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#111827" text-anchor="middle">SMTP-сервер</text>
+<rect x="940" y="520" width="230" height="62" rx="31.0" fill="#dbeafe" stroke="#1d4ed8" stroke-width="1.6"/>
+<text x="1055.0" y="548.0" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#111827" text-anchor="middle">LLM-провайдер (только с</text>
+<text x="1055.0" y="563.5" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#111827" text-anchor="middle">AI-модулем)</text>
+<rect x="940" y="40" width="230" height="62" rx="31.0" fill="#dbeafe" stroke="#1d4ed8" stroke-width="1.6"/>
+<text x="1055.0" y="75.8" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#111827" text-anchor="middle">Prometheus, Grafana</text>
+<rect x="1190" y="120" width="200" height="62" rx="31.0" fill="#dbeafe" stroke="#1d4ed8" stroke-width="1.6"/>
+<text x="1290.0" y="155.8" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#111827" text-anchor="middle">SIEM, коллектор логов</text>
+<path d="M 220.0 328.0 L 270.0 338.0" fill="none" stroke="#4b5563" stroke-width="1.3" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<text x="245.0" y="325.0" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="10.5" fill="#4b5563" text-anchor="middle">HTTPS, WSS</text>
+<path d="M 220.0 448.0 L 370.0 448.0 L 370.0 376.0" fill="none" stroke="#4b5563" stroke-width="1.3" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<text x="295.0" y="440.0" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="10.5" fill="#4b5563" text-anchor="middle">HTTPS</text>
+<path d="M 470.0 338.0 L 610.0 338.0 L 610.0 270.0" fill="none" stroke="#4b5563" stroke-width="1.3" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<text x="540.0" y="285.0" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="10.5" fill="#4b5563" text-anchor="middle">HTTP, WebSocket</text>
+<path d="M 770.0 200.0 L 870.0 200.0" fill="none" stroke="#4b5563" stroke-width="1.3" stroke-linejoin="round"/>
+<path d="M 870.0 200.0 L 870.0 551.0" fill="none" stroke="#4b5563" stroke-width="1.3" stroke-linejoin="round"/>
+<path d="M 870.0 151.0 L 940.0 151.0" fill="none" stroke="#4b5563" stroke-width="1.3" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<text x="905.0" y="144.0" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="10.5" fill="#4b5563" text-anchor="middle">JDBC</text>
+<path d="M 870.0 231.0 L 940.0 231.0" fill="none" stroke="#4b5563" stroke-width="1.3" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<text x="905.0" y="224.0" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="10.5" fill="#4b5563" text-anchor="middle">S3 API</text>
+<path d="M 870.0 311.0 L 940.0 311.0" fill="none" stroke="#4b5563" stroke-width="1.3" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<text x="905.0" y="304.0" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="10.5" fill="#4b5563" text-anchor="middle">pub/sub</text>
+<path d="M 870.0 391.0 L 940.0 391.0" fill="none" stroke="#4b5563" stroke-width="1.3" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<text x="905.0" y="384.0" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="10.5" fill="#4b5563" text-anchor="middle">OIDC</text>
+<path d="M 870.0 471.0 L 940.0 471.0" fill="none" stroke="#4b5563" stroke-width="1.3" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<text x="905.0" y="464.0" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="10.5" fill="#4b5563" text-anchor="middle">SMTP</text>
+<path d="M 870.0 551.0 L 940.0 551.0" fill="none" stroke="#4b5563" stroke-width="1.3" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<text x="905.0" y="544.0" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="10.5" fill="#4b5563" text-anchor="middle">HTTPS</text>
+<path d="M 580.0 270.0 L 580.0 450.0" fill="none" stroke="#4b5563" stroke-width="1.3" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<text x="600.0" y="352.0" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="10.5" fill="#4b5563" text-anchor="middle">HTTP</text>
+<path d="M 700.0 270.0 L 700.0 320.0" fill="none" stroke="#4b5563" stroke-width="1.3" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<text x="720.0" y="287.0" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="10.5" fill="#4b5563" text-anchor="middle">HTTP</text>
+<path d="M 600.0 160.0 L 600.0 71.0 L 940.0 71.0" fill="none" stroke="#4b5563" stroke-width="1.3" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<text x="790.0" y="57.0" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="10.5" fill="#4b5563" text-anchor="middle">метрики</text>
+<path d="M 680.0 160.0 L 680.0 112.0 L 1290.0 112.0 L 1290.0 120.0" fill="none" stroke="#4b5563" stroke-width="1.3" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<text x="1000.0" y="98.0" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="10.5" fill="#4b5563" text-anchor="middle">syslog</text>
+<rect x="30" y="680" width="26" height="16" rx="3" fill="#ffffff" stroke="#1f2937" stroke-width="1.4"/>
+<text x="62" y="692" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="11.5" fill="#111827">процесс</text>
+<path d="M 144.2 680 L 118.19999999999999 680 L 118.19999999999999 696 L 144.2 696" fill="#f9fafb" stroke="#1f2937" stroke-width="1.4"/>
+<line x1="118.19999999999999" y1="680" x2="118.19999999999999" y2="696" stroke="#1f2937" stroke-width="3.5"/>
+<text x="150.2" y="692" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="11.5" fill="#111827">хранилище данных</text>
+<rect x="265.79999999999995" y="680" width="26" height="16" rx="8" fill="#d9f2d9" stroke="#2f7d32" stroke-width="1.4"/>
+<text x="297.79999999999995" y="692" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="11.5" fill="#111827">роль (внешняя сущность)</text>
+<rect x="459.5999999999999" y="680" width="26" height="16" rx="8" fill="#dbeafe" stroke="#1d4ed8" stroke-width="1.4"/>
+<text x="491.5999999999999" y="692" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="11.5" fill="#111827">внешняя система</text>
+<text x="30" y="730" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="11.5" font-weight="normal" fill="#111827" text-anchor="start">Все компоненты разворачиваются на инфраструктуре заказчика. Система не инициирует исходящих обращений в интернет:</text>
+<text x="30" y="750" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="11.5" font-weight="normal" fill="#111827" text-anchor="start">образы обновляет администратор, LLM-провайдер подключается только при использовании AI-модуля.</text>
+</svg>

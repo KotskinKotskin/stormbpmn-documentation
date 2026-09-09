@@ -232,6 +232,17 @@ export default defineUserConfig({
                 text: "📊 Симуляции",
                 children: ["/simulation/", "/simulation/install.html", "/simulation/operation.html"],
             },
+            {
+                text: "🏛 Архитектурное ревью",
+                children: [
+                    "/architecture/",
+                    "/architecture/processes.html",
+                    "/architecture/roles-raci.html",
+                    "/architecture/user-management.html",
+                    "/architecture/functional-requirements.html",
+                    "/architecture/system-design.html",
+                ],
+            },
             "/operation/",
             "/support/",
             "/Changelog/",
