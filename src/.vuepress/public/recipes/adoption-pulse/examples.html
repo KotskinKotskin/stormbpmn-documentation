@@ -1,0 +1,1069 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Пульс внедрения Storm</title>
+<style>
+  :root {
+    color-scheme: light;
+    --bg: #f5f5fa;
+    --surface: #ffffff;
+    --surface-2: #eeeef6;
+    --ink: #15162b;
+    --ink-2: #4b4d6b;
+    --muted: #868aa6;
+    --line: #dfe0ec;
+    --grid: #e7e7f1;
+    --accent: #6366f1;
+    --accent-ink: #4a4dd8;
+    --accent-soft: #e9e9fd;
+    --s1: #6366f1;
+    --s2: #eb6834;
+    --s3: #1baf7a;
+    --neutral-mark: #b9bbd0;
+    --code-bg: #f1f1f8;
+    --kw: #4a4dd8;
+    --str: #a34a1f;
+    --cmt: #7d819c;
+    --num: #0f7a58;
+    --good: #0a8a3a;
+    --warn: #b45309;
+    --crit: #c2362f;
+    --shadow: 0 1px 2px rgba(21,22,43,.06), 0 8px 24px -12px rgba(21,22,43,.18);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --bg: #0e0f1e;
+      --surface: #181a2c;
+      --surface-2: #1f2138;
+      --ink: #f1f1f8;
+      --ink-2: #b7b9d2;
+      --muted: #8b8ea9;
+      --line: #2b2d47;
+      --grid: #272940;
+      --accent: #7a7df3;
+      --accent-ink: #9c9ef8;
+      --accent-soft: #23255a;
+      --s1: #7a7df3;
+      --s2: #d95926;
+      --s3: #199e70;
+      --neutral-mark: #4c4f6e;
+      --code-bg: #121327;
+      --kw: #9c9ef8;
+      --str: #f0a071;
+      --cmt: #7f829f;
+      --num: #4fd1a1;
+      --good: #3ccf6b;
+      --warn: #f5b04b;
+      --crit: #f07b73;
+      --shadow: 0 1px 2px rgba(0,0,0,.4), 0 8px 24px -12px rgba(0,0,0,.6);
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --bg: #0e0f1e;
+    --surface: #181a2c;
+    --surface-2: #1f2138;
+    --ink: #f1f1f8;
+    --ink-2: #b7b9d2;
+    --muted: #8b8ea9;
+    --line: #2b2d47;
+    --grid: #272940;
+    --accent: #7a7df3;
+    --accent-ink: #9c9ef8;
+    --accent-soft: #23255a;
+    --s1: #7a7df3;
+    --s2: #d95926;
+    --s3: #199e70;
+    --neutral-mark: #4c4f6e;
+    --code-bg: #121327;
+    --kw: #9c9ef8;
+    --str: #f0a071;
+    --cmt: #7f829f;
+    --num: #4fd1a1;
+    --good: #3ccf6b;
+    --warn: #f5b04b;
+    --crit: #f07b73;
+    --shadow: 0 1px 2px rgba(0,0,0,.4), 0 8px 24px -12px rgba(0,0,0,.6);
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: Manrope, "Segoe UI", system-ui, -apple-system, sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    padding-inline: 20px;
+    padding-block: 0 80px;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--accent-ink); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+
+  .page { max-width: 1140px; margin: 0 auto; }
+
+  /* ---------- header ---------- */
+  .hero { padding-block: 56px 36px; border-bottom: 1px solid var(--line); }
+  .eyebrow {
+    display: inline-flex; align-items: center; gap: 10px;
+    font-size: 12px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+    color: var(--accent-ink);
+  }
+  .eyebrow::before { content: ""; width: 22px; height: 3px; background: var(--accent); border-radius: 2px; }
+  h1 {
+    font-size: clamp(32px, 4.4vw, 48px); line-height: 1.08; font-weight: 800; letter-spacing: -.02em;
+    margin: 14px 0 16px; text-wrap: balance; max-width: 18ch;
+  }
+  .lede { font-size: 19px; line-height: 1.5; color: var(--ink-2); max-width: 62ch; margin: 0 0 24px; text-wrap: pretty; }
+  .meta { display: flex; flex-wrap: wrap; gap: 8px 22px; font-size: 13.5px; color: var(--muted); }
+  .meta b { color: var(--ink-2); font-weight: 600; }
+
+  /* ---------- layout ---------- */
+  .body { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 48px; padding-top: 36px; }
+  .toc { position: sticky; top: 24px; align-self: start; font-size: 13.5px; }
+  .toc .toc-title { font-size: 11.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); font-weight: 700; margin-bottom: 10px; }
+  .toc ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+  .toc li a { display: block; padding: 5px 10px; border-radius: 6px; color: var(--ink-2); line-height: 1.35; }
+  .toc li a:hover { background: var(--surface-2); text-decoration: none; color: var(--ink); }
+  .toc li a.sub { padding-left: 22px; font-size: 13px; }
+  .toc li a.current { background: var(--accent-soft); color: var(--accent-ink); font-weight: 600; }
+  main { min-width: 0; }
+  @media (max-width: 980px) { .body { grid-template-columns: 1fr; gap: 24px; } .toc { position: static; } .toc ol { display: flex; flex-wrap: wrap; gap: 4px 6px; } .toc li a.sub { padding-left: 10px; } }
+
+  /* ---------- prose ---------- */
+  section { padding-block: 8px 40px; scroll-margin-top: 20px; }
+  section + section { border-top: 1px solid var(--line); padding-top: 36px; }
+  h2 { font-size: 27px; line-height: 1.2; font-weight: 800; letter-spacing: -.015em; margin: 0 0 14px; text-wrap: balance; }
+  h2 .n, h3 .n { color: var(--accent-ink); font-variant-numeric: tabular-nums; margin-right: 10px; }
+  h3 { font-size: 19.5px; line-height: 1.3; font-weight: 700; margin: 36px 0 10px; text-wrap: balance; }
+  p, ul, ol { max-width: 68ch; }
+  p { margin: 0 0 14px; text-wrap: pretty; }
+  ul, ol { padding-left: 22px; margin: 0 0 14px; }
+  li { margin-bottom: 6px; }
+  li::marker { color: var(--muted); }
+  code { font-family: "JetBrains Mono", ui-monospace, Consolas, monospace; font-variant-ligatures: none; font-size: .86em; background: var(--code-bg); padding: 1px 5px; border-radius: 4px; color: var(--ink); }
+  .reasons { list-style: none; padding: 0; display: grid; gap: 10px; max-width: none; margin: 18px 0 22px; }
+  .reasons li { display: grid; grid-template-columns: 34px 1fr; gap: 12px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; margin: 0; }
+  .reasons .k { font-family: "JetBrains Mono", monospace; font-size: 12px; color: var(--accent-ink); font-weight: 500; padding-top: 4px; }
+  .reasons b { display: block; margin-bottom: 2px; }
+  .reasons span.t { color: var(--ink-2); font-size: 15px; line-height: 1.5; }
+  .rules { display: flex; flex-wrap: wrap; gap: 10px; margin: 8px 0 18px; padding: 0; list-style: none; max-width: none; }
+  .rules li { margin: 0; padding: 8px 14px; border-radius: 999px; background: var(--accent-soft); color: var(--accent-ink); font-weight: 600; font-size: 14px; }
+
+  .callout { border-left: 3px solid var(--accent); background: var(--surface); padding: 12px 16px; border-radius: 0 8px 8px 0; margin: 16px 0; max-width: 72ch; font-size: 15px; color: var(--ink-2); }
+  .callout b { color: var(--ink); }
+  .note { font-size: 13.5px; color: var(--muted); }
+
+  /* ---------- charts ---------- */
+  figure { margin: 22px 0 8px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 18px 18px 12px; box-shadow: var(--shadow); }
+  figure.duo { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  @media (max-width: 720px) { figure.duo { grid-template-columns: 1fr; } }
+  figcaption { font-size: 14.5px; font-weight: 700; margin-bottom: 2px; }
+  figcaption small { display: block; font-weight: 500; color: var(--muted); font-size: 12.5px; margin-top: 2px; }
+  .chart { position: relative; margin-top: 8px; }
+  .chart-svg { width: 100%; height: auto; display: block; overflow: visible; }
+  .chart-svg text { font-family: Manrope, system-ui, sans-serif; fill: var(--muted); font-size: 11.5px; }
+  .chart-svg .grid { stroke: var(--grid); stroke-width: 1; }
+  .chart-svg .base { stroke: var(--line); stroke-width: 1; }
+  .chart-svg .endlabel { fill: var(--ink-2); font-weight: 700; font-size: 12px; }
+  .chart-svg .cap { fill: var(--ink-2); font-weight: 700; font-size: 11.5px; text-anchor: middle; }
+  .chart-svg .cross { stroke: var(--muted); stroke-width: 1; stroke-dasharray: 3 3; }
+  .chart-svg .dot { stroke: var(--surface); stroke-width: 2; }
+  .chart-svg .hit { fill: transparent; cursor: crosshair; }
+  .chart-svg .hitband:hover { fill: var(--accent); fill-opacity: .06; }
+  .legend { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 12.5px; color: var(--ink-2); margin: 6px 0 2px; }
+  .legend i, .tip i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; }
+  .tip { position: absolute; z-index: 5; pointer-events: none; background: var(--ink); color: var(--bg); font-size: 12.5px; line-height: 1.45; padding: 8px 10px; border-radius: 8px; box-shadow: 0 6px 20px -6px rgba(0,0,0,.4); white-space: nowrap; }
+  .tip b { font-weight: 700; }
+  .tip > b { display: block; margin-bottom: 3px; font-size: 12px; opacity: .8; }
+
+  .hbars { display: grid; gap: 8px; margin-top: 10px; }
+  .hrow { display: grid; grid-template-columns: minmax(120px, 190px) 1fr 84px; gap: 12px; align-items: center; font-size: 13.5px; }
+  .hrow .hl { color: var(--ink-2); text-align: right; line-height: 1.3; }
+  .hrow .track { height: 22px; background: var(--surface-2); border-radius: 0 4px 4px 0; position: relative; }
+  .hrow .fill { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 0 4px 4px 0; }
+  .hrow .hv { font-variant-numeric: tabular-nums; color: var(--ink-2); font-size: 13px; }
+  .hrow .hv b { color: var(--ink); }
+  @media (max-width: 560px) { .hrow { grid-template-columns: 1fr; gap: 3px; } .hrow .hl { text-align: left; } }
+
+  .heat { display: grid; grid-template-columns: 110px 60px repeat(6, 1fr); gap: 3px; margin-top: 10px; font-size: 13px; font-variant-numeric: tabular-nums; }
+  .heat > div { padding: 7px 4px; text-align: center; border-radius: 5px; line-height: 1.2; }
+  .heat .h { color: var(--muted); font-size: 11.5px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; background: none; }
+  .heat .rl { text-align: left; color: var(--ink-2); font-weight: 600; background: none; padding-left: 0; }
+  .heat .sz { color: var(--muted); background: none; }
+  .heat .c { font-weight: 600; }
+  .heat .e { background: none; }
+  @media (max-width: 560px) { .heat { grid-template-columns: 70px 44px repeat(6, 1fr); font-size: 11.5px; } .heat > div { padding: 6px 2px; } }
+
+  .tiles { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-top: 12px; }
+  .tile { background: var(--surface-2); border-radius: 10px; padding: 14px 16px; }
+  .tile .tl { font-size: 13px; color: var(--ink-2); font-weight: 600; }
+  .tile .tv { font-size: 40px; font-weight: 800; letter-spacing: -.02em; line-height: 1.1; margin: 4px 0 2px; }
+  .tile .td { font-size: 13px; color: var(--muted); }
+  .tile .track { margin-top: 10px; }
+  @media (max-width: 560px) { .tiles { grid-template-columns: 1fr; } }
+
+  /* ---------- sql ---------- */
+  .sql { position: relative; margin: 14px 0 6px; background: var(--code-bg); border: 1px solid var(--line); border-radius: 10px; }
+  .sql pre { margin: 0; padding: 16px 18px; overflow-x: auto; font-family: "JetBrains Mono", ui-monospace, Consolas, monospace; font-size: 12.75px; line-height: 1.55; color: var(--ink); tab-size: 2; font-variant-ligatures: none; font-feature-settings: "liga" 0, "calt" 0; }
+  .sql .kw { color: var(--kw); font-weight: 500; }
+  .sql .str { color: var(--str); }
+  .sql .cmt { color: var(--cmt); font-style: italic; }
+  .sql .num { color: var(--num); }
+  .sql .bar { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 8px 12px 8px 18px; border-bottom: 1px solid var(--line); font-size: 12px; color: var(--muted); font-weight: 600; letter-spacing: .04em; text-transform: uppercase; }
+  .copy { font: inherit; font-size: 12px; font-weight: 700; letter-spacing: 0; text-transform: none; color: var(--accent-ink); background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 4px 10px; cursor: pointer; }
+  .copy:hover { border-color: var(--accent); }
+
+  /* ---------- tables ---------- */
+  .tbl-wrap { overflow-x: auto; margin: 16px 0; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }
+  table { border-collapse: collapse; width: 100%; font-size: 14px; }
+  th, td { text-align: left; padding: 10px 12px; vertical-align: top; border-bottom: 1px solid var(--line); }
+  th { font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); font-weight: 700; background: var(--surface-2); }
+  tr:last-child td { border-bottom: none; }
+  td.good { color: var(--good); }
+  td.warn { color: var(--warn); }
+  td code { white-space: nowrap; }
+  .sources td:first-child { font-family: "JetBrains Mono", monospace; font-size: 12.5px; white-space: nowrap; }
+  .fam { display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; padding: 2px 8px; border-radius: 999px; }
+  .fam.p { background: var(--surface-2); color: var(--ink-2); }
+  .fam.c { background: var(--accent-soft); color: var(--accent-ink); }
+
+  footer { margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--line); font-size: 13.5px; color: var(--muted); max-width: 72ch; }
+  @media (prefers-reduced-motion: no-preference) { .copy { transition: border-color .15s; } }
+</style>
+
+</head>
+<body>
+<div class="page">
+  <header class="hero">
+<div class="callout"><b>Примеры для Enterprise-рецепта.</b> Графики построены на условных данных. <a href="/recipes/Adoption_pulse.html">Открыть инструкцию по запуску, ограничения и настройку для своей установки</a>. <a href="queries.sql" download>Скачать SQL</a>.</div>
+    <div class="eyebrow">Storm · для команды внедрения</div>
+    <h1>Пульс внедрения Storm</h1>
+    <p class="lede">Как по данным вашей установки понять, что системой пользуются — и пользуются больше. Один журнал действий, девять запросов для хранилища данных и любой BI-системы, примеры графиков и правила чтения.</p>
+    <div class="meta">
+      <span>Версия <b>11.09.2026</b></span>
+      <span>Диалект <b>PostgreSQL 12+</b></span>
+      <span>Обновление данных <b>раз в сутки — достаточно</b></span>
+      <span>Графики <b>на условных данных, для образца</b></span>
+    </div>
+  </header>
+
+  <div class="body">
+    <nav class="toc" aria-label="Содержание">
+      <div class="toc-title">Содержание</div>
+      <ol>
+        <li><a href="#why">Почему события «пилят»</a></li>
+        <li><a href="#journal">Журнал действий</a></li>
+        <li><a href="#q1" class="sub">1 · Сколько людей пользуются</a></li>
+        <li><a href="#q2" class="sub">2 · Когорты</a></li>
+        <li><a href="#q3" class="sub">3 · Новички</a></li>
+        <li><a href="#q4" class="sub">4 · Ядро и спящие</a></li>
+        <li><a href="#q5" class="sub">5 · Живая база</a></li>
+        <li><a href="#q6" class="sub">6 · Совместная работа</a></li>
+        <li><a href="#q7" class="sub">7 · ИИ-модуль</a></li>
+        <li><a href="#q8" class="sub">8 · Эффект рассылки</a></li>
+        <li><a href="#q9" class="sub">9 · С кем работать</a></li>
+        <li><a href="#reading">Как читать</a></li>
+        <li><a href="#dashboard">Раскладка панели</a></li>
+      </ol>
+    </nav>
+
+    <main>
+      <!-- ============ 0 ============ -->
+      <section id="why">
+        <h2>Почему сырые события выглядят как бардак</h2>
+        <p>Если построить график по количеству событий в <code>sm_business_event</code> за день, получится пила без тренда. Это не поломка учёта, а четыре свойства данных.</p>
+        <ul class="reasons">
+          <li><span class="k">login</span><div><b>Вход пишется при аутентификации, а сессия живёт до 7 дней.</b><span class="t">Человек, работающий каждый день, даёт одно событие <code>login</code> в неделю. Оно отвечает на вопрос «был ли в системе на этой неделе», а не «сколько раз заходил».</span></div></li>
+          <li><span class="k">version</span><div><b>Версия модели при автосохранении пишется не каждый раз.</b><span class="t">Каждое 20-е автосохранение и при смене автора. Один сеанс редактирования — одна-три версии, а не сотня.</span></div></li>
+          <li><span class="k">cycle</span><div><b>Работа с процессами идёт волнами.</b><span class="t">Аналитик неделю рисует, две недели согласует, месяц не трогает. Дневные и недельные абсолюты прыгают; тренд виден на скользящих 28 днях и на когортах.</span></div></li>
+          <li><span class="k">on-prem</span><div><b>В установке внутри контура нет событий просмотра страниц.</b><span class="t"><code>page_view_*</code> пишутся только в облачной версии. Просмотр моделей читателями напрямую не виден — читатели видны через входы и просмотры вики-страниц.</span></div></li>
+        </ul>
+
+        <figure>
+          <figcaption>Одни и те же 12 недель, два способа посмотреть<small>Слева — события за день, как они лежат в таблице. Справа — авторы за скользящие 28 дней. Тренд есть только во втором.</small></figcaption>
+          <div class="duo-inner" style="display:grid;grid-template-columns:1fr 1fr;gap:24px" id="thesis"></div>
+        </figure>
+
+        <p style="margin-top:18px">Из этого три правила:</p>
+        <ul class="rules"><li>считать людей, а не события</li><li>смотреть неделю и 28 дней, а не день</li><li>сравнивать когорты, а не абсолют</li></ul>
+      </section>
+
+      <!-- ============ 1 ============ -->
+      <section id="journal">
+        <h2>Единый журнал действий</h2>
+        <p>Анализ опирается на одно представление — журнал действий пользователей. Оно склеивает события из <code>sm_business_event</code> и факты из прикладных таблиц: модели, версии, комментарии, согласования, реестр, вики, ИИ. Каждое действие относится к одному из двух семейств.</p>
+        <div class="tbl-wrap"><table class="sources">
+          <thead><tr><th>Источник</th><th>Что считаем</th><th>Семейство</th></tr></thead>
+          <tbody>
+            <tr><td>sm_business_event · login</td><td>вход в систему (не чаще раза в неделю на человека)</td><td><span class="fam p">presence</span></td></tr>
+            <tr><td>sm_wiki_page_user_activity</td><td>открыл вики-страницу</td><td><span class="fam p">presence</span></td></tr>
+            <tr><td>sm_diagrams</td><td>создал модель</td><td><span class="fam c">contribution</span></td></tr>
+            <tr><td>sm_diagram_versions</td><td>сохранил версию (ручную или автоматическую)</td><td><span class="fam c">contribution</span></td></tr>
+            <tr><td>sm_comments, sm_comment_messages</td><td>написал комментарий</td><td><span class="fam c">contribution</span></td></tr>
+            <tr><td>sm_approvals</td><td>запросил согласование / принял решение</td><td><span class="fam c">contribution</span></td></tr>
+            <tr><td>sm_processes</td><td>завёл процесс в реестре</td><td><span class="fam c">contribution</span></td></tr>
+            <tr><td>sm_customfield_value_history, sm_entity_change_history</td><td>изменил атрибут процесса</td><td><span class="fam c">contribution</span></td></tr>
+            <tr><td>sm_assignees, sm_assets</td><td>завёл роль или ресурс в справочнике</td><td><span class="fam c">contribution</span></td></tr>
+            <tr><td>sm_wiki_page_versions</td><td>написал в вики</td><td><span class="fam c">contribution</span></td></tr>
+            <tr><td>sm_business_event · ai_*, mcp::*</td><td>обратился к ИИ-помощнику или через MCP</td><td><span class="fam c">contribution</span></td></tr>
+          </tbody>
+        </table></div>
+        <p><b>Присутствие</b> — человек был в системе, «пришёл». <b>Вклад</b> — человек что-то сделал, «работал». Разница между ними — главное, что нужно видеть: система может быть открыта у всех, а работать в ней будут десять человек.</p>
+
+        <div class="sql" data-name="Представление v_storm_user_actions"><pre><code data-sql="view"></code></pre></div>
+
+        <div class="callout">
+          <b>Замечания.</b>
+          Удалённые модели и версии не исключаются — действие было. Служебные учётные записи (администратор поставщика, интеграционные ключи) вычтите через <code>AND user_id NOT IN (…)</code>.
+          События модуля симуляций в этом рецепте не учитываются, поэтому <code>sm_simulations</code> в журнал не входит.
+          Если представление создать нельзя — вставьте его тело как <code>WITH v_storm_user_actions AS MATERIALIZED (…)</code> в начало каждого запроса. Если запрос уже начинается с <code>WITH</code>, добавьте журнал первым CTE и отделите следующий CTE запятой.
+          Если в вашей версии нет колонки <code>sm_users.deleted_on</code> (добавлена в августе 2026), уберите условие <code>AND u.deleted_on IS NULL</code> из запросов 4 и 9.
+        </div>
+      </section>
+
+      <!-- ============ Q1 ============ -->
+      <section id="q1">
+        <h2><span class="n">1</span>Сколько людей реально пользуются</h2>
+        <p>Главный график. Аудитория за неделю и за скользящие 28 дней, отдельно «пришли» и «работали». Плюс <b>прилипаемость</b> — доля месячной аудитории, которая приходит каждую неделю.</p>
+        <figure>
+          <figcaption>Аудитория за скользящие 28 дней<small>Число людей, у которых было хотя бы одно действие за последние 28 дней на конец недели. Волна в конце июля — рассылка.</small></figcaption>
+          <div class="chart" id="c-audience"></div>
+        </figure>
+        <figure class="duo">
+          <div><figcaption>Недельная аудитория<small>Те же две линии, но за одну неделю: шумнее, зато видно волну.</small></figcaption><div class="chart" id="c-weekly"></div></div>
+          <div><figcaption>Прилипаемость<small>Недельная аудитория ÷ 28-дневная. 0,4 = за неделю активны 40% аудитории за 28 дней. Это доля аудитории, а не частота визитов каждого человека.</small></figcaption><div class="chart" id="c-stick"></div></div>
+        </figure>
+        <div class="sql" data-name="Запрос 1 · аудитория и прилипаемость"><pre><code data-sql="q1"></code></pre></div>
+        <div class="callout"><b>Как читать.</b> Растут ли авторы за 28 дней — а не количество действий за неделю, оно шумит. Диапазон 0,3–0,5 можно использовать как пример, а не универсальную норму; падение ниже собственной нормы значит, что люди заходят раз в месяц «посмотреть».</div>
+      </section>
+
+      <!-- ============ Q2 ============ -->
+      <section id="q2">
+        <h2><span class="n">2</span>Удерживаем ли людей — когорты</h2>
+        <p>Когорта — месяц первого вклада. Для каждой когорты — доля людей, сделавших хотя бы одно действие в месяц N после первого. Этот срез помогает отличить устойчивое внедрение от постоянного притока людей, которые быстро перестают пользоваться системой.</p>
+        <figure>
+          <figcaption>Удержание когорт по месяцу первого вклада<small>Доля когорты, активная в месяц N. Июльская когорта пришла по рассылке — и тает быстрее остальных.</small></figcaption>
+          <div id="c-cohort"></div>
+        </figure>
+        <div class="sql" data-name="Запрос 2 · когорты"><pre><code data-sql="q2"></code></pre></div>
+        <p class="note">В BI-системе: сводная таблица, строки <code>cohort</code>, столбцы <code>month_n</code>, значение <code>pct</code>. Если учёт событий включили позже, чем люди начали работать, первую когорту отбросьте — в ней окажутся все «старожилы».</p>
+      </section>
+
+      <!-- ============ Q3 ============ -->
+      <section id="q3">
+        <h2><span class="n">3</span>Приживаются ли новички</h2>
+        <p>Для каждой недели первого появления: сколько пришло, сколько сделали вклад за первые 14 дней, сколько вернулись на 2–4-й неделе. Именно эту таблицу смотрят после рассылки: всплеск входов — не результат, результат — доля вернувшихся.</p>
+        <figure>
+          <figcaption>Новички по неделе первого появления<small>Столбцы — пришли и вернулись на 2–4-й неделе. Неделя рассылки дала 44 новичка, но вернулась только треть.</small></figcaption>
+          <div class="chart" id="c-newcomers"></div>
+        </figure>
+        <div class="sql" data-name="Запрос 3 · активация новичков"><pre><code data-sql="q3"></code></pre></div>
+      </section>
+
+      <!-- ============ Q4 ============ -->
+      <section id="q4">
+        <h2><span class="n">4</span>Глубина: ядро, активные, эпизодические, спящие</h2>
+        <p>Снимок за 28 дней по всем включённым учётным записям. Пороги этого рецепта: ядро — 10 и больше вкладов за 28 дней, активные — 3–9, эпизодические — 1–2. Это настраиваемая сегментация; её нельзя напрямую сравнивать с показателями интерфейса без сверки окна и состава событий.</p>
+        <figure>
+          <figcaption>Структура аудитории за 28 дней<small>260 включённых учётных записей. Рост внедрения — когда растёт ядро, а не «только заходили».</small></figcaption>
+          <div id="c-tiers"></div>
+        </figure>
+        <div class="sql" data-name="Запрос 4а · снимок по уровням"><pre><code data-sql="q4a"></code></pre></div>
+        <figure>
+          <figcaption>Ядро по неделям<small>Авторы с тремя и больше действиями за скользящие 14 дней — на фоне всех авторов за те же 14 дней.</small></figcaption>
+          <div class="chart" id="c-core"></div>
+        </figure>
+        <div class="sql" data-name="Запрос 4б · ядро по неделям"><pre><code data-sql="q4b"></code></pre></div>
+      </section>
+
+      <!-- ============ Q5 ============ -->
+      <section id="q5">
+        <h2><span class="n">5</span>Живая ли база процессов</h2>
+        <p>Внедрение — не количество моделей, а доля моделей, которые кто-то трогал за последние 90 дней. Если база растёт, а доля живого падает — рисуют и забывают.</p>
+        <figure class="duo">
+          <div><figcaption>Моделей в базе<small>Без удалённых, на конец недели.</small></figcaption><div class="chart" id="c-base"></div></div>
+          <div><figcaption>Доля живых моделей<small>Тронуты за 90 дней. Здесь — сползает: тревожный пример.</small></figcaption><div class="chart" id="c-alive"></div></div>
+        </figure>
+        <div class="sql" data-name="Запрос 5 · база и доля живого"><pre><code data-sql="q5"></code></pre></div>
+      </section>
+
+      <!-- ============ Q6 ============ -->
+      <section id="q6">
+        <h2><span class="n">6</span>Совместная работа</h2>
+        <p>Одиночное рисование не приживается; приживается, когда модели читают, комментируют и согласуют другие. Смотрим комментарии, согласования, модели с двумя и больше авторами, приглашения.</p>
+        <figure>
+          <figcaption>Комментаторы и согласования по неделям<small>Комментаторы — люди, а не сообщения. Решения по согласованиям — сколько запросов закрыто за неделю.</small></figcaption>
+          <div class="chart" id="c-collab"></div>
+        </figure>
+        <div class="sql" data-name="Запрос 6 · совместная работа"><pre><code data-sql="q6"></code></pre></div>
+      </section>
+
+      <!-- ============ Q7 ============ -->
+      <section id="q7">
+        <h2><span class="n">7</span>ИИ-модуль</h2>
+        <p>Доля авторов, которые за неделю обращались к ИИ, число сообщений, оценки ответов, обращения через MCP — внешние агенты.</p>
+        <figure class="duo">
+          <div><figcaption>Люди, обращавшиеся к ИИ за неделю<small>Уникальные отправители сообщений в ИИ-чат.</small></figcaption><div class="chart" id="c-ai"></div></div>
+          <div><figcaption>Доля среди авторов<small>Обращавшиеся к ИИ ÷ все, кто сделал вклад за ту же неделю.</small></figcaption><div class="chart" id="c-aishare"></div></div>
+        </figure>
+        <div class="sql" data-name="Запрос 7 · ИИ-модуль"><pre><code data-sql="q7"></code></pre></div>
+      </section>
+
+      <!-- ============ Q8 ============ -->
+      <section id="q8">
+        <h2><span class="n">8</span>Что дала рассылка</h2>
+        <p>Две таблицы. Первая — 28 дней до и 28 дней после даты рассылки: аудитория, авторы, новички и сколько новичков сделали вклад. Вторая — сравнение возвращаемости: люди, пришедшие в первую неделю после рассылки («волна»), против людей обычной недели за пять недель до неё. Сравниваем долю вернувшихся на 2–4-й неделе.</p>
+        <figure>
+          <figcaption>Волна рассылки против обычной недели<small>Доля людей, вернувшихся на 2–4-й неделе после того, как их увидели в системе.</small></figcaption>
+          <div class="tiles" id="c-wave"></div>
+        </figure>
+        <div class="sql" data-name="Запрос 8а · до и после"><pre><code data-sql="q8a"></code></pre></div>
+        <div class="sql" data-name="Запрос 8б · волна против обычной недели"><pre><code data-sql="q8b"></code></pre></div>
+        <div class="callout"><b>Как читать.</b> Если у волны доля вернувшихся не хуже, чем у обычной недели, — это положительный сигнал; проверьте также вклад новичков и другие события периода. Если сильно хуже — пришли посмотреть и ушли; тогда следующий шаг не ещё одна рассылка, а опрос тех, кто не вернулся (список — запрос 9).</div>
+      </section>
+
+      <!-- ============ Q9 ============ -->
+      <section id="q9">
+        <h2><span class="n">9</span>С кем работать точечно</h2>
+        <p>Список людей с последним зарегистрированным действием, последним вкладом и числом действий. Сортировка от давно пропавших: сверху — кандидаты на звонок или опрос, либо на освобождение лицензии.</p>
+        <div class="sql" data-name="Запрос 9 · список людей"><pre><code data-sql="q9"></code></pre></div>
+        <p class="note">Для участника нескольких команд запрос возвращает отдельную строку для каждого значения прав. Одинаковые права в нескольких командах не умножают число действий. Для отчёта по одной команде отфильтруйте <code>sm_members</code> до соединения с журналом.</p>
+      </section>
+
+      <!-- ============ reading ============ -->
+      <section id="reading">
+        <h2>Как читать: что хорошо, что тревожно, что делать</h2>
+        <div class="tbl-wrap"><table>
+          <thead><tr><th>Вопрос</th><th>Смотрим</th><th>Хорошо</th><th>Тревожно</th><th>Что делать</th></tr></thead>
+          <tbody>
+            <tr><td>Пользуются ли</td><td>1 · <code>contributors_28d</code></td><td class="good">растёт или держится квартал к кварталу</td><td class="warn">растёт <code>users_28d</code>, а авторы стоят</td><td>люди заходят, но не работают: обучение, шаблоны, задачи «в системе»</td></tr>
+            <tr><td>Есть ли привычка</td><td>1 · <code>stickiness</code></td><td class="good">держится в своей норме</td><td class="warn">сползает</td><td>работа стала эпизодической: встроить Storm в регулярный процесс — согласование, аудит</td></tr>
+            <tr><td>Удерживаем ли</td><td>2 · когорты</td><td class="good">месяцы 1–3 у новых когорт не хуже старых</td><td class="warn">каждая новая когорта тает быстрее</td><td>проблема в первых неделях — см. запрос 3</td></tr>
+            <tr><td>Приживаются ли новички</td><td>3 · <code>contributed_14d</code>, <code>returned_8_28d</code></td><td class="good">половина и больше делают вклад за 14 дней</td><td class="warn">вклад за 14 дней у меньшинства</td><td>у новичка нет задачи: давать конкретную модель или процесс на старте</td></tr>
+            <tr><td>Есть ли ядро</td><td>4 · <code>core_users</code>, <code>core_pct</code></td><td class="good">ядро растёт в абсолюте</td><td class="warn">ядро те же пять человек, растут только «заходили»</td><td>внедрение держится на энтузиастах — расширять через них, наставники по подразделениям</td></tr>
+            <tr><td>Живая ли база</td><td>5 · <code>alive_90d_pct</code></td><td class="good">стабильна или растёт при росте базы</td><td class="warn">база растёт, доля живого падает</td><td>модели рисуют «в стол»: связать с реестром, согласованием, вики</td></tr>
+            <tr><td>Командная ли работа</td><td>6 · <code>commenters</code>, <code>diagrams_multi_author_90d</code></td><td class="good">растут вместе с авторами</td><td class="warn">авторы есть, комментаторов нет</td><td>ввести согласование через Storm вместо почты</td></tr>
+            <tr><td>ИИ</td><td>7 · <code>ai_share_of_contributors_pct</code>, оценки</td><td class="good">доля растёт, оценок «вверх» больше</td><td class="warn">доля не растёт после анонса</td><td>показать сценарии на живых процессах команды</td></tr>
+            <tr><td>Эффект рассылки</td><td>8</td><td class="good">у волны доля вернувшихся ≈ обычной неделе</td><td class="warn">волна вернулась вдвое хуже</td><td>опрос невернувшихся (запрос 9) вместо следующей рассылки</td></tr>
+          </tbody>
+        </table></div>
+        <p>Все «хорошо / тревожно» — относительно собственной истории. Сравнивать с чужими цифрами бесполезно: у команды из 30 аналитиков и у компании, где Storm открыт для 2 000 читателей, нормы разные.</p>
+      </section>
+
+      <!-- ============ dashboard ============ -->
+      <section id="dashboard">
+        <h2>Раскладка панели в BI-системе</h2>
+        <p>Любая BI-система над хранилищем: каждая карточка — один запрос из этого документа, вид подобран под то, что в нём главное.</p>
+        <div class="tbl-wrap"><table>
+          <thead><tr><th>Карточка</th><th>Запрос</th><th>Вид</th></tr></thead>
+          <tbody>
+            <tr><td>Аудитория и авторы</td><td>1</td><td>линии: <code>users_28d</code>, <code>contributors_28d</code>, <code>users_week</code>, <code>contributors_week</code></td></tr>
+            <tr><td>Прилипаемость</td><td>1</td><td>линия <code>stickiness</code></td></tr>
+            <tr><td>Когорты</td><td>2</td><td>сводная: строки <code>cohort</code>, столбцы <code>month_n</code>, значение <code>pct</code></td></tr>
+            <tr><td>Новички</td><td>3</td><td>столбцы: <code>newcomers</code>, <code>contributed_14d</code>, <code>returned_8_28d</code></td></tr>
+            <tr><td>Структура аудитории (28 дн)</td><td>4а</td><td>кольцо или столбцы по <code>tier</code></td></tr>
+            <tr><td>Ядро</td><td>4б</td><td>линии <code>core_users</code>, <code>core_pct</code></td></tr>
+            <tr><td>База процессов</td><td>5</td><td><code>diagrams_total</code> и <code>processes_total</code> столбцами, <code>alive_90d_pct</code> отдельной линией</td></tr>
+            <tr><td>Совместная работа</td><td>6</td><td>столбцы <code>comments</code>, <code>commenters</code>, <code>approvals_decided</code></td></tr>
+            <tr><td>ИИ</td><td>7</td><td><code>ai_users</code> столбцами, <code>ai_share_of_contributors_pct</code> линией, оценки отдельно</td></tr>
+            <tr><td>Рассылка</td><td>8а, 8б</td><td>две таблицы, дату <code>d0</code> вынести в параметр панели</td></tr>
+            <tr><td>Люди</td><td>9</td><td>таблица с поиском</td></tr>
+          </tbody>
+        </table></div>
+        <p>В недельных запросах горизонт 26 недель — поменяйте <code>INTERVAL '26 weeks'</code> под себя. Для когорт используется 12 месяцев, для сегментов — 28 дней, для живых моделей — 90 дней. Неделя — ISO, с понедельника. Обновление копии раз в сутки достаточно: ни один срез не требует дневной точности.</p>
+      </section>
+
+      <footer>Графики на этой странице построены на условных данных типичной установки на 260 учётных записей — только чтобы показать форму и чтение каждого среза. Перед запуском сверьте таблицы и колонки с версией своей установки.</footer>
+    </main>
+  </div>
+</div>
+
+<script>
+(function () {
+  /* ================= SQL ================= */
+  const SQL = {
+view: `CREATE OR REPLACE VIEW v_storm_user_actions AS
+-- Присутствие
+SELECT user_id, "timestamp" AS ts, 'login' AS kind, 'presence' AS family
+  FROM sm_business_event WHERE user_id IS NOT NULL AND name IN ('login', 'first_login')
+UNION ALL SELECT user_id, last_interacted_at, 'wiki_view', 'presence'
+  FROM sm_wiki_page_user_activity
+-- Вклад: модели
+UNION ALL SELECT author, created_on, 'diagram_create', 'contribution'
+  FROM sm_diagrams WHERE author IS NOT NULL
+UNION ALL SELECT user_id, created_on, 'diagram_edit', 'contribution'
+  FROM sm_diagram_versions WHERE user_id IS NOT NULL
+-- Вклад: обсуждение и согласование
+UNION ALL SELECT user_id, created_on, 'comment', 'contribution'
+  FROM sm_comments WHERE user_id IS NOT NULL
+UNION ALL SELECT author_user_id, created_on, 'comment', 'contribution'
+  FROM sm_comment_messages WHERE author_user_id IS NOT NULL
+UNION ALL SELECT created_by, created_on, 'approval_request', 'contribution'
+  FROM sm_approvals WHERE created_by IS NOT NULL
+UNION ALL SELECT approver, approval_time, 'approval_decision', 'contribution'
+  FROM sm_approvals WHERE approver IS NOT NULL AND approval_time IS NOT NULL
+-- Вклад: реестр процессов и справочники
+UNION ALL SELECT created_by, created_on, 'process_create', 'contribution'
+  FROM sm_processes WHERE created_by IS NOT NULL
+UNION ALL SELECT created_by, created_on, 'process_attr', 'contribution'
+  FROM sm_customfield_value_history WHERE created_by IS NOT NULL
+UNION ALL SELECT changed_by, changed_on, 'process_attr', 'contribution'
+  FROM sm_entity_change_history WHERE changed_by IS NOT NULL
+UNION ALL SELECT author, created_on, 'reference', 'contribution'
+  FROM sm_assignees WHERE author IS NOT NULL
+UNION ALL SELECT author, created_on, 'reference', 'contribution'
+  FROM sm_assets WHERE author IS NOT NULL
+-- Вклад: вики, ИИ
+UNION ALL SELECT created_by, created_on, 'wiki_edit', 'contribution'
+  FROM sm_wiki_page_versions WHERE created_by IS NOT NULL
+UNION ALL SELECT user_id, "timestamp", 'ai', 'contribution'
+  FROM sm_business_event
+ WHERE user_id IS NOT NULL
+   AND name IN ('ai_chat_message_sent', 'ai.generate_bpmn', 'ai.complete_bpmn', 'ai.analyze_process')
+UNION ALL SELECT user_id, "timestamp", 'mcp', 'contribution'
+  FROM sm_business_event WHERE user_id IS NOT NULL AND name LIKE 'mcp::%';`,
+
+q1: `WITH weeks AS (
+  SELECT generate_series(date_trunc('week', NOW() - INTERVAL '26 weeks'),
+                         date_trunc('week', NOW()), '1 week')::date AS week
+)
+SELECT w.week,
+  COUNT(DISTINCT a.user_id) FILTER (WHERE a.ts >= w.week AND a.ts < w.week + 7)                                   AS users_week,
+  COUNT(DISTINCT a.user_id) FILTER (WHERE a.family = 'contribution' AND a.ts >= w.week AND a.ts < w.week + 7)     AS contributors_week,
+  COUNT(*)                  FILTER (WHERE a.family = 'contribution' AND a.ts >= w.week AND a.ts < w.week + 7)     AS contributions_week,
+  COUNT(DISTINCT a.user_id) FILTER (WHERE a.ts >= w.week + 7 - 28 AND a.ts < w.week + 7)                          AS users_28d,
+  COUNT(DISTINCT a.user_id) FILTER (WHERE a.family = 'contribution' AND a.ts >= w.week + 7 - 28 AND a.ts < w.week + 7) AS contributors_28d,
+  ROUND(COUNT(DISTINCT a.user_id) FILTER (WHERE a.ts >= w.week AND a.ts < w.week + 7)::numeric
+        / NULLIF(COUNT(DISTINCT a.user_id) FILTER (WHERE a.ts >= w.week + 7 - 28 AND a.ts < w.week + 7), 0), 2) AS stickiness
+FROM weeks w
+JOIN v_storm_user_actions a ON a.ts >= w.week + 7 - 28 AND a.ts < w.week + 7
+GROUP BY 1 ORDER BY 1;`,
+
+q2: `WITH first_act AS (
+  SELECT user_id, date_trunc('month', MIN(ts))::date AS cohort
+  FROM v_storm_user_actions WHERE family = 'contribution' GROUP BY user_id
+),
+cohort_size AS (SELECT cohort, COUNT(*) AS users FROM first_act GROUP BY cohort),
+monthly AS (
+  SELECT DISTINCT user_id, date_trunc('month', ts)::date AS month
+  FROM v_storm_user_actions WHERE family = 'contribution'
+)
+SELECT f.cohort, cs.users AS cohort_size,
+       ((EXTRACT(YEAR FROM m.month) - EXTRACT(YEAR FROM f.cohort)) * 12
+         + EXTRACT(MONTH FROM m.month) - EXTRACT(MONTH FROM f.cohort))::int AS month_n,
+       COUNT(*) AS active,
+       ROUND(100.0 * COUNT(*) / cs.users, 1) AS pct
+FROM first_act f
+JOIN cohort_size cs USING (cohort)
+JOIN monthly m USING (user_id)
+WHERE f.cohort >= date_trunc('month', NOW() - INTERVAL '12 months')
+GROUP BY 1, 2, 3 ORDER BY 1, 3;
+
+-- Вариант «когорта по первому заходу»: замените family = 'contribution'
+-- на family = 'presence' в first_act и уберите условие в monthly.`,
+
+q3: `WITH first_seen AS (
+  SELECT user_id, MIN(ts) AS first_ts FROM v_storm_user_actions GROUP BY user_id
+),
+newcomer AS (
+  SELECT f.user_id, f.first_ts,
+         BOOL_OR(a.family = 'contribution' AND a.ts < f.first_ts + INTERVAL '14 days')                  AS contributed_14d,
+         BOOL_OR(a.ts >= f.first_ts + INTERVAL '7 days' AND a.ts < f.first_ts + INTERVAL '28 days')     AS returned_8_28d,
+         BOOL_OR(a.family = 'contribution'
+                 AND a.ts >= f.first_ts + INTERVAL '7 days' AND a.ts < f.first_ts + INTERVAL '28 days') AS contributed_8_28d
+  FROM first_seen f
+  JOIN v_storm_user_actions a ON a.user_id = f.user_id AND a.ts < f.first_ts + INTERVAL '28 days'
+  WHERE f.first_ts >= NOW() - INTERVAL '26 weeks'
+    AND f.first_ts <  NOW() - INTERVAL '28 days'      -- незавершённые недели не показываем
+  GROUP BY 1, 2
+)
+SELECT date_trunc('week', first_ts)::date AS first_week,
+       COUNT(*)                                     AS newcomers,
+       COUNT(*) FILTER (WHERE contributed_14d)      AS contributed_14d,
+       COUNT(*) FILTER (WHERE returned_8_28d)       AS returned_8_28d,
+       COUNT(*) FILTER (WHERE contributed_8_28d)    AS contributed_8_28d,
+       ROUND(100.0 * COUNT(*) FILTER (WHERE returned_8_28d) / COUNT(*), 1) AS returned_pct
+FROM newcomer GROUP BY 1 ORDER BY 1;`,
+
+q4a: `WITH c AS (
+  SELECT u.id AS user_id,
+         COUNT(a.ts) FILTER (WHERE a.family = 'contribution') AS contributions,
+         COUNT(a.ts) AS actions
+  FROM sm_users u
+  LEFT JOIN v_storm_user_actions a ON a.user_id = u.id AND a.ts >= NOW() - INTERVAL '28 days'
+  WHERE u.enabled AND u.deleted_on IS NULL
+  GROUP BY u.id
+)
+SELECT CASE WHEN contributions >= 10 THEN '1. ядро: 10+ действий'
+            WHEN contributions >= 3  THEN '2. активные: 3–9'
+            WHEN contributions >= 1  THEN '3. эпизодические: 1–2'
+            WHEN actions > 0         THEN '4. только заходили'
+            ELSE                          '5. не появлялись 28 дней' END AS tier,
+       COUNT(*) AS users,
+       ROUND(100.0 * COUNT(*) / SUM(COUNT(*)) OVER (), 1) AS pct
+FROM c GROUP BY 1 ORDER BY 1;`,
+
+q4b: `WITH weeks AS (
+  SELECT generate_series(date_trunc('week', NOW() - INTERVAL '26 weeks'),
+                         date_trunc('week', NOW()), '1 week')::date AS week
+),
+per_user AS (
+  SELECT w.week, a.user_id, COUNT(*) AS contributions
+  FROM weeks w
+  JOIN v_storm_user_actions a ON a.family = 'contribution'
+                             AND a.ts >= w.week + 7 - 14 AND a.ts < w.week + 7
+  GROUP BY 1, 2
+)
+SELECT week,
+       COUNT(*) FILTER (WHERE contributions >= 3) AS core_users,
+       COUNT(*) AS contributors_14d,
+       ROUND(100.0 * COUNT(*) FILTER (WHERE contributions >= 3) / COUNT(*), 1) AS core_pct
+FROM per_user GROUP BY 1 ORDER BY 1;`,
+
+q5: `WITH weeks AS (
+  SELECT generate_series(date_trunc('week', NOW() - INTERVAL '26 weeks'),
+                         date_trunc('week', NOW()), '1 week')::date AS week
+)
+SELECT w.week,
+  (SELECT COUNT(*) FROM sm_diagrams d WHERE d.created_on >= w.week AND d.created_on < w.week + 7)       AS diagrams_created,
+  (SELECT COUNT(*) FROM sm_diagrams d WHERE d.deleted = false AND d.created_on < w.week + 7)              AS diagrams_total,
+  (SELECT COUNT(DISTINCT v.diagram_uuid) FROM sm_diagram_versions v
+    WHERE v.created_on >= w.week AND v.created_on < w.week + 7)                                           AS diagrams_touched_week,
+  ROUND(100.0 * (SELECT COUNT(DISTINCT v.diagram_uuid) FROM sm_diagram_versions v
+                   JOIN sm_diagrams d ON d.id = v.diagram_uuid AND d.deleted = false
+                  WHERE v.created_on >= w.week + 7 - 90 AND v.created_on < w.week + 7)
+        / NULLIF((SELECT COUNT(*) FROM sm_diagrams d WHERE d.deleted = false AND d.created_on < w.week + 7), 0), 1) AS alive_90d_pct,
+  (SELECT COUNT(*) FROM sm_processes p  WHERE p.deleted = false AND p.created_on < w.week + 7)            AS processes_total,
+  (SELECT COUNT(*) FROM sm_wiki_pages p WHERE p.deleted_at IS NULL AND p.created_on < w.week + 7)         AS wiki_pages_total
+FROM weeks w ORDER BY 1;`,
+
+q6: `WITH weeks AS (
+  SELECT generate_series(date_trunc('week', NOW() - INTERVAL '26 weeks'),
+                         date_trunc('week', NOW()), '1 week')::date AS week
+)
+SELECT w.week,
+  (SELECT COUNT(*) FROM sm_comments c WHERE c.created_on >= w.week AND c.created_on < w.week + 7)
+  + (SELECT COUNT(*) FROM sm_comment_messages m WHERE m.created_on >= w.week AND m.created_on < w.week + 7) AS comments,
+  (SELECT COUNT(DISTINCT uid) FROM (
+      SELECT user_id AS uid FROM sm_comments WHERE created_on >= w.week AND created_on < w.week + 7
+      UNION SELECT author_user_id FROM sm_comment_messages WHERE created_on >= w.week AND created_on < w.week + 7) t) AS commenters,
+  (SELECT COUNT(*) FROM sm_approvals a WHERE a.created_on >= w.week AND a.created_on < w.week + 7)          AS approvals_requested,
+  (SELECT COUNT(*) FROM sm_approvals a WHERE a.approval_time >= w.week AND a.approval_time < w.week + 7)    AS approvals_decided,
+  (SELECT COUNT(*) FROM (SELECT v.diagram_uuid FROM sm_diagram_versions v
+                          WHERE v.created_on >= w.week + 7 - 90 AND v.created_on < w.week + 7
+                          GROUP BY v.diagram_uuid HAVING COUNT(DISTINCT v.user_id) >= 2) t)                AS diagrams_multi_author_90d,
+  (SELECT COUNT(*) FROM sm_business_event e
+    WHERE e.name IN ('diagram.invite_sent', 'team.invite_sent')
+      AND e."timestamp" >= w.week AND e."timestamp" < w.week + 7)                                          AS invites
+FROM weeks w ORDER BY 1;`,
+
+q7: `WITH weeks AS (
+  SELECT generate_series(date_trunc('week', NOW() - INTERVAL '26 weeks'),
+                         date_trunc('week', NOW()), '1 week')::date AS week
+),
+ev AS (
+  SELECT date_trunc('week', "timestamp")::date AS week,
+         COUNT(DISTINCT user_id) FILTER (WHERE name = 'ai_chat_message_sent') AS ai_users,
+         COUNT(*)                FILTER (WHERE name = 'ai_chat_message_sent') AS ai_messages,
+         COUNT(DISTINCT user_id) FILTER (WHERE name LIKE 'mcp::%')            AS mcp_users,
+         COUNT(*)                FILTER (WHERE name LIKE 'mcp::%')            AS mcp_calls
+  FROM sm_business_event WHERE "timestamp" >= NOW() - INTERVAL '26 weeks' GROUP BY 1
+),
+fb AS (
+  SELECT date_trunc('week', created_at)::date AS week,
+         COUNT(*) FILTER (WHERE feedback = 'UP')   AS thumbs_up,
+         COUNT(*) FILTER (WHERE feedback = 'DOWN') AS thumbs_down
+  FROM sm_ai_chat_messages WHERE created_at >= NOW() - INTERVAL '26 weeks' GROUP BY 1
+),
+act AS (
+  SELECT date_trunc('week', ts)::date AS week, COUNT(DISTINCT user_id) AS contributors
+  FROM v_storm_user_actions WHERE family = 'contribution' AND ts >= NOW() - INTERVAL '26 weeks' GROUP BY 1
+)
+SELECT w.week,
+       COALESCE(ev.ai_users, 0)    AS ai_users,
+       COALESCE(ev.ai_messages, 0) AS ai_messages,
+       ROUND(100.0 * COALESCE(ev.ai_users, 0) / NULLIF(act.contributors, 0), 1) AS ai_share_of_contributors_pct,
+       COALESCE(fb.thumbs_up, 0)   AS thumbs_up,
+       COALESCE(fb.thumbs_down, 0) AS thumbs_down,
+       COALESCE(ev.mcp_users, 0)   AS mcp_users,
+       COALESCE(ev.mcp_calls, 0)   AS mcp_calls
+FROM weeks w
+LEFT JOIN ev  USING (week)
+LEFT JOIN fb  USING (week)
+LEFT JOIN act USING (week)
+ORDER BY 1;`,
+
+q8a: `WITH p AS (SELECT DATE '2026-09-15' AS d0),                   -- дата рассылки
+periods AS (
+  SELECT 'до (28 дн)'    AS period, d0 - 28 AS from_d, d0      AS to_d FROM p
+  UNION ALL
+  SELECT 'после (28 дн)',           d0,               d0 + 28 FROM p
+),
+first_seen AS (SELECT user_id, MIN(ts) AS first_ts FROM v_storm_user_actions GROUP BY user_id)
+SELECT pr.period,
+  COUNT(DISTINCT a.user_id)                                                                       AS users,
+  COUNT(DISTINCT a.user_id) FILTER (WHERE a.family = 'contribution')                              AS contributors,
+  COUNT(*)                  FILTER (WHERE a.family = 'contribution')                              AS contributions,
+  COUNT(DISTINCT a.user_id) FILTER (WHERE f.first_ts >= pr.from_d AND f.first_ts < pr.to_d)       AS newcomers,
+  COUNT(DISTINCT a.user_id) FILTER (WHERE a.family = 'contribution'
+                                      AND f.first_ts >= pr.from_d AND f.first_ts < pr.to_d)       AS newcomers_contributed
+FROM periods pr
+JOIN v_storm_user_actions a ON a.ts >= pr.from_d AND a.ts < pr.to_d
+JOIN first_seen f ON f.user_id = a.user_id
+GROUP BY 1 ORDER BY 1;`,
+
+q8b: `WITH p AS (SELECT DATE '2026-09-15' AS d0),                   -- дата рассылки
+groups AS (
+  SELECT 'волна рассылки' AS grp,          d0      AS from_d, d0 + 7  AS to_d, d0 + 7  AS ret_from, d0 + 28 AS ret_to FROM p
+  UNION ALL
+  SELECT 'обычная неделя (−5 нед)',        d0 - 35,           d0 - 28,          d0 - 28,             d0 - 7  FROM p
+),
+members AS (
+  SELECT DISTINCT g.grp, a.user_id
+  FROM groups g JOIN v_storm_user_actions a ON a.ts >= g.from_d AND a.ts < g.to_d
+),
+ret AS (
+  SELECT m.grp, m.user_id,
+         COALESCE(BOOL_OR(a.ts IS NOT NULL), false)          AS returned,
+         COALESCE(BOOL_OR(a.family = 'contribution'), false) AS contributed
+  FROM members m
+  JOIN groups g USING (grp)
+  LEFT JOIN v_storm_user_actions a ON a.user_id = m.user_id AND a.ts >= g.ret_from AND a.ts < g.ret_to
+  GROUP BY 1, 2
+)
+SELECT grp, COUNT(*) AS users,
+       COUNT(*) FILTER (WHERE returned)    AS returned_w2_4,
+       COUNT(*) FILTER (WHERE contributed) AS contributed_w2_4,
+       ROUND(100.0 * COUNT(*) FILTER (WHERE returned) / COUNT(*), 1) AS returned_pct
+FROM ret GROUP BY 1 ORDER BY 1 DESC;`,
+
+q9: `SELECT u.id, u.email, u.fullname,
+       CASE WHEN m.rights = 'VIEW' THEN 'просмотр' ELSE 'редактор' END AS role,
+       u.create_on::date AS registered,
+       MAX(a.ts)::date AS last_action,
+       MAX(a.ts) FILTER (WHERE a.family = 'contribution')::date AS last_contribution,
+       COUNT(a.ts) FILTER (WHERE a.family = 'contribution' AND a.ts >= NOW() - INTERVAL '28 days') AS contributions_28d,
+       COUNT(a.ts) FILTER (WHERE a.family = 'contribution' AND a.ts >= NOW() - INTERVAL '90 days') AS contributions_90d,
+       COUNT(a.ts) FILTER (WHERE a.kind = 'ai' AND a.ts >= NOW() - INTERVAL '90 days')            AS ai_90d
+FROM sm_users u
+LEFT JOIN (SELECT DISTINCT user_id, rights FROM sm_members) m ON m.user_id = u.id
+LEFT JOIN v_storm_user_actions a ON a.user_id = u.id
+WHERE u.enabled AND u.deleted_on IS NULL
+GROUP BY u.id, u.email, u.fullname, m.rights, u.create_on
+ORDER BY last_action NULLS FIRST;`
+  };
+
+  /* ---------- SQL highlight + copy ---------- */
+  const KW = /\b(WITH|AS|MATERIALIZED|SELECT|DISTINCT|FROM|WHERE|AND|OR|NOT|IN|IS|NULL|LIKE|UNION|ALL|GROUP|BY|ORDER|LIMIT|LEFT|JOIN|ON|USING|CASE|WHEN|THEN|ELSE|END|FILTER|OVER|INTERVAL|CREATE|REPLACE|VIEW|DATE|EXISTS|HAVING|DESC|ASC|NULLS|FIRST|TRUE|FALSE|COUNT|SUM|MAX|MIN|ROUND|COALESCE|NULLIF|BOOL_OR|EXTRACT|YEAR|MONTH|NOW|GENERATE_SERIES|DATE_TRUNC)\b/gi;
+  const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  function highlight(src) {
+    const re = /(--[^\n]*)|('[^']*')|(\b\d+(?:\.\d+)?\b)|([A-Za-z_][A-Za-z_0-9]*)/g;
+    return esc(src).replace(re, (m, cmt, str, num, word) => {
+      if (cmt) return `<span class="cmt">${m}</span>`;
+      if (str) return `<span class="str">${m}</span>`;
+      if (num) return `<span class="num">${m}</span>`;
+      if (word && word.match(KW)) return `<span class="kw">${m}</span>`;
+      return m;
+    });
+  }
+  document.querySelectorAll('.sql').forEach(box => {
+    const code = box.querySelector('code');
+    const key = code.getAttribute('data-sql');
+    const src = SQL[key] || '';
+    code.innerHTML = highlight(src);
+    const bar = document.createElement('div');
+    bar.className = 'bar';
+    bar.innerHTML = `<span>${box.getAttribute('data-name') || 'SQL'}</span>`;
+    const btn = document.createElement('button');
+    btn.className = 'copy'; btn.type = 'button'; btn.textContent = 'Скопировать';
+    btn.addEventListener('click', async () => {
+      let ok = false;
+      try { await navigator.clipboard.writeText(src); ok = true; } catch (e) { ok = false; }
+      if (!ok) { try { const r = document.createRange(); r.selectNodeContents(code); const s = getSelection(); s.removeAllRanges(); s.addRange(r); } catch (e) {} }
+      btn.textContent = ok ? 'Скопировано' : 'Выделено — Ctrl+C';
+      setTimeout(() => btn.textContent = 'Скопировать', 1800);
+    });
+    bar.appendChild(btn);
+    box.insertBefore(bar, box.firstChild);
+  });
+
+  /* ================= data (условные) ================= */
+  function rng(seed) { return () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+  const N = 26, SPIKE = 18;
+  const monday0 = new Date(2026, 2, 16);
+  const weeks = Array.from({ length: N }, (_, i) => new Date(2026, 2, 16 + 7 * i));
+  const wl = weeks.map(d => `${String(d.getDate()).padStart(2, '0')}.${String(d.getMonth() + 1).padStart(2, '0')}`);
+  const r1 = rng(11);
+  const noise = (amp) => Math.round((r1() - 0.5) * 2 * amp);
+  const bump = (i, a) => i === SPIKE ? a : i === SPIKE + 1 ? Math.round(a * 0.35) : i === SPIKE + 2 ? Math.round(a * 0.12) : 0;
+  const usersWeek = weeks.map((_, i) => Math.max(40, Math.round(64 + i * 1.25 + noise(7) + bump(i, 72))));
+  const contribWeek = weeks.map((_, i) => Math.max(20, Math.round(37 + i * 0.9 + noise(4) + bump(i, 19))));
+  const users28 = weeks.map((_, i) => Math.round(148 + i * 2.8 + noise(5) + (i >= SPIKE && i <= SPIKE + 3 ? [44, 40, 31, 16][i - SPIKE] : 0)));
+  const contrib28 = weeks.map((_, i) => Math.round(70 + i * 1.45 + noise(3) + (i >= SPIKE && i <= SPIKE + 3 ? [12, 10, 7, 3][i - SPIKE] : 0)));
+  const stick = weeks.map((_, i) => +(usersWeek[i] / users28[i]).toFixed(2));
+
+  // дневные события за последние 12 недель (84 дня)
+  const r2 = rng(5);
+  const days = []; const dayLabels = [];
+  for (let d = 0; d < 84; d++) {
+    const date = new Date(2026, 5, 15 + d); // с 15.06 по 06.09
+    const dow = date.getDay();
+    let v = (dow === 0 || dow === 6) ? 12 + r2() * 18 : 110 + r2() * 120 + (dow === 1 ? 40 : 0);
+    if (d === 36) v = 640; if (d === 37) v = 410; if (d === 58) v = 520; if (d === 71) v = 470;
+    days.push(Math.round(v));
+    dayLabels.push(`${String(date.getDate()).padStart(2, '0')}.${String(date.getMonth() + 1).padStart(2, '0')}`);
+  }
+
+  const cohorts = [
+    { m: 'апрель', size: 24, ret: [100, 58, 50, 42, 38, 33] },
+    { m: 'май',    size: 31, ret: [100, 61, 48, 45, 39] },
+    { m: 'июнь',   size: 19, ret: [100, 63, 53, 47] },
+    { m: 'июль',   size: 45, ret: [100, 40, 29] },
+    { m: 'август', size: 27, ret: [100, 56] },
+    { m: 'сентябрь', size: 12, ret: [100] }
+  ];
+
+  const newW = wl.slice(10, 22);
+  const newcomers  = [5, 7, 4, 6, 8, 5, 6, 9, 44, 12, 7, 6];
+  const contrib14  = [3, 4, 3, 4, 5, 3, 4, 6, 19, 7, 4, 4];
+  const returned   = [3, 4, 2, 4, 5, 3, 4, 5, 15, 6, 4, 4];
+
+  const tiers = [
+    { l: 'ядро · 10+ действий', v: 22 }, { l: 'активные · 3–9', v: 35 }, { l: 'эпизодические · 1–2', v: 41 },
+    { l: 'только заходили', v: 58 }, { l: 'не появлялись 28 дней', v: 104 }
+  ];
+
+  const coreUsers = weeks.map((_, i) => Math.round(26 + i * 0.7 + noise(2) + bump(i, 5)));
+  const contrib14d = weeks.map((_, i) => Math.round(52 + i * 1.1 + noise(3) + bump(i, 22)));
+  const corePct = weeks.map((_, i) => +(100 * coreUsers[i] / contrib14d[i]).toFixed(1));
+
+  let base = 412; const baseTotal = weeks.map((_, i) => { base += 8 + Math.round(r1() * 6) + (i === SPIKE ? 26 : 0); return base; });
+  const alive = weeks.map((_, i) => +(63 - i * 0.55 + (r1() - 0.5) * 3 + (i >= SPIKE && i <= SPIKE + 1 ? 2 : 0)).toFixed(1));
+
+  const commenters = weeks.map((_, i) => Math.round(11 + i * 0.45 + noise(3) + bump(i, 6)));
+  const approvals = weeks.map((_, i) => Math.max(0, Math.round(6 + i * 0.35 + noise(3) + (i % 4 === 3 ? 5 : 0))));
+
+  const aiUsers = weeks.map((_, i) => Math.max(2, Math.round(5 + i * 0.65 + noise(2) + bump(i, 6))));
+  const aiShare = weeks.map((_, i) => +(100 * aiUsers[i] / contribWeek[i]).toFixed(1));
+
+  /* ================= chart helpers ================= */
+  const NS = 'http://www.w3.org/2000/svg';
+  const el = (tag, attrs, parent) => { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (parent) parent.appendChild(e); return e; };
+  const fmt = n => Math.round(n).toLocaleString('ru-RU');
+  const pct = n => n.toLocaleString('ru-RU', { maximumFractionDigits: 1 }) + ' %';
+  const dec = n => n.toLocaleString('ru-RU', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  function scale(max, min) {
+    max = Math.max(max, 1); min = min || 0;
+    const raw = (max - min) / 4, p = Math.pow(10, Math.floor(Math.log10(raw)));
+    const step = [1, 2, 2.5, 5, 10].map(m => m * p).find(s => (max - min) / s <= 5) || 10 * p;
+    return { step, top: Math.ceil(max / step) * step, bottom: Math.floor(min / step) * step };
+  }
+  function tipOf(root) { let t = root.querySelector('.tip'); if (!t) { t = document.createElement('div'); t.className = 'tip'; t.hidden = true; root.appendChild(t); } return t; }
+  function showTip(root, t, html, ev) {
+    t.innerHTML = html; t.hidden = false;
+    const r = root.getBoundingClientRect();
+    let x = ev.clientX - r.left + 14, y = ev.clientY - r.top + 14;
+    if (x + t.offsetWidth > r.width - 4) x = ev.clientX - r.left - t.offsetWidth - 14;
+    if (x < 0) x = 4;
+    t.style.left = x + 'px'; t.style.top = y + 'px';
+  }
+  function legend(root, series) {
+    if (series.length < 2) return;
+    const lg = document.createElement('div'); lg.className = 'legend';
+    series.forEach(s => lg.insertAdjacentHTML('beforeend', `<span><i style="background:${s.color}"></i>${s.name}</span>`));
+    root.appendChild(lg);
+  }
+  const renderers = [];
+
+  function lineChart(root, cfg) {
+    const draw = () => {
+      root.innerHTML = '';
+      legend(root, cfg.series);
+      const W = Math.max(280, root.clientWidth), H = cfg.height || 240;
+      const m = { t: 14, r: cfg.rightPad == null ? 58 : cfg.rightPad, b: 28, l: 44 };
+      const n = cfg.labels.length;
+      const vals = cfg.series.flatMap(s => s.values);
+      const sc = scale(cfg.max != null ? cfg.max : Math.max(...vals), cfg.min != null ? cfg.min : 0);
+      const x = i => m.l + i * (W - m.l - m.r) / (n - 1);
+      const y = v => m.t + (H - m.t - m.b) * (1 - (v - sc.bottom) / (sc.top - sc.bottom));
+      const svg = el('svg', { viewBox: `0 0 ${W} ${H}`, class: 'chart-svg', role: 'img', 'aria-label': cfg.aria || '' }, root);
+      for (let v = sc.bottom; v <= sc.top + 1e-9; v += sc.step) {
+        el('line', { x1: m.l, x2: W - m.r, y1: y(v), y2: y(v), class: v === sc.bottom ? 'base' : 'grid' }, svg);
+        el('text', { x: m.l - 8, y: y(v) + 4, 'text-anchor': 'end' }, svg).textContent = (cfg.yFmt || fmt)(v);
+      }
+      const every = cfg.every || Math.max(1, Math.round(n / Math.max(3, Math.floor(W / 110))));
+      cfg.labels.forEach((l, i) => { if (i % every === 0 && i <= n - 1 - every / 2 || i === n - 1) el('text', { x: x(i), y: H - 8, 'text-anchor': 'middle' }, svg).textContent = l; });
+      cfg.series.forEach(s => {
+        const pts = s.values.map((v, i) => `${x(i).toFixed(1)},${y(v).toFixed(1)}`);
+        if (s.area) el('path', { d: `M${x(0)},${y(sc.bottom)} L` + pts.join(' L') + ` L${x(n - 1)},${y(sc.bottom)} Z`, fill: s.color, 'fill-opacity': '0.1', stroke: 'none' }, svg);
+        el('polyline', { points: pts.join(' '), fill: 'none', stroke: s.color, 'stroke-width': 2, 'stroke-linejoin': 'round', 'stroke-linecap': 'round' }, svg);
+        const last = n - 1;
+        el('circle', { cx: x(last), cy: y(s.values[last]), r: 4.5, fill: s.color, class: 'dot' }, svg);
+        if (m.r > 20) el('text', { x: x(last) + 9, y: y(s.values[last]) + 4, class: 'endlabel' }, svg).textContent = (s.fmt || cfg.yFmt || fmt)(s.values[last]);
+      });
+      const cross = el('line', { x1: 0, x2: 0, y1: m.t, y2: H - m.b, class: 'cross' }, svg); cross.style.display = 'none';
+      const dots = cfg.series.map(s => { const c = el('circle', { r: 4.5, fill: s.color, class: 'dot' }, svg); c.style.display = 'none'; return c; });
+      const hit = el('rect', { x: m.l, y: m.t, width: W - m.l - m.r, height: H - m.t - m.b, class: 'hit' }, svg);
+      const t = tipOf(root);
+      hit.addEventListener('mousemove', e => {
+        const rc = svg.getBoundingClientRect(); const sx = (e.clientX - rc.left) * W / rc.width;
+        let i = Math.round((sx - m.l) / ((W - m.l - m.r) / (n - 1))); i = Math.max(0, Math.min(n - 1, i));
+        cross.setAttribute('x1', x(i)); cross.setAttribute('x2', x(i)); cross.style.display = '';
+        dots.forEach((d, k) => { d.setAttribute('cx', x(i)); d.setAttribute('cy', y(cfg.series[k].values[i])); d.style.display = ''; });
+        showTip(root, t, `<b>${cfg.tipLabel ? cfg.tipLabel(i) : 'Неделя с ' + cfg.labels[i]}</b>` + cfg.series.map(s => `<div><i style="background:${s.color}"></i>${s.name}: <b>${(s.fmt || cfg.yFmt || fmt)(s.values[i])}</b></div>`).join(''), e);
+      });
+      hit.addEventListener('mouseleave', () => { cross.style.display = 'none'; dots.forEach(d => d.style.display = 'none'); t.hidden = true; });
+    };
+    renderers.push(draw); draw();
+  }
+
+  function columnChart(root, cfg) {
+    const draw = () => {
+      root.innerHTML = '';
+      legend(root, cfg.series);
+      const W = Math.max(280, root.clientWidth), H = cfg.height || 240;
+      const m = { t: 18, r: 10, b: 28, l: 44 };
+      const n = cfg.labels.length, k = cfg.series.length;
+      const sc = scale(cfg.max != null ? cfg.max : Math.max(...cfg.series.flatMap(s => s.values)), 0);
+      const band = (W - m.l - m.r) / n, gap = 2;
+      const bw = Math.max(2, Math.min(24, (band * 0.72 - gap * (k - 1)) / k));
+      const gw = bw * k + gap * (k - 1);
+      const x0 = i => m.l + i * band + (band - gw) / 2;
+      const y = v => m.t + (H - m.t - m.b) * (1 - v / sc.top);
+      const svg = el('svg', { viewBox: `0 0 ${W} ${H}`, class: 'chart-svg', role: 'img', 'aria-label': cfg.aria || '' }, root);
+      for (let v = 0; v <= sc.top + 1e-9; v += sc.step) {
+        el('line', { x1: m.l, x2: W - m.r, y1: y(v), y2: y(v), class: v === 0 ? 'base' : 'grid' }, svg);
+        el('text', { x: m.l - 8, y: y(v) + 4, 'text-anchor': 'end' }, svg).textContent = (cfg.yFmt || fmt)(v);
+      }
+      const every = cfg.every || Math.max(1, Math.round(n / Math.max(3, Math.floor(W / 110))));
+      cfg.labels.forEach((l, i) => { const lastLabeled = Math.floor((n - 1) / every) * every; if (i % every === 0 && (i !== lastLabeled || n - 1 - i >= every / 2) || i === n - 1) el('text', { x: x0(i) + gw / 2, y: H - 8, 'text-anchor': 'middle' }, svg).textContent = l; });
+      cfg.series.forEach((s, j) => s.values.forEach((v, i) => {
+        const xx = x0(i) + j * (bw + gap), yv = y(v), yb = y(0), h = yb - yv, rr = Math.min(4, h, bw / 2);
+        el('path', { d: `M${xx},${yb} V${yv + rr} Q${xx},${yv} ${xx + rr},${yv} H${xx + bw - rr} Q${xx + bw},${yv} ${xx + bw},${yv + rr} V${yb} Z`, fill: s.color }, svg);
+      }));
+      (cfg.capLabels || []).forEach(i => { const s = cfg.series[0]; el('text', { x: x0(i) + (k === 1 ? bw / 2 : bw / 2), y: y(s.values[i]) - 6, class: 'cap' }, svg).textContent = (s.fmt || cfg.yFmt || fmt)(s.values[i]); });
+      const t = tipOf(root);
+      cfg.labels.forEach((l, i) => {
+        const hb = el('rect', { x: m.l + i * band, y: m.t, width: band, height: H - m.t - m.b, class: 'hit hitband' }, svg);
+        hb.addEventListener('mousemove', e => showTip(root, t, `<b>${cfg.tipLabel ? cfg.tipLabel(i) : l}</b>` + cfg.series.map(s => `<div><i style="background:${s.color}"></i>${s.name}: <b>${(s.fmt || cfg.yFmt || fmt)(s.values[i])}</b></div>`).join('') + (cfg.extra ? `<div>${cfg.extra(i)}</div>` : ''), e));
+        hb.addEventListener('mouseleave', () => t.hidden = true);
+      });
+    };
+    renderers.push(draw); draw();
+  }
+
+  function hbars(root, items, opts) {
+    const total = items.reduce((a, b) => a + b.v, 0), max = Math.max(...items.map(i => i.v));
+    root.innerHTML = '<div class="hbars">' + items.map((it, i) => {
+      const w = (100 * it.v / max).toFixed(1);
+      const col = opts && opts.colors ? opts.colors[i] : 'var(--s1)';
+      return `<div class="hrow"><span class="hl">${it.l}</span><span class="track"><span class="fill" style="width:${w}%;background:${col}"></span></span><span class="hv"><b>${fmt(it.v)}</b> · ${(100 * it.v / total).toFixed(0)} %</span></div>`;
+    }).join('') + '</div>';
+  }
+
+  function heat(root, rows) {
+    const cols = 6;
+    let h = '<div class="heat"><div class="h rl">Когорта</div><div class="h">Людей</div>';
+    for (let c = 0; c < cols; c++) h += `<div class="h">М${c}</div>`;
+    rows.forEach(rw => {
+      h += `<div class="rl">${rw.m}</div><div class="sz">${rw.size}</div>`;
+      for (let c = 0; c < cols; c++) {
+        const v = rw.ret[c];
+        if (v == null) { h += '<div class="e"></div>'; continue; }
+        const mix = Math.round(10 + v * 0.9);
+        const ink = v >= 55 ? '#fff' : 'var(--ink)';
+        h += `<div class="c" style="background:color-mix(in oklab, var(--s1) ${mix}%, var(--surface));color:${ink}" title="${rw.m}: месяц ${c} — ${v} %">${v} %</div>`;
+      }
+    });
+    root.innerHTML = h + '</div><p class="note" style="margin:10px 0 0">М0 — месяц первого вклада, всегда 100 %. Клетка — доля когорты, сделавшая хотя бы одно действие в этот месяц.</p>';
+  }
+
+  /* ================= render ================= */
+  const S1 = 'var(--s1)', S2 = 'var(--s2)', S3 = 'var(--s3)', SN = 'var(--neutral-mark)';
+
+  // тезис: события в день vs авторы 28д
+  const th = document.getElementById('thesis');
+  const thA = document.createElement('div'); thA.className = 'chart';
+  const thB = document.createElement('div'); thB.className = 'chart';
+  const capA = document.createElement('div'); capA.className = 'legend'; capA.innerHTML = '<span><i style="background:var(--neutral-mark)"></i>событий в день, sm_business_event</span>';
+  const capB = document.createElement('div'); capB.className = 'legend'; capB.innerHTML = '<span><i style="background:var(--s1)"></i>авторов за скользящие 28 дней</span>';
+  const wrapA = document.createElement('div'); wrapA.appendChild(capA); wrapA.appendChild(thA);
+  const wrapB = document.createElement('div'); wrapB.appendChild(capB); wrapB.appendChild(thB);
+  th.appendChild(wrapA); th.appendChild(wrapB);
+  if (matchMedia('(max-width: 720px)').matches) th.style.gridTemplateColumns = '1fr';
+  columnChart(thA, { labels: dayLabels, series: [{ name: 'событий', color: SN, values: days }], height: 200, every: 14, tipLabel: i => dayLabels[i] });
+  lineChart(thB, { labels: wl.slice(14), series: [{ name: 'авторов за 28 дней', color: S1, values: contrib28.slice(14), area: true }], height: 200, min: 0 });
+
+  // Q1
+  lineChart(document.getElementById('c-audience'), { labels: wl, series: [
+    { name: 'пришли за 28 дней', color: S2, values: users28 },
+    { name: 'работали за 28 дней', color: S1, values: contrib28, area: true }
+  ], height: 260 });
+  lineChart(document.getElementById('c-weekly'), { labels: wl, series: [
+    { name: 'пришли за неделю', color: S2, values: usersWeek },
+    { name: 'работали за неделю', color: S1, values: contribWeek }
+  ], height: 210 });
+  lineChart(document.getElementById('c-stick'), { labels: wl, series: [{ name: 'прилипаемость', color: S1, values: stick, fmt: dec }], height: 210, min: 0, max: 1, yFmt: v => v.toLocaleString('ru-RU', { maximumFractionDigits: 2 }) });
+
+  // Q2
+  heat(document.getElementById('c-cohort'), cohorts);
+
+  // Q3
+  columnChart(document.getElementById('c-newcomers'), { labels: newW, series: [
+    { name: 'пришли впервые', color: SN, values: newcomers },
+    { name: 'сделали вклад за 14 дней', color: S3, values: contrib14 },
+    { name: 'вернулись на 2–4-й неделе', color: S1, values: returned }
+  ], height: 240, every: 1, capLabels: [8], extra: i => `вернулись: <b>${(100 * returned[i] / newcomers[i]).toFixed(0)} %</b>` });
+
+  // Q4
+  hbars(document.getElementById('c-tiers'), tiers, { colors: ['var(--s1)', 'color-mix(in oklab, var(--s1) 75%, var(--surface))', 'color-mix(in oklab, var(--s1) 50%, var(--surface))', 'var(--neutral-mark)', 'color-mix(in oklab, var(--neutral-mark) 55%, var(--surface))'] });
+  lineChart(document.getElementById('c-core'), { labels: wl, series: [
+    { name: 'все авторы за 14 дней', color: SN, values: contrib14d },
+    { name: 'ядро · 3+ действий', color: S1, values: coreUsers, area: true }
+  ], height: 240 });
+
+  // Q5
+  columnChart(document.getElementById('c-base'), { labels: wl, series: [{ name: 'моделей в базе', color: S1, values: baseTotal }], height: 210, capLabels: [N - 1] });
+  lineChart(document.getElementById('c-alive'), { labels: wl, series: [{ name: 'доля живых моделей', color: S2, values: alive, fmt: pct, area: true }], height: 210, min: 0, max: 100, yFmt: v => v + ' %' });
+
+  // Q6
+  columnChart(document.getElementById('c-collab'), { labels: wl, series: [
+    { name: 'комментаторов за неделю', color: S1, values: commenters },
+    { name: 'решений по согласованиям', color: S2, values: approvals }
+  ], height: 240 });
+
+  // Q7
+  columnChart(document.getElementById('c-ai'), { labels: wl, series: [{ name: 'обращались к ИИ', color: S1, values: aiUsers }], height: 210, capLabels: [N - 1] });
+  lineChart(document.getElementById('c-aishare'), { labels: wl, series: [{ name: 'доля авторов с ИИ', color: S1, values: aiShare, fmt: pct, area: true }], height: 210, min: 0, max: 50, yFmt: v => v + ' %' });
+
+  // Q8
+  const wave = [{ l: 'волна рассылки', users: 168, ret: 71, contr: 44 }, { l: 'обычная неделя (−5 нед)', users: 96, ret: 58, contr: 41 }];
+  document.getElementById('c-wave').innerHTML = wave.map((g, i) => {
+    const p = 100 * g.ret / g.users, c = 100 * g.contr / g.users;
+    return `<div class="tile"><div class="tl">${g.l}</div><div class="tv">${p.toFixed(0)} %</div><div class="td">вернулись на 2–4-й неделе: ${g.ret} из ${g.users}</div>
+      <div class="track" style="height:10px;background:var(--surface);border-radius:4px;position:relative"><span class="fill" style="position:absolute;left:0;top:0;bottom:0;border-radius:4px;width:${p.toFixed(1)}%;background:${i === 0 ? 'var(--s2)' : 'var(--s1)'}"></span></div>
+      <div class="td" style="margin-top:8px">сделали вклад: ${g.contr} (${c.toFixed(0)} %)</div></div>`;
+  }).join('');
+
+  let rt; addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => renderers.forEach(f => f()), 120); });
+
+  /* ---------- TOC current ---------- */
+  const links = [...document.querySelectorAll('.toc a')];
+  const secs = links.map(a => document.querySelector(a.getAttribute('href'))).filter(Boolean);
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(en => { if (en.isIntersecting) { links.forEach(a => a.classList.toggle('current', a.getAttribute('href') === '#' + en.target.id)); } });
+    }, { rootMargin: '-10% 0px -75% 0px', threshold: 0 });
+    secs.forEach(s => io.observe(s));
+  }
+})();
+</script>
+
+</body>
+</html>
