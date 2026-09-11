@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 345" role="img" aria-labelledby="title description">
+<title id="title">Возвращаемость после рассылки</title>
+<desc id="description">Вернулись 42% участников волны рассылки и 60% участников обычной недели. Условные данные для примера.</desc>
+<style>text{font-family:Arial,'Segoe UI',sans-serif;font-size:18px;fill:#464960}.title{font-size:24px;font-weight:700;fill:#17182d}.small{font-size:16px}.value{font-weight:700;fill:#17182d}</style>
+<rect x="1" y="1" width="798" height="343" fill="#ffffff" rx="14" stroke="#dfe0ec"/>
+<text x="28" y="40" class="title">Возвращаемость после рассылки</text>
+<text x="28" y="325" class="small">Условные данные · пример чтения метрики</text>
+<text x="28" y="80" class="value">Волна рассылки</text><text x="750" y="80" text-anchor="end" class="value">42%</text><rect x="28" y="95" width="722" height="18" fill="#f0f0f8" rx="5"/><rect x="28" y="95" width="303.24" height="18" fill="#df642e" rx="5"/><text x="28" y="140" >Вернулись на 2–4-й неделе: 71 из 168. Сделали вклад: 44.</text><text x="28" y="200" class="value">Обычная неделя (−5 недель)</text><text x="750" y="200" text-anchor="end" class="value">60%</text><rect x="28" y="215" width="722" height="18" fill="#f0f0f8" rx="5"/><rect x="28" y="215" width="433.2" height="18" fill="#6366f1" rx="5"/><text x="28" y="260" >Вернулись на 2–4-й неделе: 58 из 96. Сделали вклад: 41.</text>
+</svg>
