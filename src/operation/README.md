@@ -55,7 +55,7 @@ StormBPMN предоставляет HTTP-endpoint с метриками в фо
 | **No Data**                | > 5 минут без данных    | Недоступность сервиса       |
 
 ::: warning При срабатывании алертов
-Переходите к разделу [Disaster Recovery](#disaster-recovery-при-базовой-эксплуатации)
+Переходите к разделу [Disaster Recovery](#при-базовои-эксплуатации)
 :::
 
 ### Health Checks
