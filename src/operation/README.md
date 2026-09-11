@@ -1,8 +1,8 @@
 ---
 dir:
-    order: 5
+    order: 6
     link: true
-    text: 5. Обслуживание
+    text: 6. Обслуживание
     collapsible: true
 ---
 

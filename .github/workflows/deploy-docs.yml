@@ -13,16 +13,19 @@ jobs:
     runs-on: self-hosted
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
           # if your docs needs submodules, uncomment the following line
           # submodules: true
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: npm
+          # cache: npm НЕ включаем: раннер self-hosted, ~/.npm живёт на его диске
+          # между прогонами, поэтому npm ci и так укладывается в секунды. Кэш
+          # GitHub только дублировал этот же ~/.npm и вырос до 8 ГБ — restore
+          # падал по таймауту SAS-токена на 80%, съедая ~20 минут на прогон.
 
       - name: Install Deps
         run: npm ci

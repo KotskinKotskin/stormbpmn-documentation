@@ -1,11 +1,11 @@
 ---
 dir:
-    order: 6
+    order: 7
     link: true
-    text: 6. REST API
+    text: 7. REST API
     collapsible: true
 index: true
-order: 6
+order: 7
 ---
 
 [[toc]]

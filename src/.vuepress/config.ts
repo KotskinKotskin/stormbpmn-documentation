@@ -182,6 +182,9 @@ export default defineUserConfig({
                 tasklist: true,
                 hint: true,
                 component: true,
+                // Диаграммы прямо в тексте страницы: ```mermaid. Рендерятся на клиенте и
+                // грузятся динамически — на страницах без диаграмм библиотека не подтягивается.
+                mermaid: true,
             },
         },
         repo: "KotskinKotskin/stormbpmn-documentation",
@@ -227,6 +230,21 @@ export default defineUserConfig({
             {
                 text: "🤖 AI-ассистент",
                 children: ["/ai/", "/ai/AI_CHAT.html", "/ai/KnowledgeBase.html", "/ai/self-hosted-llm/", "/ai/voice-input.html"],
+            },
+            {
+                text: "📊 Симуляции",
+                children: ["/simulation/", "/simulation/install.html", "/simulation/operation.html"],
+            },
+            {
+                text: "🏛 Архитектурное ревью",
+                children: [
+                    "/architecture/",
+                    "/architecture/processes.html",
+                    "/architecture/roles-raci.html",
+                    "/architecture/user-management.html",
+                    "/architecture/functional-requirements.html",
+                    "/architecture/system-design.html",
+                ],
             },
             "/operation/",
             "/support/",
