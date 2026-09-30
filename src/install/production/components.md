@@ -414,7 +414,7 @@ Listmonk использует синтаксис Go-шаблонов: перем
 | **SMTP_PASSWORD**  | SMTP пароль                                               | `secure-password`       |
 | **SMTP_FROM**      | Email отправителя                                         | `stormbpmn@company.com` |
 | **SMTP_PROTOCOL**  | SMTP/STARTTLS/SMTPS. STARTTLS - по-умолчанию              | `STARTTLS`              |
-| **SMTP_USE_AUTH**  | true/false. Использовать авторизацию. true - по-умолчанию | `true`                  |
+| **SMTP_USE_AUTH**  | `false` — не использовать авторизацию, даже если задан `SMTP_USERNAME`. Без `SMTP_USERNAME` авторизация не используется при любом значении | `false`                 |
 
 #### Переменные окружения
 
