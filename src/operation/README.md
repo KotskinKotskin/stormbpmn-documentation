@@ -327,6 +327,7 @@ CREATE EXTENSION IF NOT EXISTS pg_trgm;   -- для автодополнения
 
 ## Связанная документация
 
+-   **[Проверка системы](./system-check.md)** - автопроверки базы, лицензии, почты, S3, Gotenberg и других сервисов
 -   **[Конфигурация](../configure/README.md)** - настройка системы
 -   **[Production-Ready](/install/production/)** - развертывание для продакшена
 -   **[Безопасность](/configure/security/)** - настройки безопасности

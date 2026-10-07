@@ -97,6 +97,28 @@ Assistants API) — они к чату напрямую не относятся.
 
 ¹ Токен может быть пустым только для self-hosted эндпоинта без авторизации.
 
+::: tip Ключи настроек
+В админ-панели у каждого поля есть ключ — по нему настройку можно найти в поиске, а [«Проверка системы»](/operation/system-check.md) и служба поддержки называют их именно так.
+
+| Поле                  | Ключ настройки              |
+| --------------------- | --------------------------- |
+| Включение модели      | `bpmnAiCompletion`          |
+| Формат API            | `bpmnAiChatFormat`          |
+| Базовый URL           | `bpmnAiCompletionBaseUrl`   |
+| Токен                 | `bpmnAiCompletionToken`     |
+| Модель                | `bpmnAiCompletionModel`     |
+| Температура           | `bpmnAiCompletionTemperature` |
+| Лимит токенов         | `bpmnAiCompletionMaxTokens` |
+| Стриминг ответа       | `bpmnAiCompletionStream`    |
+| Размышления (thinking)| `bpmnAiChatThinking`        |
+
+Для отдельной модели правок (write) ключи начинаются с `bpmnAiWrite`: `bpmnAiWriteModel`, `bpmnAiWriteBaseUrl`, `bpmnAiWriteToken`, `bpmnAiWriteFormat`, `bpmnAiWriteTemperature`, `bpmnAiWriteMaxTokens`, `bpmnAiWriteThinking`.
+:::
+
+::: info Проверка подключения
+Раздел [«Проверка системы»](/operation/system-check.md) сверяет эти настройки автоматически, а кнопка «Проверить модель (платный запрос)» отправляет модели короткий запрос и показывает, отвечает ли она. Если ИИ-модуль входит в вашу лицензию, а модель не настроена, проверка считается ошибкой и мешает завершить первоначальную настройку.
+:::
+
 ### Формат API: `OPENAI` или `ANTHROPIC`
 
 Формат определяет, по какому контракту Storm общается с моделью:
