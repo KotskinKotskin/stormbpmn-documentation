@@ -217,6 +217,12 @@ export default defineUserConfig({
         // квалификатору (иначе «STORM Storm Enterprise»). SEO-title не меняется.
         navbarTitle: "Enterprise",
         hideSiteNameOnMobile: true,
+        // Раскладка темы по умолчанию + кнопка AI-помощника (AskAi, client.js) перед поиском.
+        navbarLayout: {
+            start: ["Brand"],
+            center: ["Links"],
+            end: ["Language", "Repo", "AskAi", "Outlook", "Search"],
+        },
 
         navbar: [
             {
@@ -246,8 +252,10 @@ export default defineUserConfig({
                     "/architecture/system-design.html",
                 ],
             },
-            "/operation/",
-            "/support/",
+            // Короткие подписи: заголовки страниц («Администрирование системы»,
+            // «Каналы поддержки») не помещаются в одну строку навбара.
+            { text: "Администрирование", link: "/operation/" },
+            { text: "Поддержка", link: "/support/" },
             "/Changelog/",
             {
                 text: "💼 Обсудить покупку",
