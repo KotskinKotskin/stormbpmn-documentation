@@ -374,6 +374,63 @@ html[data-theme="dark"] {
 }
 
 // -----------------------------------------------------------------------------
+// Место под оглавление справа
+// -----------------------------------------------------------------------------
+// На ≥1440px тема выносит оглавление вправо от контента и оставляет под него
+// 100vw − content-width − сайдбар − 6rem. С нашими 1000px контента это ~44px на
+// 1440 — оглавление (~16rem) уезжало за край и давало горизонтальную прокрутку.
+// Не меньше 16rem: на средних ширинах сужается контент, на широких — как было.
+@media (min-width: 1440px) {
+    .has-toc .vp-page {
+        padding-inline-end: max(16rem, calc(100vw - var(--content-width) - var(--sidebar-space) - 6rem));
+    }
+}
+
+// -----------------------------------------------------------------------------
+// Раскладка навбара
+// -----------------------------------------------------------------------------
+// Тема делит навбар на три равные трети (flex: 1), и ссылки, которым нужно
+// ~1300px, вылезали из центральной трети поверх поиска. Бренд и поиск берут
+// свою ширину, ссылки — всё остальное.
+.vp-navbar-start,
+.vp-navbar-end {
+    flex: none;
+}
+
+.vp-navbar-center {
+    min-width: 0;
+    justify-content: end;
+    margin-inline-end: 0.75rem !important;
+}
+
+// Гамбургер у темы включается только на ≤719px, а ссылки перестают помещаться
+// гораздо раньше (бренд + ссылки + AI + поиск ≈ 1995px). Ниже этой ширины прячем
+// разделы в меню-шторку темы, CTA «Обсудить покупку» остаётся. Порог с запасом
+// ~60px на другие метрики шрифта и масштаб текста.
+// shortcut: порог подобран под текущий набор пунктов; добавили пункт — перемерь.
+@media (max-width: 2059px) {
+    .vp-navbar .vp-nav-item:not(:has(> .nav-link[href="https://stormbpmn.com/contact-sales"])) {
+        display: none;
+    }
+
+    .vp-toggle-navbar-button {
+        display: flex;
+    }
+
+    #nav-screen,
+    .nav-screen-links {
+        display: block;
+    }
+
+    // CTA уже в шапке — в шторке не дублируем (на ≤719px тема прячет его из шапки).
+    @media (min-width: 720px) {
+        .nav-screen-links .navbar-links-item:has(> .nav-link[href="https://stormbpmn.com/contact-sales"]) {
+            display: none;
+        }
+    }
+}
+
+// -----------------------------------------------------------------------------
 // CTA «Обсудить покупку»
 // -----------------------------------------------------------------------------
 // Было: фиолетовый градиент 667eea→764ba2 + красный градиент в тёмной теме +
@@ -400,6 +457,12 @@ html[data-theme="dark"] {
         box-shadow 0.15s ease,
         background var(--color-transition);
 
+    // В шторке пункты идут колонкой — отступ от соседа слева там сдвигает плашку.
+    .nav-screen-links & {
+        box-sizing: border-box;
+        margin-inline-start: 0;
+    }
+
     // Тема подчёркивает активный пункт полоской ::after — на плашке она лишняя.
     &::after {
         display: none;
@@ -409,5 +472,72 @@ html[data-theme="dark"] {
         background: var(--mkt-color-brand-strong);
         box-shadow: var(--mkt-shadow-hover);
         transform: translate(-1px, -1px);
+    }
+}
+
+// -----------------------------------------------------------------------------
+// Кнопка AI-помощника в навбаре (AskAiButton.vue)
+// -----------------------------------------------------------------------------
+// Дублирует плавающую «Спросить AI» там, куда смотрят первым делом. Контурная,
+// чтобы не спорить с залитым CTA «Обсудить покупку» по соседству.
+.ask-ai-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.25rem 0.6rem;
+    border: 1px solid var(--mkt-color-brand);
+    border-radius: var(--mkt-radius);
+
+    background: color-mix(in srgb, var(--mkt-color-brand) 8%, transparent);
+    color: var(--mkt-color-brand);
+
+    font: inherit;
+    font-size: 0.875rem;
+    font-weight: 600;
+    line-height: 1.5rem;
+    cursor: pointer;
+
+    transition: background var(--color-transition);
+
+    &:hover {
+        background: color-mix(in srgb, var(--mkt-color-brand) 16%, transparent);
+    }
+
+    // indigo-500 на тёмном навбаре даёт ~3.5:1 — светлее, как --theme-color.
+    html[data-theme="dark"] & {
+        border-color: var(--theme-color);
+        color: var(--theme-color);
+    }
+
+    &:focus-visible {
+        outline: 2px solid var(--mkt-color-brand);
+        outline-offset: 2px;
+    }
+
+    .ask-ai-kbd {
+        padding: 0 0.3rem;
+        border: 1px solid color-mix(in srgb, var(--mkt-color-brand) 40%, transparent);
+        border-radius: var(--mkt-radius-sm);
+        font-size: 0.7rem;
+        font-weight: 500;
+        line-height: 1.2rem;
+    }
+
+    // На узком экране — только значок и «AI», без подсказки клавиш.
+    @media (max-width: 719px) {
+        padding: 0.2rem 0.45rem;
+
+        .ask-ai-text::before {
+            content: "AI";
+            font-size: 0.875rem;
+        }
+
+        .ask-ai-text {
+            font-size: 0;
+        }
+
+        .ask-ai-kbd {
+            display: none;
+        }
     }
 }
