@@ -405,10 +405,11 @@ html[data-theme="dark"] {
 
 // Гамбургер у темы включается только на ≤719px, а ссылки перестают помещаться
 // гораздо раньше (бренд + ссылки + AI + поиск ≈ 1995px). Ниже этой ширины прячем
-// разделы в меню-шторку темы, CTA «Обсудить покупку» (последний пункт) остаётся.
+// разделы в меню-шторку темы, CTA «Обсудить покупку» остаётся. Порог с запасом
+// ~60px на другие метрики шрифта и масштаб текста.
 // shortcut: порог подобран под текущий набор пунктов; добавили пункт — перемерь.
-@media (max-width: 2009px) {
-    .vp-navbar .vp-nav-item:not(:last-child) {
+@media (max-width: 2059px) {
+    .vp-navbar .vp-nav-item:not(:has(> .nav-link[href="https://stormbpmn.com/contact-sales"])) {
         display: none;
     }
 
@@ -423,7 +424,7 @@ html[data-theme="dark"] {
 
     // CTA уже в шапке — в шторке не дублируем (на ≤719px тема прячет его из шапки).
     @media (min-width: 720px) {
-        .nav-screen-links .navbar-links-item:last-child {
+        .nav-screen-links .navbar-links-item:has(> .nav-link[href="https://stormbpmn.com/contact-sales"]) {
             display: none;
         }
     }
@@ -500,6 +501,12 @@ html[data-theme="dark"] {
 
     &:hover {
         background: color-mix(in srgb, var(--mkt-color-brand) 16%, transparent);
+    }
+
+    // indigo-500 на тёмном навбаре даёт ~3.5:1 — светлее, как --theme-color.
+    html[data-theme="dark"] & {
+        border-color: var(--theme-color);
+        color: var(--theme-color);
     }
 
     &:focus-visible {
