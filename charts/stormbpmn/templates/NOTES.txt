@@ -11,6 +11,10 @@ StormBPMN Enterprise {{ .Chart.AppVersion }} развёрнут (чарт {{ .Ch
      http{{ if $.Values.ingress.tls }}s{{ end }}://{{ $host.host }}{{ .path }}
   {{- end }}
 {{- end }}
+{{- else if and .Values.httpRoute.enabled .Values.httpRoute.hostnames }}
+{{- range .Values.httpRoute.hostnames }}
+     https://{{ . }}/
+{{- end }}
 {{- else if contains "NodePort" .Values.service.type }}
      export NODE_PORT=$(kubectl get -n {{ .Release.Namespace }} -o jsonpath="{.spec.ports[0].nodePort}" svc/{{ include "stormbpmn.fullname" . }})
      export NODE_IP=$(kubectl get nodes -o jsonpath="{.items[0].status.addresses[0].address}")
@@ -54,6 +58,12 @@ StormBPMN Enterprise {{ .Chart.AppVersion }} развёрнут (чарт {{ .Ch
 
 ⚠️  Экземпляров приложения до {{ $replicas }}, но на ingress не настроены sticky-cookies
    (service.sessionAffinity за ingress их не заменяет):
+   совместное редактирование (WebSocket) будет рваться.
+{{- end }}
+{{- if and (gt $replicas 1) .Values.httpRoute.enabled (not .Values.httpRoute.sessionPersistence) }}
+
+⚠️  Экземпляров приложения до {{ $replicas }}, а httpRoute.sessionPersistence не задан.
+   Если sticky-сессии не настроены политикой вашего Gateway-контроллера,
    совместное редактирование (WebSocket) будет рваться.
 {{- end }}
 {{- if not .Values.storm.integrations.gotenbergUrl }}

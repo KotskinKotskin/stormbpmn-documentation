@@ -143,7 +143,7 @@ helm test storm -n stormbpmn
       nginx.ingress.kubernetes.io/proxy-body-size: "50m"
   ```
 
-  Для другого контроллера включите аналогичную привязку по cookie.
+  Для другого контроллера включите аналогичную привязку по cookie. Для Gateway API см. ниже.
 - **PDB и HPA** (`podDisruptionBudget.enabled`, `autoscaling.enabled`): обновление узлов не выключит все
   поды разом. При HPA учитывайте `autoscaling.maxReplicas`: Redis и sticky-сессии нужны уже при нём.
 - **Свой Gotenberg** в `storm.integrations.gotenbergUrl`, иначе документы при печати в PDF уходят на
@@ -151,6 +151,33 @@ helm test storm -n stormbpmn
 - **`storm.security.allowedOrigins`** — домен приложения, а не `*`.
 - **Метрики**: `metrics.serviceMonitor.enabled: true`, если в кластере есть Prometheus Operator.
 - **Резервные копии** PostgreSQL и S3 по расписанию. В подах приложения нет данных, которые нужно сохранять.
+
+### Gateway API вместо Ingress
+
+Если в кластере вместо Ingress-контроллера используется Gateway API (Envoy Gateway, Istio, Cilium,
+Traefik, NGINX Gateway Fabric и др.), выключите `ingress` и включите `httpRoute`:
+
+```yaml
+ingress:
+  enabled: false
+httpRoute:
+  enabled: true
+  parentRefs:
+    - name: main-gateway          # ваш Gateway
+      namespace: gateway-system
+  hostnames:
+    - stormbpmn.company.local
+  timeouts:
+    request: "0s"                 # WebSocket без ограничения, если контроллер это поддерживает
+  # При нескольких репликах — sticky-сессии:
+  sessionPersistence:
+    type: Cookie
+    sessionName: stormbpmn-affinity
+```
+
+TLS-сертификат, лимит размера загрузки (не меньше 50 МБ) и таймауты настраиваются на Gateway или в
+политиках вашего контроллера. `sessionPersistence` входит в экспериментальный канал Gateway API.
+Если ваш контроллер его не поддерживает, включите привязку по cookie политикой контроллера.
 
 После `helm install` и `helm upgrade` чарт выводит подсказки и предупреждения о том, чего не хватает
 в ваших values. Прочитайте их.

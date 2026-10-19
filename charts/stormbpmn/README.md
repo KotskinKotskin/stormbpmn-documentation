@@ -26,6 +26,7 @@ helm install storm stormbpmn/stormbpmn -n stormbpmn -f my-values.yaml
 |---|---|
 | Deployment, Service, ConfigMap, Secret, ServiceAccount | всегда (Secret — если не задан `existingSecret`) |
 | Ingress | `ingress.enabled` |
+| HTTPRoute (Gateway API) | `httpRoute.enabled` |
 | HPA / PDB | `autoscaling.enabled` / `podDisruptionBudget.enabled` |
 | ServiceMonitor | `metrics.serviceMonitor.enabled` (Prometheus Operator) |
 | Deployment + Service `storm-des` | `des.enabled` (модуль симуляций) |
