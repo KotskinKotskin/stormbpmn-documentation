@@ -138,7 +138,7 @@ storm:
 В 2.x: root, все ENV (включая публичные) в Secret через `data: + b64enc`.
 
 В 3.0.0:
-- `runAsNonRoot: true`, `runAsUser: 1000`, `drop ALL capabilities` по умолчанию
+- `drop ALL capabilities` и `seccompProfile: RuntimeDefault` по умолчанию; образ работает под uid 100 — другой `runAsUser` ломает nginx внутри образа
 - Публичные ENV → ConfigMap, чувствительные → Secret (правильная семантика)
 - Поддержка `existingSecret` (для SealedSecrets / Vault / external-secrets)
 

@@ -44,14 +44,16 @@ StormBPMN Enterprise {{ .Chart.AppVersion }} развёрнут (чарт {{ .Ch
 {{- if .Values.des.enabled }}
 Симуляции: storm-des доступен приложению по http://{{ include "stormbpmn.desName" . }}:{{ .Values.des.service.port }}
 {{- end }}
-{{- if and (gt (int .Values.replicaCount) 1) (not .Values.storm.redis.enabled) }}
+{{- $replicas := ternary (int .Values.autoscaling.minReplicas) (int .Values.replicaCount) .Values.autoscaling.enabled }}
+{{- if and (gt $replicas 1) (not .Values.storm.redis.enabled) }}
 
-⚠️  replicaCount={{ .Values.replicaCount }}, но storm.redis.enabled=false.
+⚠️  Экземпляров приложения: {{ $replicas }}, но storm.redis.enabled=false.
    Для нескольких экземпляров Redis обязателен (сессии, pub/sub совместного редактирования).
 {{- end }}
-{{- if and (gt (int .Values.replicaCount) 1) (not (or .Values.service.sessionAffinity (hasKey .Values.ingress.annotations "nginx.ingress.kubernetes.io/affinity"))) }}
+{{- if and (gt $replicas 1) .Values.ingress.enabled (not (hasKey (.Values.ingress.annotations | default dict) "nginx.ingress.kubernetes.io/affinity")) }}
 
-⚠️  replicaCount={{ .Values.replicaCount }}, но sticky-сессии не настроены:
+⚠️  Экземпляров приложения: {{ $replicas }}, но на ingress не настроены sticky-cookies
+   (service.sessionAffinity за ingress их не заменяет):
    совместное редактирование (WebSocket) будет рваться.
 {{- end }}
 {{- if not .Values.storm.integrations.gotenbergUrl }}

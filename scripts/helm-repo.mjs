@@ -33,7 +33,25 @@ if (versions.length === 0) throw new Error(`В src/Changelog нет версий
 fs.rmSync(outDir, { recursive: true, force: true });
 fs.mkdirSync(outDir, { recursive: true });
 
+// Опубликованная версия неизменна: её архив скачиваем с сайта как есть (тот же digest для
+// helm/Argo CD/Flux), пакуем только новые. HELM_REPACK="X.Y.Z,…" — осознанная перепаковка.
+const repack = new Set((process.env.HELM_REPACK ?? "").split(",").filter(Boolean));
+
 for (const v of versions) {
+    const file = `stormbpmn-${v}.tgz`;
+    if (!repack.has(v)) {
+        const res = await fetch(`${SITE_URL}/${file}`);
+        // Неизвестный путь nginx сайта отдаёт как index.html с кодом 200, поэтому
+        // «опубликован» = пришёл gzip-архив (сигнатура 1f 8b), а не просто 200.
+        const body = res.ok ? Buffer.from(await res.arrayBuffer()) : null;
+        if (body && body[0] === 0x1f && body[1] === 0x8b) {
+            fs.writeFileSync(path.join(outDir, file), body);
+            console.log(`${file}: уже опубликован, взят с сайта`);
+            continue;
+        }
+        // Иначе при сбое сайта молча перепаковали бы все выпущенные версии.
+        if (!res.ok && res.status !== 404) throw new Error(`${SITE_URL}/${file}: HTTP ${res.status}`);
+    }
     execFileSync("helm", ["package", chartDir, "--version", v, "--app-version", v, "-d", outDir], {
         stdio: "inherit",
     });
