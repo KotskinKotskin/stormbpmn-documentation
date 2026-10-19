@@ -99,7 +99,7 @@ Name of the ConfigMap with public ENV.
 storm-des: имя ресурсов, selector-лейблы и образ (registry и tag по умолчанию — как у приложения).
 */}}
 {{- define "stormbpmn.desName" -}}
-{{- printf "%s-des" (include "stormbpmn.fullname" .) | trunc 63 | trimSuffix "-" -}}
+{{- printf "%s-des" (include "stormbpmn.fullname" . | trunc 59 | trimSuffix "-") -}}
 {{- end }}
 
 {{- define "stormbpmn.desSelectorLabels" -}}

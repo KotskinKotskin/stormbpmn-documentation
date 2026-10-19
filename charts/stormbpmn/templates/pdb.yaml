@@ -6,11 +6,11 @@ metadata:
   labels:
     {{- include "stormbpmn.labels" . | nindent 4 }}
 spec:
-  {{- if hasKey .Values.podDisruptionBudget "minAvailable" }}
-  minAvailable: {{ .Values.podDisruptionBudget.minAvailable }}
-  {{- end }}
+  {{- /* поля взаимоисключающие: заданный maxUnavailable важнее дефолтного minAvailable */}}
   {{- if hasKey .Values.podDisruptionBudget "maxUnavailable" }}
   maxUnavailable: {{ .Values.podDisruptionBudget.maxUnavailable }}
+  {{- else }}
+  minAvailable: {{ .Values.podDisruptionBudget.minAvailable }}
   {{- end }}
   selector:
     matchLabels:

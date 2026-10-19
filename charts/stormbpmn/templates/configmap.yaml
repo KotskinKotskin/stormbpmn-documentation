@@ -28,8 +28,8 @@ data:
   S3_EXTERNAL_ENDPOINT: {{ . | quote }}
   {{- end }}
   S3_REGION: {{ $.Values.storm.s3.region | default "ru-3" | quote }}
-  S3_VIRTUAL_HOST: {{ $.Values.storm.s3.virtualHost | default "false" | quote }}
-  S3_SINGLE_USERS_BUCKET: {{ $.Values.storm.s3.singleUsersBucket | default "true" | quote }}
+  S3_VIRTUAL_HOST: {{ $.Values.storm.s3.virtualHost | toString | quote }}
+  S3_SINGLE_USERS_BUCKET: {{ $.Values.storm.s3.singleUsersBucket | toString | quote }}
   S3_BUCKET_UPLOADS: {{ $.Values.storm.s3.buckets.uploads | default "storm-uploads" | quote }}
   S3_BUCKET_USERS: {{ $.Values.storm.s3.buckets.users | default "storm-users" | quote }}
   S3_BUCKET_IMPORTS: {{ $.Values.storm.s3.buckets.imports | default "storm-imports" | quote }}
@@ -50,7 +50,7 @@ data:
   SMTP_HOST: {{ .Values.storm.email.smtp.host | quote }}
   SMTP_PORT: {{ .Values.storm.email.smtp.port | quote }}
   SMTP_PROTOCOL: {{ .Values.storm.email.smtp.protocol | default "STARTTLS" | quote }}
-  SMTP_USE_AUTH: {{ .Values.storm.email.smtp.useAuth | default "true" | quote }}
+  SMTP_USE_AUTH: {{ .Values.storm.email.smtp.useAuth | toString | quote }}
   SMTP_FROM: {{ .Values.storm.email.smtp.from | quote }}
   SMTP_USERNAME: {{ .Values.storm.email.smtp.username | quote }}
   {{- end }}
@@ -71,14 +71,14 @@ data:
   {{- end }}
 
   # ---- AI ----
-  MCP_ENABLED: {{ .Values.storm.ai.mcpEnabled | default "false" | quote }}
-  STORM_RETENTION_ENABLED: {{ .Values.storm.ai.retentionEnabled | default "false" | quote }}
+  MCP_ENABLED: {{ .Values.storm.ai.mcpEnabled | toString | quote }}
+  STORM_RETENTION_ENABLED: {{ .Values.storm.ai.retentionEnabled | toString | quote }}
 
   # ---- Security flags ----
   STORM_ALLOWED_ORIGINS: {{ .Values.storm.security.allowedOrigins | default "*" | quote }}
-  STORM_DISABLE_SIMPLE_AUTH: {{ .Values.storm.security.disableSimpleAuth | default "false" | quote }}
-  STORM_DISABLE_ENV_IN_UI: {{ .Values.storm.security.disableEnvInUi | default "true" | quote }}
-  STORM_DISABLE_ANON_SHARING: {{ .Values.storm.security.disableAnonSharing | default "true" | quote }}
+  STORM_DISABLE_SIMPLE_AUTH: {{ .Values.storm.security.disableSimpleAuth | toString | quote }}
+  STORM_DISABLE_ENV_IN_UI: {{ .Values.storm.security.disableEnvInUi | toString | quote }}
+  STORM_DISABLE_ANON_SHARING: {{ .Values.storm.security.disableAnonSharing | toString | quote }}
   {{- with .Values.storm.security.sessionExpirationSeconds }}
   {{- if gt (int64 .) 7776000 }}
   {{- fail "storm.security.sessionExpirationSeconds задаётся в СЕКУНДАХ и не больше 7776000 (90 суток): с большим значением приложение не стартует" }}
@@ -87,7 +87,7 @@ data:
   {{- end }}
 
   # ---- SIEM / Audit ----
-  AUDIT_ENABLED: {{ .Values.storm.audit.enabled | default "false" | quote }}
+  AUDIT_ENABLED: {{ .Values.storm.audit.enabled | toString | quote }}
   {{- if eq (.Values.storm.audit.enabled | toString) "true" }}
   AUDIT_CHANNEL: {{ .Values.storm.audit.channel | default "console" | quote }}
   {{- with .Values.storm.audit.includeUnauthPaths }}

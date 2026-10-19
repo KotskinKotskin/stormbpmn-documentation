@@ -26,7 +26,11 @@ StormBPMN Enterprise {{ .Chart.AppVersion }} развёрнут (чарт {{ .Ch
    a) Откройте /admin-onboarding (вход не нужен), скопируйте весь код активации.
    b) Передайте код менеджеру StormBPMN и получите LICENSE_KEY_V2 для этой инсталляции.
    c) Передайте ключ: --set storm.license.keyV2=... или ключ LICENSE_KEY_V2 в existingSecret,
-      затем helm upgrade (поды перезапустятся сами).
+      затем helm upgrade.
+{{- if .Values.existingSecret }}
+      При existingSecret поды сами не перезапустятся — после правки Secret выполните:
+        kubectl -n {{ .Release.Namespace }} rollout restart deployment -l app.kubernetes.io/instance={{ .Release.Name }}
+{{- end }}
    d) Создайте первого администратора в мастере настройки.
    Подробно: https://enterprise.stormbpmn.com/operation/License.html
 
