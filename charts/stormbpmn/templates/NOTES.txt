@@ -44,15 +44,15 @@ StormBPMN Enterprise {{ .Chart.AppVersion }} развёрнут (чарт {{ .Ch
 {{- if .Values.des.enabled }}
 Симуляции: storm-des доступен приложению по http://{{ include "stormbpmn.desName" . }}:{{ .Values.des.service.port }}
 {{- end }}
-{{- $replicas := ternary (int .Values.autoscaling.minReplicas) (int .Values.replicaCount) .Values.autoscaling.enabled }}
+{{- $replicas := ternary (int .Values.autoscaling.maxReplicas) (int .Values.replicaCount) .Values.autoscaling.enabled }}
 {{- if and (gt $replicas 1) (not .Values.storm.redis.enabled) }}
 
-⚠️  Экземпляров приложения: {{ $replicas }}, но storm.redis.enabled=false.
+⚠️  Экземпляров приложения до {{ $replicas }}, но storm.redis.enabled=false.
    Для нескольких экземпляров Redis обязателен (сессии, pub/sub совместного редактирования).
 {{- end }}
 {{- if and (gt $replicas 1) .Values.ingress.enabled (not (hasKey (.Values.ingress.annotations | default dict) "nginx.ingress.kubernetes.io/affinity")) }}
 
-⚠️  Экземпляров приложения: {{ $replicas }}, но на ingress не настроены sticky-cookies
+⚠️  Экземпляров приложения до {{ $replicas }}, но на ingress не настроены sticky-cookies
    (service.sessionAffinity за ingress их не заменяет):
    совместное редактирование (WebSocket) будет рваться.
 {{- end }}

@@ -9,7 +9,9 @@ import path from "node:path";
 
 // С этой версии шаблоны чарта совпадают с приложением (LICENSE_KEY_V2, SESSION_EXPIRATION в секундах).
 const MIN_VERSION = "9.1.302";
-const SITE_URL = process.env.HELM_SITE_URL ?? "https://enterprise.stormbpmn.com/helm";
+const PUBLIC_URL = "https://enterprise.stormbpmn.com/helm";
+// Откуда брать уже опубликованное; переопределяется только для локальной проверки.
+const SITE_URL = process.env.HELM_SITE_URL ?? PUBLIC_URL;
 
 const root = path.resolve(import.meta.dirname, "..");
 const chartDir = path.join(root, "charts/stormbpmn");
@@ -37,25 +39,32 @@ fs.mkdirSync(outDir, { recursive: true });
 // helm/Argo CD/Flux), пакуем только новые. HELM_REPACK="X.Y.Z,…" — осознанная перепаковка.
 const repack = new Set((process.env.HELM_REPACK ?? "").split(",").filter(Boolean));
 
+// Что опубликовано — по живому index.yaml. Неизвестный путь nginx сайта отдаёт как
+// index.html с кодом 200, поэтому индекс без «apiVersion:» = репозиторий ещё пуст.
+const indexRes = await fetch(`${SITE_URL}/index.yaml`);
+if (!indexRes.ok && indexRes.status !== 404) throw new Error(`${SITE_URL}/index.yaml: HTTP ${indexRes.status}`);
+const indexText = indexRes.ok ? await indexRes.text() : "";
+const published = indexText.startsWith("apiVersion:")
+    ? new Set([...indexText.matchAll(/^\s+version: "?([\d.]+)"?\s*$/gm)].map((m) => m[1]))
+    : new Set();
+
 for (const v of versions) {
     const file = `stormbpmn-${v}.tgz`;
-    if (!repack.has(v)) {
+    if (published.has(v) && !repack.has(v)) {
         const res = await fetch(`${SITE_URL}/${file}`);
-        // Неизвестный путь nginx сайта отдаёт как index.html с кодом 200, поэтому
-        // «опубликован» = пришёл gzip-архив (сигнатура 1f 8b), а не просто 200.
         const body = res.ok ? Buffer.from(await res.arrayBuffer()) : null;
-        if (body && body[0] === 0x1f && body[1] === 0x8b) {
-            fs.writeFileSync(path.join(outDir, file), body);
-            console.log(`${file}: уже опубликован, взят с сайта`);
-            continue;
+        // Версия в индексе, а архива нет — падаем: тихая перепаковка сменила бы digest.
+        if (!body || body[0] !== 0x1f || body[1] !== 0x8b) {
+            throw new Error(`${file} есть в index.yaml, но не скачался как gzip (HTTP ${res.status})`);
         }
-        // Иначе при сбое сайта молча перепаковали бы все выпущенные версии.
-        if (!res.ok && res.status !== 404) throw new Error(`${SITE_URL}/${file}: HTTP ${res.status}`);
+        fs.writeFileSync(path.join(outDir, file), body);
+        console.log(`${file}: уже опубликован, взят с сайта`);
+        continue;
     }
     execFileSync("helm", ["package", chartDir, "--version", v, "--app-version", v, "-d", outDir], {
         stdio: "inherit",
     });
 }
-execFileSync("helm", ["repo", "index", outDir, "--url", SITE_URL], { stdio: "inherit" });
+execFileSync("helm", ["repo", "index", outDir, "--url", PUBLIC_URL], { stdio: "inherit" });
 
 console.log(`Helm-репозиторий собран: ${versions.join(", ")}`);
