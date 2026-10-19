@@ -35,14 +35,8 @@ data:
   S3_BUCKET_IMPORTS: {{ $.Values.storm.s3.buckets.imports | default "storm-imports" | quote }}
   {{- end }}
 
-  # ---- Redis (без пароля) ----
-  REDIS_ENABLED: {{ ternary "true" "false" .Values.storm.redis.enabled | quote }}
-  {{- if .Values.storm.redis.enabled }}
-  REDIS_HOST: {{ .Values.storm.redis.host | quote }}
-  REDIS_PORT: {{ .Values.storm.redis.port | quote }}
-  REDIS_DATABASE: {{ .Values.storm.redis.database | default "0" | quote }}
-  REDIS_TIMEOUT: {{ .Values.storm.redis.timeout | default "1000ms" | quote }}
-  {{- end }}
+  # Redis в enterprise не используется.
+  REDIS_ENABLED: "false"
 
   # ---- Email (без паролей) ----
   EMAIL_PROVIDER: {{ .Values.storm.email.provider | default "nop" | quote }}

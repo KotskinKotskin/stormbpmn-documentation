@@ -15,7 +15,7 @@ StormBPMN ставится в Kubernetes официальным Helm-чарто�
 обновление сводится к `helm repo update` и `helm upgrade`.
 :::
 
-Чарт разворачивает контейнер приложения и, если в лицензии есть модуль симуляций, необязательный сервис `storm-des`. PostgreSQL, S3, Redis,
+Чарт разворачивает контейнер приложения и, если в лицензии есть модуль симуляций, необязательный сервис `storm-des`. PostgreSQL, S3,
 Gotenberg, PlantUML и SMTP вы поднимаете сами или берёте корпоративные. Требования к ним те же, что
 при установке в Docker: см. [«Установка»](./README.md) и [«Production-установка»](./production/README.md).
 
@@ -26,7 +26,6 @@ Gotenberg, PlantUML и SMTP вы поднимаете сами или берёт
 | Kubernetes | 1.23 или новее |
 | Helm | 3.8 или новее |
 | PostgreSQL | База в UTF8 с расширениями **pgvector** и **pg_trgm**. Без pgvector приложение не запустится, подробнее в разделе [«Требования к PostgreSQL»](./README.md#требования-к-postgresql-расширения-и-кодировка) |
-| Redis | Нужен, если реплик больше одной |
 | S3 | Любое S3-совместимое хранилище |
 | Gotenberg | Нужен свой сервис. Если не указать его адрес, PDF будут печататься через публичный demo.gotenberg.dev |
 | Доступ к `cr.selcloud.ru` | Логин и пароль реестра выдаёт ваш менеджер |
@@ -93,8 +92,8 @@ ingress:
 
 | Файл | Сценарий |
 | --- | --- |
-| `single-instance.yaml` | Пилот: один под без Redis, почта выключена |
-| `on-prem-ru.yaml` | Промышленная установка: 3+ реплики, Redis, HPA, PDB, ServiceMonitor, аудит в SIEM по Syslog |
+| `single-instance.yaml` | Пилот: один под, почта выключена |
+| `on-prem-ru.yaml` | Промышленная установка: 3+ реплики, HPA, PDB, ServiceMonitor, аудит в SIEM по Syslog |
 | `airgap.yaml` | Закрытый контур: все образы из внутреннего реестра |
 
 ::: tip Секреты не в values
@@ -127,25 +126,20 @@ helm test storm -n stormbpmn
 
 Для нескольких реплик возьмите за основу `examples/on-prem-ru.yaml` и проверьте:
 
-- **Redis включён** (`storm.redis.enabled: true`). Без него сессии и совместное редактирование работают
-  только в пределах одного пода.
-- **Sticky-сессии на ingress.** WebSocket совместного редактирования должен приходить в тот же под.
-  Для ingress-nginx:
+- **Ingress пропускает большие загрузки и долгие запросы.** Для ingress-nginx чарт задаёт это по
+  умолчанию:
 
   ```yaml
   ingress:
     annotations:
-      nginx.ingress.kubernetes.io/affinity: "cookie"
-      nginx.ingress.kubernetes.io/affinity-mode: "persistent"
-      nginx.ingress.kubernetes.io/session-cookie-name: "stormbpmn-affinity"
+      nginx.ingress.kubernetes.io/proxy-body-size: "50m"
       nginx.ingress.kubernetes.io/proxy-read-timeout: "86400"
       nginx.ingress.kubernetes.io/proxy-send-timeout: "86400"
-      nginx.ingress.kubernetes.io/proxy-body-size: "50m"
   ```
 
-  Для другого контроллера включите аналогичную привязку по cookie. Для Gateway API см. ниже.
+  Для другого контроллера задайте аналогичные лимиты. Для Gateway API см. ниже.
 - **PDB и HPA** (`podDisruptionBudget.enabled`, `autoscaling.enabled`): обновление узлов не выключит все
-  поды разом. При HPA учитывайте `autoscaling.maxReplicas`: Redis и sticky-сессии нужны уже при нём.
+  поды разом.
 - **Свой Gotenberg** в `storm.integrations.gotenbergUrl`, иначе документы при печати в PDF уходят на
   публичный сервис.
 - **`storm.security.allowedOrigins`** — домен приложения, а не `*`.
@@ -168,16 +162,11 @@ httpRoute:
   hostnames:
     - stormbpmn.company.local
   timeouts:
-    request: "0s"                 # WebSocket без ограничения, если контроллер это поддерживает
-  # При нескольких репликах — sticky-сессии:
-  sessionPersistence:
-    type: Cookie
-    sessionName: stormbpmn-affinity
+    request: "300s"               # долгие запросы: импорт, выгрузки
 ```
 
 TLS-сертификат, лимит размера загрузки (не меньше 50 МБ) и таймауты настраиваются на Gateway или в
-политиках вашего контроллера. `sessionPersistence` входит в экспериментальный канал Gateway API.
-Если ваш контроллер его не поддерживает, включите привязку по cookie политикой контроллера.
+политиках вашего контроллера.
 
 После `helm install` и `helm upgrade` чарт выводит подсказки и предупреждения о том, чего не хватает
 в ваших values. Прочитайте их.
@@ -185,7 +174,7 @@ TLS-сертификат, лимит размера загрузки (не ме�
 ## Пробная установка на ноутбуке
 
 Чтобы посмотреть чарт в деле до установки в рабочий кластер, разверните всё в
-[minikube](https://minikube.sigs.k8s.io/) вместе с тестовыми PostgreSQL, MinIO и Redis. Понадобятся
+[minikube](https://minikube.sigs.k8s.io/) вместе с тестовыми PostgreSQL и MinIO. Понадобятся
 Docker, около 8 ГБ свободной памяти и доступ к `cr.selcloud.ru`.
 
 ::: warning Только для проверки
@@ -260,22 +249,6 @@ Docker, около 8 ГБ свободной памяти и доступ к `cr
    kind: Service
    metadata: {name: minio}
    spec: {selector: {app: minio}, ports: [{port: 9000}]}
-   ---
-   apiVersion: apps/v1
-   kind: Deployment
-   metadata: {name: redis}
-   spec:
-     selector: {matchLabels: {app: redis}}
-     template:
-       metadata: {labels: {app: redis}}
-       spec:
-         containers:
-           - {name: redis, image: "redis:7-alpine"}
-   ---
-   apiVersion: v1
-   kind: Service
-   metadata: {name: redis}
-   spec: {selector: {app: redis}, ports: [{port: 6379}]}
    ```
 
 3. Сохраните `values-local.yaml`:
@@ -388,7 +361,6 @@ done
 | `helm install` отклоняет `storm.jwt.secret` | Ключ короче 64 символов |
 | `helm install` отклоняет `sessionExpirationSeconds` | Задано больше 90 суток. Скорее всего, это миллисекунды |
 | Под перезапускается, в логе ошибка `extension "vector"` | В PostgreSQL нет pgvector |
-| Совместное редактирование рвётся при нескольких репликах | Не включён Redis или не настроены sticky-сессии на ingress |
 | Симуляции падают с «DES-нода не ответила» | У `storm-des` другой часовой пояс. В чарте он общий, проверьте `des.extraEnv` |
 | При первой установке в логе `storm-des` ошибка `relation "sm_background_tasks" does not exist` | `storm-des` запустился раньше, чем приложение создало таблицы. Ошибка проходит сама через несколько секунд после старта приложения |
 | Под в `ImagePullBackOff` с `pull access denied` | Не создан секрет `regcred` в namespace релиза или не указан `imagePullSecrets` |
