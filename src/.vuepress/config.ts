@@ -231,7 +231,7 @@ export default defineUserConfig({
             },
             {
                 text: "⚙️ Конфигурация",
-                children: ["/configure/", "/configure/security/"],
+                children: ["/configure/", "/configure/branding.html", "/configure/security/"],
             },
             {
                 text: "🤖 AI-ассистент",
