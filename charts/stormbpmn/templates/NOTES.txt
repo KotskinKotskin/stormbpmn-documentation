@@ -1,0 +1,75 @@
+
+StormBPMN Enterprise {{ .Chart.AppVersion }} развёрнут (чарт {{ .Chart.Name }}-{{ .Chart.Version }}).
+
+1. Дождитесь готовности подов (первый старт с миграциями БД — до 5 минут):
+     kubectl --namespace {{ .Release.Namespace }} rollout status deployment/{{ include "stormbpmn.fullname" . }}
+
+2. Откройте приложение:
+{{- if .Values.ingress.enabled }}
+{{- range $host := .Values.ingress.hosts }}
+  {{- range .paths }}
+     http{{ if $.Values.ingress.tls }}s{{ end }}://{{ $host.host }}{{ .path }}
+  {{- end }}
+{{- end }}
+{{- else if contains "NodePort" .Values.service.type }}
+     export NODE_PORT=$(kubectl get -n {{ .Release.Namespace }} -o jsonpath="{.spec.ports[0].nodePort}" svc/{{ include "stormbpmn.fullname" . }})
+     export NODE_IP=$(kubectl get nodes -o jsonpath="{.items[0].status.addresses[0].address}")
+     echo "http://$NODE_IP:$NODE_PORT"
+{{- else if contains "LoadBalancer" .Values.service.type }}
+     kubectl get -n {{ .Release.Namespace }} svc -w {{ include "stormbpmn.fullname" . }}
+{{- else }}
+     kubectl --namespace {{ .Release.Namespace }} port-forward svc/{{ include "stormbpmn.fullname" . }} 8081:{{ .Values.service.port }}
+     # затем откройте http://127.0.0.1:8081
+{{- end }}
+
+3. Активируйте лицензию (новая установка):
+   a) Откройте /admin-onboarding (вход не нужен), скопируйте весь код активации.
+   b) Передайте код менеджеру StormBPMN и получите LICENSE_KEY_V2 для этой инсталляции.
+   c) Передайте ключ: --set storm.license.keyV2=... или ключ LICENSE_KEY_V2 в existingSecret,
+      затем helm upgrade (поды перезапустятся сами).
+   d) Создайте первого администратора в мастере настройки.
+   Подробно: https://enterprise.stormbpmn.com/operation/License.html
+
+4. SSO (Keycloak, Azure AD, ADFS) настраивается в админ-панели /app/admin.
+
+Проверка: helm test {{ .Release.Name }} --namespace {{ .Release.Namespace }}
+{{- if .Values.metrics.enabled }}
+Метрики:  kubectl --namespace {{ .Release.Namespace }} port-forward svc/{{ include "stormbpmn.fullname" . }} 8082:{{ .Values.service.metricsPort }}
+          curl http://127.0.0.1:8082/actuator/prometheus
+{{- end }}
+{{- if .Values.des.enabled }}
+Симуляции: storm-des доступен приложению по http://{{ include "stormbpmn.desName" . }}:{{ .Values.des.service.port }}
+{{- end }}
+{{- if and (gt (int .Values.replicaCount) 1) (not .Values.storm.redis.enabled) }}
+
+⚠️  replicaCount={{ .Values.replicaCount }}, но storm.redis.enabled=false.
+   Для нескольких экземпляров Redis обязателен (сессии, pub/sub совместного редактирования).
+{{- end }}
+{{- if and (gt (int .Values.replicaCount) 1) (not (or .Values.service.sessionAffinity (hasKey .Values.ingress.annotations "nginx.ingress.kubernetes.io/affinity"))) }}
+
+⚠️  replicaCount={{ .Values.replicaCount }}, но sticky-сессии не настроены:
+   совместное редактирование (WebSocket) будет рваться.
+{{- end }}
+{{- if not .Values.storm.integrations.gotenbergUrl }}
+
+⚠️  storm.integrations.gotenbergUrl пуст: PDF будут печататься через ПУБЛИЧНЫЙ сервис
+   https://demo.gotenberg.dev — документы уйдут за периметр. Разверните свой Gotenberg.
+{{- end }}
+{{- if not .Values.existingSecret }}
+{{- if lt (len .Values.storm.jwt.secret) 64 }}
+
+⚠️  storm.jwt.secret короче 64 символов — вход упадёт с WeakKeyException.
+   Сгенерируйте: openssl rand -hex 32
+{{- end }}
+{{- if not (or .Values.storm.license.keyV2 .Values.storm.license.key) }}
+
+ℹ️  Лицензионный ключ не задан — активируйте инсталляцию по шагу 3.
+{{- end }}
+{{- end }}
+{{- if eq (.Values.storm.security.allowedOrigins | toString) "*" }}
+
+ℹ️  storm.security.allowedOrigins="*". В проде укажите домен приложения.
+{{- end }}
+
+Документация: https://enterprise.stormbpmn.com/install/kubernetes.html
+Поддержка:    help@stormbpmn.com

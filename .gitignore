@@ -10,3 +10,6 @@ src/.vuepress/.temp/
 # Индекс релизов для таймлайна на /Changelog/ — генерируется из src/Changelog/*.md
 # на каждой сборке (см. config.ts)
 src/.vuepress/public/changelog-index.json
+
+# Helm-репозиторий — собирается scripts/helm-repo.mjs в CI
+src/.vuepress/public/helm/

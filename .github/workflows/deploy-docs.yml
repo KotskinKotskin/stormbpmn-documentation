@@ -30,6 +30,15 @@ jobs:
       - name: Install Deps
         run: npm ci
 
+      - name: Setup Helm
+        uses: azure/setup-helm@v4
+        with:
+          version: v3.16.4
+
+      # Helm-репозиторий в public/helm/: по чарту на каждую версию из src/Changelog
+      - name: Build Helm repo
+        run: node scripts/helm-repo.mjs
+
       - name: Build Docs
         env:
           NODE_OPTIONS: --max_old_space_size=8192

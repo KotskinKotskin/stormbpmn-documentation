@@ -1,0 +1,176 @@
+# ============================================================================
+# Пример: российский on-prem (банк / ПРОМ)
+# ============================================================================
+# Стек:
+#   - Kubernetes 1.27 (Rancher / Deckhouse / Astra K8s)
+#   - nginx-ingress + cert-manager (внутренний CA)
+#   - PostgreSQL 17 на VM с pgvector (образ/пакет pgvector, расширение pg_trgm создано)
+#   - Redis 7 на VM (multi-instance)
+#   - S3-совместимое хранилище (Selectel S3 / Yandex / внутренний)
+#   - Корпоративный SMTP
+#   - SIEM по Syslog (RFC_5424)
+#   - kube-prometheus-stack (Prometheus Operator)
+#
+# OAuth2/SSO (Keycloak/Azure AD/ADFS) настраивается через /app/admin
+# ПОСЛЕ установки (не через ENV).
+# ============================================================================
+
+replicaCount: 3
+
+image:
+  registry: cr.selcloud.ru
+  repository: stormbpmn-enterprise/stormbpmn_fullstack_enterprise
+  tag: ""    # = версия чарта (версия StormBPMN)
+  pullPolicy: IfNotPresent
+
+imagePullSecrets:
+  - name: regcred
+
+resources:
+  requests:
+    cpu: 1
+    memory: 8Gi
+  limits:
+    cpu: 4
+    memory: 12Gi
+
+topologySpreadConstraints:
+  - maxSkew: 1
+    topologyKey: topology.kubernetes.io/zone
+    whenUnsatisfiable: ScheduleAnyway
+    labelSelector:
+      matchLabels:
+        app.kubernetes.io/name: stormbpmn
+
+service:
+  type: ClusterIP
+  port: 8081
+  metricsPort: 8082
+  # Резервный sticky (если ingress sticky-cookie отвалится).
+  sessionAffinity: ClientIP
+  sessionAffinityConfig:
+    clientIP:
+      timeoutSeconds: 10800
+
+ingress:
+  enabled: true
+  className: nginx
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: "50m"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "86400"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "86400"
+    nginx.ingress.kubernetes.io/affinity: "cookie"
+    nginx.ingress.kubernetes.io/affinity-mode: "persistent"
+    nginx.ingress.kubernetes.io/session-cookie-name: "stormbpmn-affinity"
+    nginx.ingress.kubernetes.io/proxy-buffering: "off"
+    cert-manager.io/cluster-issuer: "letsencrypt-internal-ca"
+  hosts:
+    - host: stormbpmn.bank.local
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: stormbpmn-tls
+      hosts:
+        - stormbpmn.bank.local
+
+autoscaling:
+  enabled: true
+  minReplicas: 3
+  maxReplicas: 8
+  targetCPUUtilizationPercentage: 70
+
+podDisruptionBudget:
+  enabled: true
+  minAvailable: 2
+
+metrics:
+  enabled: true
+  serviceMonitor:
+    enabled: true
+    interval: 30s
+
+storm:
+  general:
+    springProfile: prod
+    timezone: Europe/Moscow
+    javaOpts: "-Xmx10g"
+
+  database:
+    url: "jdbc:postgresql://postgres-prod.bank.local:5432/storm"
+    username: "stormuser"
+    password: "<передать через --set или existingSecret>"
+
+  license:
+    keyV2: "<LICENSE_KEY_V2 по коду активации с /admin-onboarding>"
+
+  jwt:
+    secret: "<openssl rand -hex 32>"
+
+  s3:
+    endpoint: "https://s3.storage.selcloud.ru"
+    # externalEndpoint: "https://s3.bank.ru"   # если браузер ходит в S3 по другому адресу
+    region: "ru-3"
+    virtualHost: "false"
+    singleUsersBucket: "true"
+    buckets:
+      uploads: "bank-stormbpmn-uploads"
+      users:   "bank-stormbpmn-users"
+      imports: "bank-stormbpmn-imports"
+    accessKey: "<S3 access key>"
+    secretKey: "<S3 secret key>"
+
+  redis:
+    enabled: true
+    host: "redis-prod.bank.local"
+    port: "6379"
+    database: "0"
+    timeout: "1000ms"
+    password: "<передать через --set или existingSecret>"
+
+  email:
+    provider: "smtp"
+    smtp:
+      host: "smtp.bank.local"
+      port: "587"
+      protocol: "STARTTLS"
+      useAuth: "true"
+      from: "stormbpmn@bank.local"
+      username: "stormbpmn@bank.local"
+      password: "<передать через --set или existingSecret>"
+
+  integrations:
+    plantumlServer: "http://plantuml.bank.local:8090/"
+    gotenbergUrl: "http://gotenberg.bank.local:3001"
+
+  security:
+    allowedOrigins: "https://stormbpmn.bank.local"
+    # Только SSO (после настройки OAuth2 в /app/admin).
+    disableSimpleAuth: "true"
+    disableEnvInUi: "true"
+    disableAnonSharing: "true"
+    sessionExpirationSeconds: "86400"   # секунды!
+
+  # SIEM (важно для банка — отправка аудит-логов в корпоративный SIEM).
+  audit:
+    enabled: "true"
+    channel: "syslog"
+    # Исключаем шумные служебные эндпоинты.
+    excludeAuthPaths: ".*/heartbeat$,.*/actuator/health.*,.*/diagram/.*/autosave$"
+    syslog:
+      servers: "siem.bank.local:514"
+      source: "stormbpmn"
+      messageFormat: "RFC_5424"
+
+# Если в кластере используется корпоративный самоподписанный CA — добавьте
+# CA-бандл в trustStore контейнера.
+extraVolumes:
+  - name: corporate-ca
+    secret:
+      secretName: corporate-ca-bundle
+      optional: true
+extraVolumeMounts:
+  - name: corporate-ca
+    mountPath: /etc/ssl/certs/corporate-ca.crt
+    subPath: ca.crt
+    readOnly: true

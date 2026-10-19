@@ -1,0 +1,30 @@
+# ============================================================================
+# Пример: air-gap (закрытый контур, без интернета)
+# ============================================================================
+# Кластер не имеет доступа к cr.selcloud.ru: образы перенесены в Harbor.
+# Перенос образов — см. /install/kubernetes.html → «Закрытый контур».
+# Используется поверх основного values: -f my-values.yaml -f airgap.yaml
+# ============================================================================
+
+image:
+  registry: harbor.bank.local
+  repository: stormbpmn/stormbpmn_fullstack_enterprise
+  tag: ""    # = версия чарта; в Harbor должен лежать образ с этим тегом
+
+imagePullSecrets:
+  - name: harbor-creds
+
+# storm-des берёт registry основного образа; путь укажите свой.
+des:
+  image:
+    repository: stormbpmn/storm-des
+
+# Образ smoke-теста `helm test` тоже из внутреннего registry.
+tests:
+  image: harbor.bank.local/library/busybox:1.37
+
+storm:
+  integrations:
+    # Без своего Gotenberg PDF ушли бы на публичный demo.gotenberg.dev,
+    # а из закрытого контура он недоступен.
+    gotenbergUrl: "http://gotenberg.bank.local:3001"

@@ -1,0 +1,40 @@
+{{/*
+helm test storm   →   запускает этот Pod, проверяет:
+  1) DNS резолвится в Service
+  2) nginx-фронт (service.port) отдаёт HTTP 200 с SPA HTML
+  3) backend Actuator (только если metrics.enabled) на service.metricsPort = UP
+Pod удаляется после теста.
+*/}}
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "{{ include "stormbpmn.fullname" . }}-test-connection"
+  labels:
+    {{- include "stormbpmn.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": test
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+spec:
+  restartPolicy: Never
+  containers:
+    - name: smoke
+      image: {{ .Values.tests.image | quote }}
+      command:
+        - sh
+        - -c
+        - |
+          set -eu
+          SVC="{{ include "stormbpmn.fullname" . }}"
+          echo "=== 1) frontend nginx on port {{ .Values.service.port }} ==="
+          STATUS=$(wget -q -S -O /dev/null "http://$SVC:{{ .Values.service.port }}/" 2>&1 | awk '/HTTP\// {print $2; exit}')
+          echo "HTTP status: $STATUS"
+          [ "$STATUS" = "200" ] || { echo "FAIL: frontend status=$STATUS"; exit 1; }
+          {{- if .Values.metrics.enabled }}
+          echo
+          echo "=== 2) backend /actuator/health/liveness on port {{ .Values.service.metricsPort }} ==="
+          BODY=$(wget -q -O - "http://$SVC:{{ .Values.service.metricsPort }}/actuator/health/liveness")
+          echo "$BODY"
+          echo "$BODY" | grep -q '"status":"UP"' || { echo "FAIL: backend not UP"; exit 1; }
+          {{- end }}
+          echo
+          echo "=== ALL CHECKS PASSED ==="
