@@ -13,6 +13,8 @@
 | — | `storm.s3.externalEndpoint` | `S3_EXTERNAL_ENDPOINT`, если браузер ходит в S3 по другому адресу |
 | — | `storm.ai.mcpEnabled`, `storm.ai.retentionEnabled` | AI-модуль |
 | `storm.audit.channel`: console / syslog | + `database` и `storm.audit.database.*` | Аудит в TimescaleDB |
+| `storm.redis.*` | удалён | Redis в enterprise не нужен, чарт всегда передаёт `REDIS_ENABLED=false`. Если Redis разворачивали для StormBPMN, его можно удалить |
+| ingress-аннотации `affinity: cookie` | удалены из умолчаний | Sticky-сессии не нужны |
 | — | `des.*` | Модуль симуляций `storm-des` в том же релизе |
 | `storm.flags.*` (в старом `airgap.yaml`) | удалить | Такого ключа в чарте не было |
 
@@ -198,7 +200,7 @@ helm get values storm -n stormbpmn > old-values.yaml
 | `MINIO_ACCESSKEY` | `storm.s3.accessKey` |
 | `MINIO_SECRETKEY` | `storm.s3.secretKey` |
 | `MINIO_DEFAULTBUCKET` | `storm.s3.buckets.uploads` (+ users + imports) |
-| `REDIS_*` | `storm.redis.*`, **обязательно `storm.redis.enabled: true`** |
+| `REDIS_*` | в 9.x не используется (см. начало файла) |
 | `PLANTUML_SERVER` | `storm.integrations.plantumlServer` |
 | `GOTENBERG_URL` | `storm.integrations.gotenbergUrl` |
 | `SPRING_PROFILES_ACTIVE` | `storm.general.springProfile` |

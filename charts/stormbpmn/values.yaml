@@ -3,7 +3,7 @@
 # =============================================================================
 # Полная enterprise-дока: https://enterprise.stormbpmn.com
 # Чарт разворачивает контейнер StormBPMN и опционально storm-des (des.enabled).
-# PostgreSQL, S3, Redis, PlantUML, Gotenberg, SMTP — внешние сервисы,
+# PostgreSQL, S3, PlantUML, Gotenberg, SMTP — внешние сервисы,
 # поднимаются заказчиком.
 #
 # ⚠️  ВАЖНО: список ENV в этом чарте — ровно то, что описано в enterprise-доке.
@@ -19,8 +19,7 @@
 #     хранятся в БД). После первого helm install идите в /app/admin → SSO.
 # =============================================================================
 
-# -- Количество реплик. Для multi-instance Redis ОБЯЗАТЕЛЕН (sync сессий,
-#    pub/sub) + sticky-cookies на ingress (WebSocket/STOMP collaborative editing).
+# -- Количество реплик.
 replicaCount: 1
 
 # =============================================================================
@@ -148,8 +147,7 @@ service:
   port: 8081
   # -- Service-порт для metrics (целит в containerPorts.app=8082). Открывается, только если metrics.enabled.
   metricsPort: 8082
-  # -- Sticky session. Включите при replicaCount>1 для WebSocket,
-  #    если ingress не делает sticky-cookies сам.
+  # -- sessionAffinity Service (обычно не нужен).
   sessionAffinity: ""  # "" | "ClientIP"
   sessionAffinityConfig: {}
 
@@ -162,15 +160,11 @@ ingress:
 
   # -- Дефолтные nginx-ingress аннотации (по official enterprise nginx-config):
   #    * proxy-body-size: 50m (импорт BPMN/изображений)
-  #    * proxy-read/send-timeout: 86400 (долгоживущие WebSocket)
-  #    * affinity: cookie (sticky для collaborative editing)
+  #    * proxy-read/send-timeout: 86400 (долгие запросы: импорт, выгрузки)
   annotations:
     nginx.ingress.kubernetes.io/proxy-body-size: "50m"
     nginx.ingress.kubernetes.io/proxy-read-timeout: "86400"
     nginx.ingress.kubernetes.io/proxy-send-timeout: "86400"
-    nginx.ingress.kubernetes.io/affinity: "cookie"
-    nginx.ingress.kubernetes.io/affinity-mode: "persistent"
-    nginx.ingress.kubernetes.io/session-cookie-name: "stormbpmn-affinity"
     nginx.ingress.kubernetes.io/proxy-buffering: "off"
     # Для cert-manager (если есть):
     # cert-manager.io/cluster-issuer: letsencrypt-prod
@@ -190,7 +184,7 @@ ingress:
 # Gateway API (HTTPRoute) — вместо Ingress, если в кластере есть Gateway
 # =============================================================================
 # Нужны CRD Gateway API v1 и контроллер (Envoy Gateway, Istio, Cilium, Traefik,
-# NGINX Gateway Fabric…). TLS, размер тела и таймауты WebSocket настраиваются
+# NGINX Gateway Fabric…). TLS, размер тела и таймауты настраиваются
 # на Gateway / в политиках вашего контроллера.
 httpRoute:
   enabled: false
@@ -202,17 +196,9 @@ httpRoute:
   #   sectionName: https
   hostnames: []
   # - stormbpmn.example.local
-  # -- rules[].timeouts. Для WebSocket совместного редактирования нужен длинный
-  #    таймаут или "0s" (без ограничения), если контроллер это поддерживает.
+  # -- rules[].timeouts, например request: "300s" для долгого импорта.
   timeouts: {}
-  # request: "0s"
-  # -- rules[].sessionPersistence — sticky-сессии при нескольких репликах.
-  #    Поле из experimental-канала Gateway API: включайте, только если ваш
-  #    контроллер и CRD его поддерживают, иначе настройте привязку по cookie
-  #    политикой контроллера.
-  sessionPersistence: {}
-  # sessionName: stormbpmn-affinity
-  # type: Cookie
+  # request: "300s"
 
 # =============================================================================
 # Autoscaling (HPA)
@@ -342,21 +328,6 @@ storm:
     accessKey: ""
     # -- S3_SECRET_KEY → Secret.
     secretKey: ""
-
-  # ---- Redis (обязателен при replicaCount>1) -------------------------------
-  redis:
-    # -- REDIS_ENABLED. При false — single-instance, InMemory.
-    enabled: false
-    # -- REDIS_HOST.
-    host: "redis.example.local"
-    # -- REDIS_PORT.
-    port: "6379"
-    # -- REDIS_DATABASE.
-    database: "0"
-    # -- REDIS_TIMEOUT.
-    timeout: "1000ms"
-    # -- REDIS_PASSWORD → Secret.
-    password: ""
 
   # ---- Email --------------------------------------------------------------
   # EMAIL_PROVIDER — обязательный. Варианты:

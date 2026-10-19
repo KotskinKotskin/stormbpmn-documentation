@@ -5,7 +5,6 @@
 #   - Kubernetes 1.27 (Rancher / Deckhouse / Astra K8s)
 #   - nginx-ingress + cert-manager (внутренний CA)
 #   - PostgreSQL 17 на VM с pgvector (образ/пакет pgvector, расширение pg_trgm создано)
-#   - Redis 7 на VM (multi-instance)
 #   - S3-совместимое хранилище (Selectel S3 / Yandex / внутренний)
 #   - Корпоративный SMTP
 #   - SIEM по Syslog (RFC_5424)
@@ -46,11 +45,6 @@ service:
   type: ClusterIP
   port: 8081
   metricsPort: 8082
-  # Резервный sticky (если ingress sticky-cookie отвалится).
-  sessionAffinity: ClientIP
-  sessionAffinityConfig:
-    clientIP:
-      timeoutSeconds: 10800
 
 ingress:
   enabled: true
@@ -59,9 +53,6 @@ ingress:
     nginx.ingress.kubernetes.io/proxy-body-size: "50m"
     nginx.ingress.kubernetes.io/proxy-read-timeout: "86400"
     nginx.ingress.kubernetes.io/proxy-send-timeout: "86400"
-    nginx.ingress.kubernetes.io/affinity: "cookie"
-    nginx.ingress.kubernetes.io/affinity-mode: "persistent"
-    nginx.ingress.kubernetes.io/session-cookie-name: "stormbpmn-affinity"
     nginx.ingress.kubernetes.io/proxy-buffering: "off"
     cert-manager.io/cluster-issuer: "letsencrypt-internal-ca"
   hosts:
@@ -119,14 +110,6 @@ storm:
       imports: "bank-stormbpmn-imports"
     accessKey: "<S3 access key>"
     secretKey: "<S3 secret key>"
-
-  redis:
-    enabled: true
-    host: "redis-prod.bank.local"
-    port: "6379"
-    database: "0"
-    timeout: "1000ms"
-    password: "<передать через --set или existingSecret>"
 
   email:
     provider: "smtp"

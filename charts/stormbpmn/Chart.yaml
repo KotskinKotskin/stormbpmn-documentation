@@ -5,7 +5,7 @@ description: |
   бизнес-процессов и архитектуры предприятия.
 
   Чарт разворачивает контейнер приложения StormBPMN и, по желанию, сервис
-  симуляций storm-des. PostgreSQL (с pgvector), Redis, S3, PlantUML, Gotenberg
+  симуляций storm-des. PostgreSQL (с pgvector), S3, PlantUML, Gotenberg
   и SMTP поднимаются заказчиком отдельно. См. https://enterprise.stormbpmn.com/install/kubernetes.html
 type: application
 

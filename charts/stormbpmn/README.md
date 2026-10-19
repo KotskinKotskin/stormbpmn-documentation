@@ -43,7 +43,6 @@ helm install storm stormbpmn/stormbpmn -n stormbpmn -f my-values.yaml
 | `storm.license.key` | `""` | `LICENSE_KEY` (v1, устаревший) |
 | `storm.jwt.secret` | `""` | `JWTSECRET`, ≥ 64 символов |
 | `storm.s3.*` | — | `S3_*`, включая `S3_EXTERNAL_ENDPOINT` |
-| `storm.redis.*` | выкл. | `REDIS_*`, обязателен при `replicaCount > 1` |
 | `storm.email.*` | `smtp` | `EMAIL_PROVIDER`, `SMTP_*` / `LISTMONK_*` |
 | `storm.integrations.*` | `""` | `PLANTUML_SERVER`, `GOTENBERG_URL` (пустой = публичный demo.gotenberg.dev) |
 | `storm.ai.*` | `false` | `MCP_ENABLED`, `STORM_RETENTION_ENABLED` |
