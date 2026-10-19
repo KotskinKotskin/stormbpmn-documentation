@@ -15,7 +15,7 @@ StormBPMN ставится в Kubernetes официальным Helm-чарто�
 обновление сводится к `helm repo update` и `helm upgrade`.
 :::
 
-Чарт разворачивает контейнер приложения и, если нужно, сервис симуляций `storm-des`. PostgreSQL, S3, Redis,
+Чарт разворачивает контейнер приложения и, если в лицензии есть модуль симуляций, необязательный сервис `storm-des`. PostgreSQL, S3, Redis,
 Gotenberg, PlantUML и SMTP вы поднимаете сами или берёте корпоративные. Требования к ним те же, что
 при установке в Docker: см. [«Установка»](./README.md) и [«Production-установка»](./production/README.md).
 
@@ -123,6 +123,182 @@ helm test storm -n stormbpmn
 `kubectl -n stormbpmn rollout restart deployment`. Затем создайте первого администратора в мастере настройки.
 Подробности в разделе [«Активация инсталляции»](/operation/License.md#активация-инсталляции).
 
+## Промышленная установка
+
+Для нескольких реплик возьмите за основу `examples/on-prem-ru.yaml` и проверьте:
+
+- **Redis включён** (`storm.redis.enabled: true`). Без него сессии и совместное редактирование работают
+  только в пределах одного пода.
+- **Sticky-сессии на ingress.** WebSocket совместного редактирования должен приходить в тот же под.
+  Для ingress-nginx:
+
+  ```yaml
+  ingress:
+    annotations:
+      nginx.ingress.kubernetes.io/affinity: "cookie"
+      nginx.ingress.kubernetes.io/affinity-mode: "persistent"
+      nginx.ingress.kubernetes.io/session-cookie-name: "stormbpmn-affinity"
+      nginx.ingress.kubernetes.io/proxy-read-timeout: "86400"
+      nginx.ingress.kubernetes.io/proxy-send-timeout: "86400"
+      nginx.ingress.kubernetes.io/proxy-body-size: "50m"
+  ```
+
+  Для другого контроллера включите аналогичную привязку по cookie.
+- **PDB и HPA** (`podDisruptionBudget.enabled`, `autoscaling.enabled`): обновление узлов не выключит все
+  поды разом. При HPA учитывайте `autoscaling.maxReplicas`: Redis и sticky-сессии нужны уже при нём.
+- **Свой Gotenberg** в `storm.integrations.gotenbergUrl`, иначе документы при печати в PDF уходят на
+  публичный сервис.
+- **`storm.security.allowedOrigins`** — домен приложения, а не `*`.
+- **Метрики**: `metrics.serviceMonitor.enabled: true`, если в кластере есть Prometheus Operator.
+- **Резервные копии** PostgreSQL и S3 по расписанию. В подах приложения нет данных, которые нужно сохранять.
+
+После `helm install` и `helm upgrade` чарт выводит подсказки и предупреждения о том, чего не хватает
+в ваших values. Прочитайте их.
+
+## Пробная установка на ноутбуке
+
+Чтобы посмотреть чарт в деле до установки в рабочий кластер, разверните всё в
+[minikube](https://minikube.sigs.k8s.io/) вместе с тестовыми PostgreSQL, MinIO и Redis. Понадобятся
+Docker, около 8 ГБ свободной памяти и доступ к `cr.selcloud.ru`.
+
+::: warning Только для проверки
+Пароли ниже открытые, данные хранятся внутри подов и пропадут при их перезапуске. Для работы эта
+схема не годится.
+:::
+
+1. Запустите кластер и создайте namespace с секретом реестра:
+
+   ```bash
+   minikube start --cpus=4 --memory=12g --addons=ingress
+   kubectl create namespace storm
+   kubectl -n storm create secret docker-registry regcred \
+     --docker-server=cr.selcloud.ru \
+     --docker-username='<логин>' --docker-password='<пароль>'
+   ```
+
+2. Сохраните зависимости в `deps.yaml` и примените их командой `kubectl -n storm apply -f deps.yaml`:
+
+   ```yaml
+   apiVersion: v1
+   kind: ConfigMap
+   metadata: {name: pg-init}
+   data:
+     init.sql: |
+       CREATE EXTENSION IF NOT EXISTS vector;
+       CREATE EXTENSION IF NOT EXISTS pg_trgm;
+   ---
+   apiVersion: apps/v1
+   kind: Deployment
+   metadata: {name: postgres}
+   spec:
+     selector: {matchLabels: {app: postgres}}
+     template:
+       metadata: {labels: {app: postgres}}
+       spec:
+         imagePullSecrets: [{name: regcred}]
+         containers:
+           - name: pg
+             image: cr.selcloud.ru/stormbpmn-enterprise/pgvector:pg17
+             env:
+               - {name: POSTGRES_DB, value: storm}
+               - {name: POSTGRES_USER, value: stormuser}
+               - {name: POSTGRES_PASSWORD, value: stormpass}
+             volumeMounts: [{name: init, mountPath: /docker-entrypoint-initdb.d}]
+             readinessProbe: {exec: {command: [pg_isready, -U, stormuser, -d, storm]}}
+         volumes: [{name: init, configMap: {name: pg-init}}]
+   ---
+   apiVersion: v1
+   kind: Service
+   metadata: {name: postgres}
+   spec: {selector: {app: postgres}, ports: [{port: 5432}]}
+   ---
+   apiVersion: apps/v1
+   kind: Deployment
+   metadata: {name: minio}
+   spec:
+     selector: {matchLabels: {app: minio}}
+     template:
+       metadata: {labels: {app: minio}}
+       spec:
+         containers:
+           - name: minio
+             image: bitnamilegacy/minio:2025.7.23-debian-12-r5
+             env:
+               - {name: MINIO_ROOT_USER, value: minioadmin}
+               - {name: MINIO_ROOT_PASSWORD, value: minioadmin123}
+               - {name: MINIO_DEFAULT_BUCKETS, value: "storm-uploads,storm-users,storm-imports"}
+             readinessProbe: {httpGet: {path: /minio/health/ready, port: 9000}}
+   ---
+   apiVersion: v1
+   kind: Service
+   metadata: {name: minio}
+   spec: {selector: {app: minio}, ports: [{port: 9000}]}
+   ---
+   apiVersion: apps/v1
+   kind: Deployment
+   metadata: {name: redis}
+   spec:
+     selector: {matchLabels: {app: redis}}
+     template:
+       metadata: {labels: {app: redis}}
+       spec:
+         containers:
+           - {name: redis, image: "redis:7-alpine"}
+   ---
+   apiVersion: v1
+   kind: Service
+   metadata: {name: redis}
+   spec: {selector: {app: redis}, ports: [{port: 6379}]}
+   ```
+
+3. Сохраните `values-local.yaml`:
+
+   ```yaml
+   imagePullSecrets: [{name: regcred}]
+   storm:
+     general:
+       javaOpts: "-Xmx3g"
+     database:
+       url: "jdbc:postgresql://postgres:5432/storm"
+       username: "stormuser"
+       password: "stormpass"
+     jwt:
+       secret: "<вывод openssl rand -hex 32>"
+     s3:
+       endpoint: "http://minio:9000"
+       accessKey: "minioadmin"
+       secretKey: "minioadmin123"
+     email:
+       provider: "nop"
+   des:
+     enabled: false           # true — только если в ключе лицензии есть модуль симуляций
+     javaOpts: "-Xmx2g"
+   ingress:
+     enabled: true
+     hosts:
+       - host: storm.local
+         paths: [{path: /, pathType: Prefix}]
+   ```
+
+4. Подключите репозиторий, как в шаге 1 установки, затем установите чарт и дождитесь готовности:
+
+   ```bash
+   kubectl -n storm wait --for=condition=available deploy --all --timeout=300s
+   helm install storm stormbpmn/stormbpmn -n storm -f values-local.yaml
+   kubectl -n storm rollout status deployment/storm-stormbpmn --timeout=10m
+   helm test storm -n storm
+   ```
+
+5. Откройте приложение:
+
+   ```bash
+   kubectl -n storm port-forward svc/storm-stormbpmn 8081:8081
+   ```
+
+   Затем перейдите на `http://127.0.0.1:8081/admin-onboarding` и активируйте инсталляцию, как в шаге 5 установки.
+
+Удалить всё: `minikube delete`.
+
 ## Обновление
 
 Перед обновлением сделайте резервную копию PostgreSQL и S3 и прочитайте предупреждения в [Changelog](/Changelog/README.md).
@@ -142,6 +318,11 @@ helm upgrade storm stormbpmn/stormbpmn -n stormbpmn -f my-values.yaml
 - В PostgreSQL нужен pgvector.
 
 ## Модуль симуляций
+
+::: info Необязательный модуль
+`storm-des` нужен только для симуляций процессов и работает, только если модуль симуляций есть в вашем
+ключе лицензии. Без него StormBPMN работает полностью. По умолчанию модуль выключен (`des.enabled: false`).
+:::
 
 Если в лицензии есть модуль симуляций, включите его в том же релизе:
 
@@ -182,3 +363,6 @@ done
 | Под перезапускается, в логе ошибка `extension "vector"` | В PostgreSQL нет pgvector |
 | Совместное редактирование рвётся при нескольких репликах | Не включён Redis или не настроены sticky-сессии на ingress |
 | Симуляции падают с «DES-нода не ответила» | У `storm-des` другой часовой пояс. В чарте он общий, проверьте `des.extraEnv` |
+| При первой установке в логе `storm-des` ошибка `relation "sm_background_tasks" does not exist` | `storm-des` запустился раньше, чем приложение создало таблицы. Ошибка проходит сама через несколько секунд после старта приложения |
+| Под в `ImagePullBackOff` с `pull access denied` | Не создан секрет `regcred` в namespace релиза или не указан `imagePullSecrets` |
+| Под приложения в `CrashLoopBackOff` вскоре после старта | Мало памяти: проверьте `resources.limits.memory` и `storm.general.javaOpts` (`-Xmx` должен быть меньше лимита) |
