@@ -9,7 +9,7 @@ import path from "node:path";
 
 // С этой версии шаблоны чарта совпадают с приложением (LICENSE_KEY_V2, SESSION_EXPIRATION в секундах).
 const MIN_VERSION = "9.1.302";
-const SITE_URL = "https://enterprise.stormbpmn.com/helm";
+const SITE_URL = process.env.HELM_SITE_URL ?? "https://enterprise.stormbpmn.com/helm";
 
 const root = path.resolve(import.meta.dirname, "..");
 const chartDir = path.join(root, "charts/stormbpmn");
