@@ -1,0 +1,43 @@
+apiVersion: v2
+name: stormbpmn
+description: |
+  StormBPMN Enterprise — корпоративная платформа для моделирования
+  бизнес-процессов и архитектуры предприятия.
+
+  Чарт разворачивает контейнер приложения StormBPMN и, по желанию, сервис
+  симуляций storm-des. PostgreSQL (с pgvector), Redis, S3, PlantUML, Gotenberg
+  и SMTP поднимаются заказчиком отдельно. См. https://enterprise.stormbpmn.com/install/kubernetes.html
+type: application
+
+# Версия чарта = версия StormBPMN. CI сайта документации при каждой сборке
+# пакует чарт заново под каждую версию из src/Changelog (scripts/helm-repo.mjs)
+# и подставляет её в version и appVersion. Значения ниже — только для установки
+# прямо из git; для обычной установки берите чарт из Helm-репозитория.
+version: 9.1.302
+appVersion: "9.1.302"
+
+kubeVersion: ">=1.23.0-0"
+
+home: https://enterprise.stormbpmn.com
+sources:
+  - https://github.com/KotskinKotskin/stormbpmn-documentation/tree/main/charts/stormbpmn
+icon: https://enterprise.stormbpmn.com/favicon.ico
+
+keywords:
+  - bpmn
+  - process-modeling
+  - enterprise-architecture
+  - stormbpmn
+
+maintainers:
+  - name: StormBPMN team
+    email: help@stormbpmn.com
+    url: https://stormbpmn.com
+
+annotations:
+  artifacthub.io/license: Proprietary
+  artifacthub.io/links: |
+    - name: Documentation
+      url: https://enterprise.stormbpmn.com/install/kubernetes.html
+    - name: Changelog
+      url: https://enterprise.stormbpmn.com/Changelog/

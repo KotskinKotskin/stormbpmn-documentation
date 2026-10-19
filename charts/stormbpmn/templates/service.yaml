@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "stormbpmn.fullname" . }}
+  labels:
+    {{- include "stormbpmn.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  {{- with .Values.service.sessionAffinity }}
+  sessionAffinity: {{ . }}
+  {{- end }}
+  {{- with .Values.service.sessionAffinityConfig }}
+  sessionAffinityConfig:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+    {{- if .Values.metrics.enabled }}
+    - port: {{ .Values.service.metricsPort }}
+      targetPort: app
+      protocol: TCP
+      name: metrics
+    {{- end }}
+  selector:
+    {{- include "stormbpmn.selectorLabels" . | nindent 4 }}

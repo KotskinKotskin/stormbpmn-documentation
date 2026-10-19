@@ -1,0 +1,63 @@
+# ============================================================================
+# Пример: одиночный PoC (без HA)
+# ============================================================================
+# Минимальная установка для проверки: один Pod, без Redis, без autoscaling.
+# Email отключён (nop) — без писем не работают регистрация и recovery,
+# но для technical PoC ОК.
+# ============================================================================
+
+replicaCount: 1
+
+autoscaling:
+  enabled: false
+
+podDisruptionBudget:
+  enabled: false
+
+storm:
+  general:
+    timezone: Europe/Moscow
+    javaOpts: "-Xmx4g"
+
+  database:
+    url: "jdbc:postgresql://postgres.poc.local:5432/storm"
+    username: "stormuser"
+    password: "<пароль>"
+
+  # Ключ можно не задавать: после установки откройте /admin-onboarding
+  # и активируйте лицензию (keyV2), затем helm upgrade.
+  license:
+    keyV2: ""
+
+  jwt:
+    secret: "<openssl rand -hex 32>"
+
+  s3:
+    endpoint: "https://s3.storage.selcloud.ru"
+    region: "ru-3"
+    accessKey: "<key>"
+    secretKey: "<secret>"
+    buckets:
+      uploads: "storm-uploads-poc"
+      users:   "storm-users-poc"
+      imports: "storm-imports-poc"
+
+  # Redis не нужен — single instance.
+  redis:
+    enabled: false
+
+  # Email отключён для PoC.
+  email:
+    provider: "nop"
+
+  security:
+    allowedOrigins: "*"
+
+ingress:
+  enabled: true
+  className: nginx
+  hosts:
+    - host: stormbpmn-poc.local
+      paths:
+        - path: /
+          pathType: Prefix

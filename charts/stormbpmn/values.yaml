@@ -1,0 +1,489 @@
+# =============================================================================
+# StormBPMN Enterprise — Helm chart values
+# =============================================================================
+# Полная enterprise-дока: https://enterprise.stormbpmn.com
+# Чарт разворачивает контейнер StormBPMN и опционально storm-des (des.enabled).
+# PostgreSQL, S3, Redis, PlantUML, Gotenberg, SMTP — внешние сервисы,
+# поднимаются заказчиком.
+#
+# ⚠️  ВАЖНО: список ENV в этом чарте — ровно то, что описано в enterprise-доке.
+#     Всё остальное (новые ENV, MCP_OAUTH_JWK_* и т.п.) передавайте через
+#     extraEnv / extraEnvFrom без правки чарта.
+#
+# ⚠️  PostgreSQL должен содержать расширение pgvector (с 6.6.5952) и pg_trgm —
+#     без pgvector приложение не стартует. См. /install/README.md.
+#
+# ⚠️  Авторизация OAuth2/SSO (Keycloak, Azure AD, ADFS) настраивается
+#     НЕ через ENV, а через админ-панель `/app/admin` (параметры
+#     OAuthIsEnabled, OAuthClientId, OAuthClientSecret, OAuthAuthorizeUri и пр.,
+#     хранятся в БД). После первого helm install идите в /app/admin → SSO.
+# =============================================================================
+
+# -- Количество реплик. Для multi-instance Redis ОБЯЗАТЕЛЕН (sync сессий,
+#    pub/sub) + sticky-cookies на ingress (WebSocket/STOMP collaborative editing).
+replicaCount: 1
+
+# =============================================================================
+# Container image
+# =============================================================================
+# Образ "fullstack" — внутри контейнера supervisord запускает nginx (на 8081)
+# и Spring Boot backend (на 8082). nginx раздаёт SPA и проксирует API к бэку.
+image:
+  # -- Хост private registry. Для air-gap перенесите образ в свой Harbor/JFrog
+  #    и переопределите: --set image.registry=harbor.bank.local
+  registry: cr.selcloud.ru
+  repository: stormbpmn-enterprise/stormbpmn_fullstack_enterprise
+  # -- Тег. Пусто → .Chart.AppVersion (= версия чарта = версия StormBPMN).
+  #    Не используйте `latest` в проде.
+  tag: ""
+  pullPolicy: IfNotPresent
+
+# -- imagePullSecrets. Создайте Secret заранее:
+#      kubectl create secret docker-registry regcred \
+#        --docker-server=cr.selcloud.ru \
+#        --docker-username='<token-id>' --docker-password='<token-secret>'
+#    Учётные данные выдаёт ваш менеджер StormBPMN.
+imagePullSecrets:
+  - name: regcred
+
+nameOverride: ""
+fullnameOverride: ""
+
+# =============================================================================
+# ServiceAccount
+# =============================================================================
+serviceAccount:
+  create: true
+  annotations: {}
+  name: ""
+
+# =============================================================================
+# Pod
+# =============================================================================
+podAnnotations: {}
+podLabels: {}
+
+# -- Образ запускается под appuser (uid=100, gid=101) — задано через USER в Dockerfile.
+#
+#    ⚠️  Нюанс: USER в Dockerfile задан ИМЕНЕМ (`appuser`), не числом. Из-за этого
+#    kubelet НЕ может верифицировать `runAsNonRoot: true` (требует числовой UID).
+#    Поэтому в дефолтах оставляем `runAsNonRoot` пустым.
+#
+#    Для PSA-restricted namespace раскомментируйте `runAsUser: 100` + `runAsNonRoot: true`.
+#    Если вендор изменит UID — этот override надо обновить.
+#
+#    НЕ задавайте runAsUser отличный от 100 — chown в образе сделан на uid=100,
+#    любой другой UID → Permission denied на nginx-modules.
+podSecurityContext:
+  seccompProfile:
+    type: RuntimeDefault
+  # runAsUser: 100
+  # runAsNonRoot: true
+
+securityContext:
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop:
+      - ALL
+  readOnlyRootFilesystem: false  # supervisord+nginx+Spring Boot пишут в /run, /tmp
+  # runAsUser: 100
+  # runAsNonRoot: true
+
+priorityClassName: ""
+nodeSelector: {}
+tolerations: []
+affinity: {}
+topologySpreadConstraints: []
+
+# =============================================================================
+# Resources
+# =============================================================================
+# Дока рекомендует -Xmx8g (см. storm.general.javaOpts). 4-16Gi RAM, 1-4 CPU.
+resources: {}
+  # limits:
+  #   cpu: 4
+  #   memory: 12Gi
+  # requests:
+  #   cpu: 1
+  #   memory: 8Gi
+
+# =============================================================================
+# Container ports
+# =============================================================================
+containerPorts:
+  # -- HTTP entry point (nginx внутри fullstack-контейнера). Юзеры ходят сюда.
+  http: 8081
+  # -- Spring Boot backend (Actuator + API + Prometheus). Probes и metrics — сюда.
+  app: 8082
+
+# =============================================================================
+# Probes — идут на backend (containerPorts.app=8082) напрямую
+# =============================================================================
+startupProbe:
+  enabled: true
+  httpGet:
+    path: /actuator/health/liveness
+  initialDelaySeconds: 30
+  periodSeconds: 10
+  failureThreshold: 30  # 30*10s = 5 минут на старт JVM
+
+livenessProbe:
+  httpGet:
+    path: /actuator/health/liveness
+  periodSeconds: 10
+  failureThreshold: 3
+
+readinessProbe:
+  httpGet:
+    path: /actuator/health/readiness
+  periodSeconds: 5
+  failureThreshold: 3
+
+# =============================================================================
+# Service
+# =============================================================================
+service:
+  type: ClusterIP
+  # -- Service-порт для пользовательского HTTP-трафика (целит в containerPorts.http=8081).
+  port: 8081
+  # -- Service-порт для metrics (целит в containerPorts.app=8082). Открывается, только если metrics.enabled.
+  metricsPort: 8082
+  # -- Sticky session. Включите при replicaCount>1 для WebSocket,
+  #    если ingress не делает sticky-cookies сам.
+  sessionAffinity: ""  # "" | "ClientIP"
+  sessionAffinityConfig: {}
+
+# =============================================================================
+# Ingress
+# =============================================================================
+ingress:
+  enabled: false
+  className: "nginx"
+
+  # -- Дефолтные nginx-ingress аннотации (по official enterprise nginx-config):
+  #    * proxy-body-size: 50m (импорт BPMN/изображений)
+  #    * proxy-read/send-timeout: 86400 (долгоживущие WebSocket)
+  #    * affinity: cookie (sticky для collaborative editing)
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: "50m"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "86400"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "86400"
+    nginx.ingress.kubernetes.io/affinity: "cookie"
+    nginx.ingress.kubernetes.io/affinity-mode: "persistent"
+    nginx.ingress.kubernetes.io/session-cookie-name: "stormbpmn-affinity"
+    nginx.ingress.kubernetes.io/proxy-buffering: "off"
+    # Для cert-manager (если есть):
+    # cert-manager.io/cluster-issuer: letsencrypt-prod
+
+  hosts:
+    - host: stormbpmn.example.local
+      paths:
+        - path: /
+          pathType: Prefix
+
+  tls: []
+  # - secretName: stormbpmn-tls
+  #   hosts:
+  #     - stormbpmn.example.local
+
+# =============================================================================
+# Gateway API (HTTPRoute) — вместо Ingress, если в кластере есть Gateway
+# =============================================================================
+# Нужны CRD Gateway API v1 и контроллер (Envoy Gateway, Istio, Cilium, Traefik,
+# NGINX Gateway Fabric…). TLS, размер тела и таймауты WebSocket настраиваются
+# на Gateway / в политиках вашего контроллера.
+httpRoute:
+  enabled: false
+  annotations: {}
+  # -- Gateway, к которому подключается маршрут (обязательно при enabled).
+  parentRefs: []
+  # - name: main-gateway
+  #   namespace: gateway-system
+  #   sectionName: https
+  hostnames: []
+  # - stormbpmn.example.local
+  # -- rules[].timeouts. Для WebSocket совместного редактирования нужен длинный
+  #    таймаут или "0s" (без ограничения), если контроллер это поддерживает.
+  timeouts: {}
+  # request: "0s"
+  # -- rules[].sessionPersistence — sticky-сессии при нескольких репликах.
+  #    Поле из experimental-канала Gateway API: включайте, только если ваш
+  #    контроллер и CRD его поддерживают, иначе настройте привязку по cookie
+  #    политикой контроллера.
+  sessionPersistence: {}
+  # sessionName: stormbpmn-affinity
+  # type: Cookie
+
+# =============================================================================
+# Autoscaling (HPA)
+# =============================================================================
+autoscaling:
+  enabled: false
+  minReplicas: 2
+  maxReplicas: 6
+  targetCPUUtilizationPercentage: 70
+  targetMemoryUtilizationPercentage: ""
+  # JVM стартует 30-60с → высокий CPU в момент warmup. Без stabilization HPA
+  # рожает лавину replicas, потом убивает их по scale-down → flap.
+  behavior:
+    scaleUp:
+      stabilizationWindowSeconds: 120
+      maxPodsPerMinute: 2
+    scaleDown:
+      stabilizationWindowSeconds: 300
+      maxPodsPerMinute: 1
+
+# =============================================================================
+# PodDisruptionBudget
+# =============================================================================
+podDisruptionBudget:
+  enabled: false
+  minAvailable: 1
+
+# =============================================================================
+# Metrics (Prometheus)
+# =============================================================================
+# Spring Boot Actuator: /actuator/prometheus на containerPorts.app=8082.
+metrics:
+  # -- Открыть metricsPort на Service.
+  enabled: true
+  serviceMonitor:
+    enabled: false
+    interval: 30s
+    scrapeTimeout: 10s
+    namespace: ""  # пусто → namespace релиза
+    labels: {}
+    relabelings: []
+    metricRelabelings: []
+
+# =============================================================================
+# Secret mode
+# =============================================================================
+# -- Если задан — чарт НЕ создаёт Secret, использует существующий.
+#    Удобно для SealedSecrets / external-secrets-operator / Vault.
+#    Ключи — те же имена ENV, что создаёт чарт: JDBC_PASSWORD, JWTSECRET,
+#    LICENSE_KEY_V2 (и/или LICENSE_KEY), S3_ACCESS_KEY, S3_SECRET_KEY и т.д.
+#    (см. templates/secret.yaml). Отсутствующий необязательный ключ пропускается.
+existingSecret: ""
+
+# =============================================================================
+# Extra (escape-hatch для будущих ENV без правки чарта)
+# =============================================================================
+extraEnv: []
+extraEnvFrom: []
+extraVolumes: []
+extraVolumeMounts: []
+
+# =============================================================================
+# StormBPMN application config (только enterprise ENV)
+# =============================================================================
+storm:
+
+  # ---- Общие ---------------------------------------------------------------
+  general:
+    # -- SPRING_PROFILES_ACTIVE. Для прода всегда `prod`.
+    springProfile: prod
+    # -- TZ. Тот же пояс получает storm-des (des.enabled) — они обязаны совпадать.
+    timezone: Europe/Moscow
+    # -- JAVA_OPTS. По доке рекомендуется -Xmx8g.
+    javaOpts: "-Xmx8g"
+    # -- CONTAINER_ROLE: FRONT | BACK | FULLSTACK. Пусто → FULLSTACK по умолчанию.
+    #    Разделять имеет смысл, только если разворачиваете FRONT и BACK отдельными
+    #    helm-релизами (требование "1 процесс в контейнере (PID 1)").
+    containerRole: ""
+
+  # ---- Database (PostgreSQL c pgvector, pg_trgm, pgcrypto, uuid-ossp, hstore) --
+  database:
+    # -- JDBC_URL. Своя схема: ...?currentSchema=myschema
+    url: "jdbc:postgresql://postgres.example.local:5432/storm"
+    # -- JDBC_USERNAME.
+    username: "stormuser"
+    # -- JDBC_PASSWORD → Secret. При existingSecret — пусто.
+    password: ""
+
+  # ---- License -------------------------------------------------------------
+  # Порядок активации: https://enterprise.stormbpmn.com/operation/License.html
+  license:
+    # -- LICENSE_KEY_V2 → Secret. Ключ выдаётся на конкретную инсталляцию по коду
+    #    активации со страницы /admin-onboarding. Если не пуст — используется только он.
+    keyV2: ""
+    # -- LICENSE_KEY (v1, устаревший) → Secret. Поддерживается временно; держите его
+    #    рядом с keyV2 только на время проверки v2.
+    key: ""
+
+  # ---- JWT -----------------------------------------------------------------
+  jwt:
+    # -- JWTSECRET → Secret. Не менее 64 символов (подпись HS512), иначе вход
+    #    падает с WeakKeyException. Сгенерировать: `openssl rand -hex 32` (64 символа).
+    secret: ""
+
+  # ---- S3 storage ----------------------------------------------------------
+  # Без S3 ограничены: миниатюры, аватары, документы.
+  s3:
+    # -- S3_ENDPOINT. Пример: https://s3.ru-3.host.ru
+    endpoint: ""
+    # -- S3_EXTERNAL_ENDPOINT. Адрес S3 для ссылок, которые открывает браузер,
+    #    если он отличается от S3_ENDPOINT. Пусто → не задаётся.
+    externalEndpoint: ""
+    # -- S3_REGION.
+    region: "ru-3"
+    # -- S3_VIRTUAL_HOST. true для vHosted, false для Path-Style.
+    virtualHost: "false"
+    # -- S3_SINGLE_USERS_BUCKET. Для свежих установок дока рекомендует "true".
+    singleUsersBucket: "true"
+    buckets:
+      # -- S3_BUCKET_UPLOADS — BPMN-диаграммы, изображения.
+      uploads: "storm-uploads"
+      # -- S3_BUCKET_USERS — аватары и пользовательский контент.
+      users: "storm-users"
+      # -- S3_BUCKET_IMPORTS — файлы импорта.
+      imports: "storm-imports"
+    # -- S3_ACCESS_KEY → Secret.
+    accessKey: ""
+    # -- S3_SECRET_KEY → Secret.
+    secretKey: ""
+
+  # ---- Redis (обязателен при replicaCount>1) -------------------------------
+  redis:
+    # -- REDIS_ENABLED. При false — single-instance, InMemory.
+    enabled: false
+    # -- REDIS_HOST.
+    host: "redis.example.local"
+    # -- REDIS_PORT.
+    port: "6379"
+    # -- REDIS_DATABASE.
+    database: "0"
+    # -- REDIS_TIMEOUT.
+    timeout: "1000ms"
+    # -- REDIS_PASSWORD → Secret.
+    password: ""
+
+  # ---- Email --------------------------------------------------------------
+  # EMAIL_PROVIDER — обязательный. Варианты:
+  #   - "smtp"     — корпоративный SMTP (настраивается только через ENV, в админке раздела нет)
+  #   - "listmonk" — через ListMonk (красивые шаблоны)
+  #   - "nop"      — отключено (без писем не работают приглашения и восстановление пароля)
+  email:
+    # -- EMAIL_PROVIDER.
+    provider: "smtp"
+    smtp:
+      # -- SMTP_HOST.
+      host: ""
+      # -- SMTP_PORT (587=STARTTLS, 465=SMTPS, 25=SMTP).
+      port: "587"
+      # -- SMTP_PROTOCOL: STARTTLS | SMTP | SMTPS.
+      protocol: "STARTTLS"
+      # -- SMTP_USE_AUTH.
+      useAuth: "true"
+      # -- SMTP_FROM.
+      from: "stormbpmn@example.local"
+      # -- SMTP_USERNAME.
+      username: ""
+      # -- SMTP_PASSWORD → Secret.
+      password: ""
+    listmonk:
+      # -- LISTMONK_BASE_URL (заканчивается на /api). Пример: http://listmonk:9000/api
+      baseUrl: ""
+      # -- LISTMONK_USERNAME (имя API-юзера).
+      username: ""
+      # -- LISTMONK_PASSWORD (API-токен) → Secret.
+      password: ""
+
+  # ---- Опциональные интеграции ---------------------------------------------
+  integrations:
+    # -- PLANTUML_SERVER. Пусто → отключено.
+    plantumlServer: ""
+    # -- GOTENBERG_URL. ⚠️ Пусто → PDF печатается через ПУБЛИЧНЫЙ демо-сервис
+    #    https://demo.gotenberg.dev. В проде обязательно укажите свой Gotenberg.
+    gotenbergUrl: ""
+
+  # ---- AI-модуль (нужна лицензия с AI) -------------------------------------
+  ai:
+    # -- MCP_ENABLED. Включает AI-чат и связанные сервисы на бэкенде.
+    mcpEnabled: "false"
+    # -- STORM_RETENTION_ENABLED. Ночные AI-прогревы (см. /ai/retention.html).
+    retentionEnabled: "false"
+
+  # ---- Security flags (см. /configure/security/) ---------------------------
+  security:
+    # -- STORM_ALLOWED_ORIGINS. В проде — конкретный домен, не "*".
+    allowedOrigins: "*"
+    # -- STORM_DISABLE_SIMPLE_AUTH. Отключить встроенную регистрацию по email/паролю
+    #    (использовать только SSO через admin-панель OAuth2).
+    disableSimpleAuth: "false"
+    # -- STORM_DISABLE_ENV_IN_UI. Скрыть ENV в админке. В проде — "true".
+    disableEnvInUi: "true"
+    # -- STORM_DISABLE_ANON_SHARING. Запретить анонимные share-ссылки.
+    disableAnonSharing: "true"
+    # -- SESSION_EXPIRATION в СЕКУНДАХ (сутки = 86400, неделя = 604800), не больше
+    #    7776000 (90 суток) — иначе приложение не стартует. Пусто → дефолт приложения.
+    sessionExpirationSeconds: ""
+
+  # ---- SIEM / Audit-logging (см. /configure/security/audit-logging.html) ---
+  audit:
+    # -- AUDIT_ENABLED.
+    enabled: "false"
+    # -- AUDIT_CHANNEL: console | syslog | database.
+    channel: "console"
+    # -- AUDIT_INCLUDE_UNAUTH_PATH. RegExp через запятую без пробелов. Пример: ".*/auth/signin$"
+    includeUnauthPaths: ""
+    # -- AUDIT_EXCLUDE_AUTH_PATH. RegExp через запятую без пробелов.
+    #    Пример: ".*/heartbeat$,.*/diagram/.*/autosave$"
+    excludeAuthPaths: ""
+    syslog:
+      # -- SYSLOG_SERVERS. CSV host:port. Пример: "localhost:514,192.168.78.53:601"
+      servers: ""
+      # -- SYSLOG_SOURCE — название приложения в логах.
+      source: "stormbpmn"
+      # -- SYSLOG_MESSAGE_FORMAT: RFC_3164 | RFC_5424.
+      messageFormat: "RFC_5424"
+    # Канал database: отдельная TimescaleDB (Community-сборка, не -oss).
+    database:
+      # -- AUDIT_DB_URL. Пример: jdbc:postgresql://timescale:5432/storm_audit
+      url: ""
+      # -- AUDIT_DB_USERNAME.
+      username: ""
+      # -- AUDIT_DB_PASSWORD → Secret.
+      password: ""
+
+# Модуль симуляций storm-des — необязательный, работает только с ключом лицензии, где есть симуляции
+# Модуль симуляций storm-des (отдельная лицензия)
+# =============================================================================
+# Отдельный Deployment в том же релизе: та же БД (логин и пароль берутся из
+# storm.database и Secret приложения), тот же TZ и та же версия образа, что у
+# приложения. Приложению автоматически передаётся DES_BASE_URL на его Service.
+des:
+  enabled: false
+  replicaCount: 1
+  image:
+    # -- Пусто → image.registry основного приложения.
+    registry: ""
+    repository: stormbpmn-enterprise/storm-des
+    # -- Пусто → .Chart.AppVersion. Версия ДОЛЖНА совпадать с приложением.
+    tag: ""
+    pullPolicy: IfNotPresent
+  # -- JAVA_OPTS для storm-des. Рекомендуемая конфигурация — 16 GB на контейнер.
+  javaOpts: "-Xms4g -Xmx12g -XX:+UseG1GC -XX:+ExitOnOutOfMemoryError"
+  # -- SIMULATION_MAX_CONCURRENT: параллельных прогонов на ноду (больше → больше памяти).
+  maxConcurrent: "2"
+  # -- SIMULATION_TIMEOUT_MINUTES: жёсткий лимит одного прогона.
+  timeoutMinutes: "10"
+  resources: {}
+    # limits:
+    #   memory: 14Gi
+    # requests:
+    #   cpu: 2
+    #   memory: 14Gi
+  service:
+    port: 8081
+  extraEnv: []
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+
+# =============================================================================
+# helm test
+# =============================================================================
+tests:
+  # -- Образ smoke-теста. В air-gap перенесите его в свой registry.
+  image: busybox:1.37

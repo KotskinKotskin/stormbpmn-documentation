@@ -1,0 +1,398 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "title": "StormBPMN Enterprise Helm chart values",
+  "type": "object",
+  "required": [
+    "image",
+    "storm"
+  ],
+  "properties": {
+    "replicaCount": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "image": {
+      "type": "object",
+      "required": [
+        "registry",
+        "repository"
+      ],
+      "properties": {
+        "registry": {
+          "type": "string",
+          "minLength": 1
+        },
+        "repository": {
+          "type": "string",
+          "minLength": 1
+        },
+        "tag": {
+          "type": "string"
+        },
+        "pullPolicy": {
+          "enum": [
+            "Always",
+            "IfNotPresent",
+            "Never"
+          ]
+        }
+      }
+    },
+    "service": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "enum": [
+            "ClusterIP",
+            "NodePort",
+            "LoadBalancer"
+          ]
+        },
+        "port": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 65535
+        },
+        "metricsPort": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 65535
+        },
+        "sessionAffinity": {
+          "enum": [
+            "",
+            "None",
+            "ClientIP"
+          ]
+        }
+      }
+    },
+    "autoscaling": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "minReplicas": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "maxReplicas": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "storm": {
+      "type": "object",
+      "required": [
+        "database",
+        "license",
+        "jwt",
+        "email"
+      ],
+      "properties": {
+        "general": {
+          "type": "object",
+          "properties": {
+            "springProfile": {
+              "type": "string"
+            },
+            "timezone": {
+              "type": "string"
+            },
+            "javaOpts": {
+              "type": "string"
+            },
+            "containerRole": {
+              "enum": [
+                "",
+                "FRONT",
+                "BACK",
+                "FULLSTACK"
+              ]
+            }
+          }
+        },
+        "database": {
+          "type": "object",
+          "required": [
+            "url",
+            "username"
+          ],
+          "properties": {
+            "url": {
+              "type": "string",
+              "pattern": "^jdbc:postgresql://.+"
+            },
+            "username": {
+              "type": "string",
+              "minLength": 1
+            },
+            "password": {
+              "type": "string"
+            }
+          }
+        },
+        "license": {
+          "type": "object",
+          "properties": {
+            "keyV2": {
+              "type": "string"
+            },
+            "key": {
+              "type": "string"
+            }
+          }
+        },
+        "jwt": {
+          "type": "object",
+          "properties": {
+            "secret": {
+              "type": "string",
+              "description": "JWTSECRET: не менее 64 символов (HS512). `openssl rand -hex 32`. Пусто — только вместе с existingSecret.",
+              "oneOf": [
+                {
+                  "minLength": 64
+                },
+                {
+                  "maxLength": 0
+                }
+              ]
+            }
+          }
+        },
+        "s3": {
+          "type": "object",
+          "properties": {
+            "endpoint": {
+              "type": "string"
+            },
+            "region": {
+              "type": "string"
+            },
+            "virtualHost": {
+              "enum": [
+                "true",
+                "false",
+                true,
+                false
+              ]
+            },
+            "singleUsersBucket": {
+              "enum": [
+                "true",
+                "false",
+                true,
+                false
+              ]
+            },
+            "accessKey": {
+              "type": "string"
+            },
+            "secretKey": {
+              "type": "string"
+            },
+            "buckets": {
+              "type": "object",
+              "properties": {
+                "uploads": {
+                  "type": "string"
+                },
+                "users": {
+                  "type": "string"
+                },
+                "imports": {
+                  "type": "string"
+                }
+              }
+            },
+            "externalEndpoint": {
+              "type": "string"
+            }
+          }
+        },
+        "redis": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "host": {
+              "type": "string"
+            },
+            "port": {
+              "type": "string"
+            },
+            "database": {
+              "type": "string"
+            },
+            "timeout": {
+              "type": "string"
+            },
+            "password": {
+              "type": "string"
+            }
+          }
+        },
+        "email": {
+          "type": "object",
+          "required": [
+            "provider"
+          ],
+          "properties": {
+            "provider": {
+              "enum": [
+                "nop",
+                "smtp",
+                "listmonk"
+              ]
+            }
+          }
+        },
+        "audit": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "enum": [
+                "true",
+                "false",
+                true,
+                false
+              ]
+            },
+            "channel": {
+              "enum": [
+                "console",
+                "syslog",
+                "database"
+              ]
+            },
+            "syslog": {
+              "type": "object",
+              "properties": {
+                "messageFormat": {
+                  "enum": [
+                    "RFC_3164",
+                    "RFC_5424"
+                  ]
+                }
+              }
+            },
+            "database": {
+              "type": "object",
+              "properties": {
+                "url": {
+                  "type": "string"
+                },
+                "username": {
+                  "type": "string"
+                },
+                "password": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "ai": {
+          "type": "object",
+          "properties": {
+            "mcpEnabled": {
+              "enum": [
+                "true",
+                "false",
+                true,
+                false
+              ]
+            },
+            "retentionEnabled": {
+              "enum": [
+                "true",
+                "false",
+                true,
+                false
+              ]
+            }
+          }
+        },
+        "security": {
+          "type": "object",
+          "properties": {
+            "sessionExpirationSeconds": {
+              "description": "SESSION_EXPIRATION в секундах, не больше 7776000 (90 суток), иначе приложение не стартует.",
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^$|^[0-9]+$"
+                },
+                {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 7776000
+                }
+              ]
+            },
+            "allowedOrigins": {
+              "type": "string"
+            },
+            "disableSimpleAuth": {
+              "enum": [
+                "true",
+                "false",
+                true,
+                false
+              ]
+            },
+            "disableEnvInUi": {
+              "enum": [
+                "true",
+                "false",
+                true,
+                false
+              ]
+            },
+            "disableAnonSharing": {
+              "enum": [
+                "true",
+                "false",
+                true,
+                false
+              ]
+            }
+          }
+        }
+      }
+    },
+    "existingSecret": {
+      "type": "string"
+    },
+    "extraEnv": {
+      "type": "array"
+    },
+    "extraEnvFrom": {
+      "type": "array"
+    },
+    "des": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "replicaCount": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "tests": {
+      "type": "object",
+      "properties": {
+        "image": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    }
+  }
+}

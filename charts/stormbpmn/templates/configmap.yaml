@@ -1,0 +1,108 @@
+{{/*
+ConfigMap с публичными ENV (несекреты).
+Только enterprise-релевантные переменные из enterprise.stormbpmn.com.
+*/}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "stormbpmn.configMapName" . }}
+  labels:
+    {{- include "stormbpmn.labels" . | nindent 4 }}
+data:
+  # ---- General ----
+  TZ: {{ .Values.storm.general.timezone | default "Europe/Moscow" | quote }}
+  SPRING_PROFILES_ACTIVE: {{ .Values.storm.general.springProfile | default "prod" | quote }}
+  JAVA_OPTS: {{ .Values.storm.general.javaOpts | default "-Xmx8g" | quote }}
+  {{- with .Values.storm.general.containerRole }}
+  CONTAINER_ROLE: {{ . | quote }}
+  {{- end }}
+
+  # ---- Database (URL и username; пароль в Secret) ----
+  JDBC_URL: {{ .Values.storm.database.url | quote }}
+  JDBC_USERNAME: {{ .Values.storm.database.username | quote }}
+
+  # ---- S3 (без ключей; ключи в Secret) ----
+  {{- with .Values.storm.s3.endpoint }}
+  S3_ENDPOINT: {{ . | quote }}
+  {{- with $.Values.storm.s3.externalEndpoint }}
+  S3_EXTERNAL_ENDPOINT: {{ . | quote }}
+  {{- end }}
+  S3_REGION: {{ $.Values.storm.s3.region | default "ru-3" | quote }}
+  S3_VIRTUAL_HOST: {{ $.Values.storm.s3.virtualHost | toString | quote }}
+  S3_SINGLE_USERS_BUCKET: {{ $.Values.storm.s3.singleUsersBucket | toString | quote }}
+  S3_BUCKET_UPLOADS: {{ $.Values.storm.s3.buckets.uploads | default "storm-uploads" | quote }}
+  S3_BUCKET_USERS: {{ $.Values.storm.s3.buckets.users | default "storm-users" | quote }}
+  S3_BUCKET_IMPORTS: {{ $.Values.storm.s3.buckets.imports | default "storm-imports" | quote }}
+  {{- end }}
+
+  # ---- Redis (без пароля) ----
+  REDIS_ENABLED: {{ ternary "true" "false" .Values.storm.redis.enabled | quote }}
+  {{- if .Values.storm.redis.enabled }}
+  REDIS_HOST: {{ .Values.storm.redis.host | quote }}
+  REDIS_PORT: {{ .Values.storm.redis.port | quote }}
+  REDIS_DATABASE: {{ .Values.storm.redis.database | default "0" | quote }}
+  REDIS_TIMEOUT: {{ .Values.storm.redis.timeout | default "1000ms" | quote }}
+  {{- end }}
+
+  # ---- Email (без паролей) ----
+  EMAIL_PROVIDER: {{ .Values.storm.email.provider | default "nop" | quote }}
+  {{- if eq .Values.storm.email.provider "smtp" }}
+  SMTP_HOST: {{ .Values.storm.email.smtp.host | quote }}
+  SMTP_PORT: {{ .Values.storm.email.smtp.port | quote }}
+  SMTP_PROTOCOL: {{ .Values.storm.email.smtp.protocol | default "STARTTLS" | quote }}
+  SMTP_USE_AUTH: {{ .Values.storm.email.smtp.useAuth | toString | quote }}
+  SMTP_FROM: {{ .Values.storm.email.smtp.from | quote }}
+  SMTP_USERNAME: {{ .Values.storm.email.smtp.username | quote }}
+  {{- end }}
+  {{- if eq .Values.storm.email.provider "listmonk" }}
+  LISTMONK_BASE_URL: {{ .Values.storm.email.listmonk.baseUrl | quote }}
+  LISTMONK_USERNAME: {{ .Values.storm.email.listmonk.username | quote }}
+  {{- end }}
+
+  # ---- Integrations ----
+  {{- with .Values.storm.integrations.plantumlServer }}
+  PLANTUML_SERVER: {{ . | quote }}
+  {{- end }}
+  {{- with .Values.storm.integrations.gotenbergUrl }}
+  GOTENBERG_URL: {{ . | quote }}
+  {{- end }}
+  {{- if .Values.des.enabled }}
+  DES_BASE_URL: {{ printf "http://%s:%v" (include "stormbpmn.desName" .) .Values.des.service.port | quote }}
+  {{- end }}
+
+  # ---- AI ----
+  MCP_ENABLED: {{ .Values.storm.ai.mcpEnabled | toString | quote }}
+  STORM_RETENTION_ENABLED: {{ .Values.storm.ai.retentionEnabled | toString | quote }}
+
+  # ---- Security flags ----
+  STORM_ALLOWED_ORIGINS: {{ .Values.storm.security.allowedOrigins | default "*" | quote }}
+  STORM_DISABLE_SIMPLE_AUTH: {{ .Values.storm.security.disableSimpleAuth | toString | quote }}
+  STORM_DISABLE_ENV_IN_UI: {{ .Values.storm.security.disableEnvInUi | toString | quote }}
+  STORM_DISABLE_ANON_SHARING: {{ .Values.storm.security.disableAnonSharing | toString | quote }}
+  {{- with .Values.storm.security.sessionExpirationSeconds }}
+  {{- if gt (int64 .) 7776000 }}
+  {{- fail "storm.security.sessionExpirationSeconds задаётся в СЕКУНДАХ и не больше 7776000 (90 суток): с большим значением приложение не стартует" }}
+  {{- end }}
+  SESSION_EXPIRATION: {{ . | quote }}
+  {{- end }}
+
+  # ---- SIEM / Audit ----
+  AUDIT_ENABLED: {{ .Values.storm.audit.enabled | toString | quote }}
+  {{- if eq (.Values.storm.audit.enabled | toString) "true" }}
+  AUDIT_CHANNEL: {{ .Values.storm.audit.channel | default "console" | quote }}
+  {{- with .Values.storm.audit.includeUnauthPaths }}
+  AUDIT_INCLUDE_UNAUTH_PATH: {{ . | quote }}
+  {{- end }}
+  {{- with .Values.storm.audit.excludeAuthPaths }}
+  AUDIT_EXCLUDE_AUTH_PATH: {{ . | quote }}
+  {{- end }}
+  {{- if eq .Values.storm.audit.channel "syslog" }}
+  SYSLOG_SERVERS: {{ .Values.storm.audit.syslog.servers | quote }}
+  SYSLOG_SOURCE: {{ .Values.storm.audit.syslog.source | default "stormbpmn" | quote }}
+  SYSLOG_MESSAGE_FORMAT: {{ .Values.storm.audit.syslog.messageFormat | default "RFC_5424" | quote }}
+  {{- end }}
+  {{- if eq .Values.storm.audit.channel "database" }}
+  AUDIT_DB_URL: {{ .Values.storm.audit.database.url | quote }}
+  AUDIT_DB_USERNAME: {{ .Values.storm.audit.database.username | quote }}
+  {{- end }}
+  {{- end }}
