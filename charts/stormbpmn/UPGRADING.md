@@ -52,7 +52,7 @@ SaaS-only переменные удалены — их в enterprise-дистр�
 
 | 2.x | 3.0.0 |
 |---|---|
-| `cr.yandex/crp3tddjfqiv4gk93q34/stormfullstack:latest` | `cr.selcloud.ru/stormbpmn-enterprise/stormbpmn_fullstack_enterprise:6.6.5181` |
+| Старый образ из Yandex Container Registry (`stormfullstack:latest`) | `cr.selcloud.ru/stormbpmn-enterprise/stormbpmn_fullstack_enterprise:6.6.5181` |
 | Один параметр `image.repository` | Разделены `image.registry` + `image.repository` (удобно для air-gap). |
 
 ### ENV — переименования (AWS SDK v2, 6.6.4154+)
