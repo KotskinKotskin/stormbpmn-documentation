@@ -9,8 +9,12 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: "{{ include "stormbpmn.fullname" . }}-test-connection"
+  # Свои лейблы, не selector приложения: иначе ReplicaSet может «усыновить» и удалить под теста.
   labels:
-    {{- include "stormbpmn.labels" . | nindent 4 }}
+    helm.sh/chart: {{ include "stormbpmn.chart" . }}
+    app.kubernetes.io/name: {{ include "stormbpmn.name" . }}-test
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
   annotations:
     "helm.sh/hook": test
     "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded

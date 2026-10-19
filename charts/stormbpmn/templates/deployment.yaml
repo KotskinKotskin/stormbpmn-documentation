@@ -68,25 +68,27 @@ spec:
             - name: app
               containerPort: {{ .Values.containerPorts.app }}
               protocol: TCP
+          {{- /* CONTAINER_ROLE=FRONT запускает только nginx: probes идут в него, а не в Spring Boot */}}
+          {{- $front := eq (.Values.storm.general.containerRole | toString) "FRONT" }}
           {{- if .Values.startupProbe.enabled }}
           startupProbe:
             httpGet:
-              path: {{ .Values.startupProbe.httpGet.path }}
-              port: {{ .Values.containerPorts.app }}
+              path: {{ ternary "/" .Values.startupProbe.httpGet.path $front }}
+              port: {{ ternary "http" "app" $front }}
             initialDelaySeconds: {{ .Values.startupProbe.initialDelaySeconds }}
             periodSeconds: {{ .Values.startupProbe.periodSeconds }}
             failureThreshold: {{ .Values.startupProbe.failureThreshold }}
           {{- end }}
           livenessProbe:
             httpGet:
-              path: {{ .Values.livenessProbe.httpGet.path }}
-              port: {{ .Values.containerPorts.app }}
+              path: {{ ternary "/" .Values.livenessProbe.httpGet.path $front }}
+              port: {{ ternary "http" "app" $front }}
             periodSeconds: {{ .Values.livenessProbe.periodSeconds }}
             failureThreshold: {{ .Values.livenessProbe.failureThreshold }}
           readinessProbe:
             httpGet:
-              path: {{ .Values.readinessProbe.httpGet.path }}
-              port: {{ .Values.containerPorts.app }}
+              path: {{ ternary "/" .Values.readinessProbe.httpGet.path $front }}
+              port: {{ ternary "http" "app" $front }}
             periodSeconds: {{ .Values.readinessProbe.periodSeconds }}
             failureThreshold: {{ .Values.readinessProbe.failureThreshold }}
           resources:

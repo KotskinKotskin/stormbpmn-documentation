@@ -109,7 +109,7 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 
 {{- define "stormbpmn.desImage" -}}
 {{- $registry := default .Values.image.registry .Values.des.image.registry -}}
-{{- $tag := default .Chart.AppVersion .Values.des.image.tag -}}
+{{- $tag := .Values.des.image.tag | default .Values.image.tag | default .Chart.AppVersion -}}
 {{- if $registry -}}
 {{- printf "%s/%s:%s" $registry .Values.des.image.repository $tag -}}
 {{- else -}}
