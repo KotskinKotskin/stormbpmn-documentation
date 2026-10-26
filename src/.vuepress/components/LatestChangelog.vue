@@ -1,17 +1,23 @@
 <script setup>
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
+import { usePageLang } from 'vuepress/client';
+import { messages } from './changelog-messages.js';
+
+const lang = usePageLang();
+const t = computed(() => messages[lang.value] ?? messages['ru-RU']);
 
 // Данные передаются через Vite define из config.ts
 // eslint-disable-next-line no-undef
-const latestRelease = __LATEST_RELEASE__;
+const latestReleases = __LATEST_RELEASE__;
 
 const latestChangelog = computed(() => {
+  const latestRelease = latestReleases[lang.value] ?? latestReleases['ru-RU'];
   if (!latestRelease) return null;
 
   return {
     version: latestRelease.version,
     date: latestRelease.date,
-    path: `/Changelog/${latestRelease.version}.html`
+    path: latestRelease.path
   };
 });
 
@@ -27,12 +33,13 @@ const isoDate = computed(() => {
 });
 
 const pluralizeDays = (days) => {
+  if (lang.value === 'en-US') return days === 1 ? t.value.day[0] : t.value.day[1];
   const tail10 = days % 10;
   const tail100 = days % 100;
 
-  if (tail10 === 1 && tail100 !== 11) return 'день';
-  if (tail10 >= 2 && tail10 <= 4 && (tail100 < 10 || tail100 >= 20)) return 'дня';
-  return 'дней';
+  if (tail10 === 1 && tail100 !== 11) return t.value.day[0];
+  if (tail10 >= 2 && tail10 <= 4 && (tail100 < 10 || tail100 >= 20)) return t.value.day[1];
+  return t.value.day[2];
 };
 
 // «Сколько дней назад» считаем ТОЛЬКО на клиенте (onMounted), а не в computed:
@@ -41,7 +48,8 @@ const pluralizeDays = (days) => {
 // До монтирования подпись просто отсутствует.
 const releasedAgo = ref(null);
 
-onMounted(() => {
+onMounted(() => watch(latestChangelog, () => {
+  releasedAgo.value = null;
   const raw = latestChangelog.value?.date;
   const parts = raw?.split('.');
   if (parts?.length !== 3) return;
@@ -57,10 +65,10 @@ onMounted(() => {
   const days = Math.round((today - released) / 86_400_000);
   if (days < 0) return; // дата релиза в будущем — считать нечего
 
-  if (days === 0) releasedAgo.value = 'сегодня';
-  else if (days === 1) releasedAgo.value = 'вчера';
-  else releasedAgo.value = `${days} ${pluralizeDays(days)} назад`;
-});
+  if (days === 0) releasedAgo.value = t.value.today;
+  else if (days === 1) releasedAgo.value = t.value.yesterday;
+  else releasedAgo.value = `${days} ${pluralizeDays(days)} ${t.value.ago}`;
+}, { immediate: true }));
 </script>
 
 <template>
@@ -68,13 +76,13 @@ onMounted(() => {
     v-if="latestChangelog"
     :href="latestChangelog.path"
     class="release-card"
-    :aria-label="`Что изменилось в версии ${latestChangelog.version}`"
+    :aria-label="`${t.version} ${latestChangelog.version}`"
   >
     <div class="release-card__meta">
-      <span class="release-card__label">Текущий релиз</span>
+      <span class="release-card__label">{{ t.current }}</span>
       <span class="release-card__version">{{ latestChangelog.version }}</span>
       <span class="release-card__date">
-        <time :datetime="isoDate">от {{ latestChangelog.date }}</time>
+        <time :datetime="isoDate">{{ t.date }} {{ latestChangelog.date }}</time>
         <template v-if="releasedAgo">
           <span class="release-card__sep" aria-hidden="true">·</span>
           <span>{{ releasedAgo }}</span>
@@ -83,7 +91,7 @@ onMounted(() => {
     </div>
 
     <span class="release-card__cta">
-      Что изменилось
+      {{ t.changes }}
       <span class="release-card__arrow" aria-hidden="true">→</span>
     </span>
   </a>

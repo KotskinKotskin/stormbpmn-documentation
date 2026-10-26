@@ -1,0 +1,22 @@
+# Для жёсткой проверки уберите continue-on-error у шага проверки.
+name: Check documentation translations
+on:
+  pull_request:
+    paths: ['src/**/*.md']
+permissions:
+  contents: read
+jobs:
+  i18n-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Check changed sources
+        continue-on-error: true
+        env:
+          BASE_REF: ${{ github.base_ref }}
+        run: node scripts/translate.mjs --check --format github --changed-since "origin/$BASE_REF"

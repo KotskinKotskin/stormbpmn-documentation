@@ -14,6 +14,7 @@ function stripInlineMarkdown(text: string): string {
         .replace(/`([^`]+)`/g, "$1")
         .replace(/\*\*([^*]+)\*\*/g, "$1")
         .replace(/__([^_]+)__/g, "$1")
+        .replace(/\s*\{#[^}]+\}\s*$/, "")
         .replace(/\s+/g, " ")
         .trim();
 }
@@ -66,9 +67,9 @@ function parseReleaseSections(content: string) {
 }
 
 // Читаем changelog-файлы и получаем список релизов, новые первыми
-function readReleases() {
-    const changelogDir = path.resolve(__dirname, "../Changelog");
-    const files = fs.readdirSync(changelogDir);
+function readReleases(dir: string, routePrefix: string) {
+    const changelogDir = path.resolve(__dirname, dir);
+    const files = fs.existsSync(changelogDir) ? fs.readdirSync(changelogDir) : [];
 
     return files
         .filter((file) => /^\d+\.\d+\.\d+\.md$/.test(file))
@@ -78,8 +79,8 @@ function readReleases() {
             const content = fs.readFileSync(filePath, "utf-8");
 
             // Пытаемся извлечь дату из заголовка "Версия X.X.X от DD.MM.YYYY"
-            const dateMatch = content.match(/от\s+(\d{2}\.\d{2}\.\d{4})/);
-            let date = dateMatch ? dateMatch[1] : null;
+            const dateMatch = content.match(/^#{1,6}\s+(.+)$/m)?.[1].match(/\d{2}\.\d{2}\.\d{4}/);
+            let date = dateMatch ? dateMatch[0] : null;
 
             // Fallback: дата создания/модификации файла
             if (!date) {
@@ -96,32 +97,22 @@ function readReleases() {
             const [major, minor, patch] = version.split(".").map(Number);
             const versionNum = major * 100000000 + minor * 10000 + patch;
 
-            return { version, date, versionNum, sections: parseReleaseSections(content) };
+            return { version, date, versionNum, path: `${routePrefix}/${version}.html`, sections: parseReleaseSections(content) };
         })
         .sort((a, b) => b.versionNum - a.versionNum);
 }
 
-const releases = readReleases();
-const latestRelease = releases[0]
-    ? { version: releases[0].version, date: releases[0].date, versionNum: releases[0].versionNum }
+const releases = readReleases("../Changelog", "/Changelog");
+const enReleases = readReleases("../en/Changelog", "/en/Changelog");
+const latest = (items: typeof releases) => items[0]
+    ? { version: items[0].version, date: items[0].date, path: items[0].path }
     : null;
+const latestRelease = { "ru-RU": latest(releases), "en-US": latest(enReleases) ?? latest(releases) };
 
-// Полный индекс релизов кладём отдельным файлом в public/, а НЕ в define: тексты
-// всех релизов — это ~170 КБ, и через define они бы приехали в общий бандл, то есть
-// на каждую страницу доков. Таймлайн подтягивает файл сам и только у себя.
-// Файл генерируемый — он в .gitignore.
-fs.writeFileSync(
-    path.resolve(__dirname, "public/changelog-index.json"),
-    JSON.stringify(
-        releases.map(({ version, date, sections }) => ({
-            version,
-            date,
-            path: `/Changelog/${version}.html`,
-            sections,
-        })),
-    ),
-    "utf-8",
-);
+for (const [filename, items] of [["changelog-index.json", releases], ["changelog-index.en.json", enReleases]] as const) {
+    fs.writeFileSync(path.resolve(__dirname, "public", filename),
+        JSON.stringify(items.map(({ version, date, path, sections }) => ({ version, date, path, sections }))), "utf-8");
+}
 
 export default defineUserConfig({
     bundler: viteBundler({
@@ -132,7 +123,10 @@ export default defineUserConfig({
         },
     }),
     base: "/",
-    lang: "ru-RU",
+    locales: {
+        "/": { lang: "ru-RU", title: "Storm Enterprise", description: "Всё о Enterprise-версии Stormbpmn" },
+        "/en/": { lang: "en-US", title: "Storm Enterprise", description: "Everything about Stormbpmn Enterprise" },
+    },
 
     title: "Storm Enterprise",
     description: "Всё о Enterprise-версии Stormbpmn",
@@ -164,10 +158,20 @@ export default defineUserConfig({
     ],
 
     theme: hopeTheme({
+        hostname: "https://enterprise.stormbpmn.com",
         fullscreen: true,
         plugins: {
+            seo: {
+                customHead: (head, page) => {
+                    head.push(["link", { rel: "alternate", hreflang: page.lang.toLowerCase(), href: `https://enterprise.stormbpmn.com${page.path}` }]);
+                },
+            },
             searchPro: {
                 indexContent: true,
+                locales: {
+                    "/": { placeholder: "Поиск", search: "Поиск" },
+                    "/en/": { placeholder: "Search documentation", search: "Search" },
+                },
             },
             copyCode: {},
             components: {
@@ -178,7 +182,7 @@ export default defineUserConfig({
             mdEnhance: {
                 mark: true,
                 align: true,
-                attrs: false,
+                attrs: true,
                 tasklist: true,
                 hint: true,
                 component: true,
@@ -224,45 +228,92 @@ export default defineUserConfig({
             end: ["Language", "Repo", "AskAi", "Outlook", "Search"],
         },
 
-        navbar: [
-            {
-                text: "🚀 Установка",
-                children: ["/install/", "/install/production/"],
-            },
-            {
-                text: "⚙️ Конфигурация",
-                children: ["/configure/", "/configure/branding.html", "/configure/security/"],
-            },
-            {
-                text: "🤖 AI-ассистент",
-                children: ["/ai/", "/ai/AI_CHAT.html", "/ai/KnowledgeBase.html", "/ai/self-hosted-llm/", "/ai/voice-input.html", "/ai/retention.html"],
-            },
-            {
-                text: "📊 Симуляции",
-                children: ["/simulation/", "/simulation/install.html", "/simulation/operation.html"],
-            },
-            {
-                text: "🏛 Архитектурное ревью",
-                children: [
-                    "/architecture/",
-                    "/architecture/processes.html",
-                    "/architecture/roles-raci.html",
-                    "/architecture/user-management.html",
-                    "/architecture/functional-requirements.html",
-                    "/architecture/system-design.html",
+        locales: {
+            "/": {
+                navbarTitle: "Enterprise",
+                repoLabel: "Улучшить документацию",
+                navbar: [
+                    {
+                        text: "🚀 Установка",
+                        children: ["/install/", "/install/production/"],
+                    },
+                    {
+                        text: "⚙️ Конфигурация",
+                        children: ["/configure/", "/configure/branding.html", "/configure/security/"],
+                    },
+                    {
+                        text: "🤖 AI-ассистент",
+                        children: ["/ai/", "/ai/AI_CHAT.html", "/ai/KnowledgeBase.html", "/ai/self-hosted-llm/", "/ai/voice-input.html", "/ai/retention.html"],
+                    },
+                    {
+                        text: "📊 Симуляции",
+                        children: ["/simulation/", "/simulation/install.html", "/simulation/operation.html"],
+                    },
+                    {
+                        text: "🏛 Архитектурное ревью",
+                        children: [
+                            "/architecture/",
+                            "/architecture/processes.html",
+                            "/architecture/roles-raci.html",
+                            "/architecture/user-management.html",
+                            "/architecture/functional-requirements.html",
+                            "/architecture/system-design.html",
+                        ],
+                    },
+                    // Короткие подписи: заголовки страниц («Администрирование системы»,
+                    // «Каналы поддержки») не помещаются в одну строку навбара.
+                    { text: "Администрирование", link: "/operation/" },
+                    { text: "Поддержка", link: "/support/" },
+                    "/Changelog/",
+                    {
+                        text: "💼 Обсудить покупку",
+                        link: "https://stormbpmn.com/contact-sales",
+                        ariaLabel: "Обсудить покупку Enterprise версии",
+                    },
                 ],
             },
-            // Короткие подписи: заголовки страниц («Администрирование системы»,
-            // «Каналы поддержки») не помещаются в одну строку навбара.
-            { text: "Администрирование", link: "/operation/" },
-            { text: "Поддержка", link: "/support/" },
-            "/Changelog/",
-            {
-                text: "💼 Обсудить покупку",
-                link: "https://stormbpmn.com/contact-sales",
-                ariaLabel: "Обсудить покупку Enterprise версии",
+            "/en/": {
+                navbarTitle: "Enterprise",
+                repoLabel: "Improve documentation",
+                navbar: [
+                    {
+                        text: "🚀 Installation",
+                        children: ["/en/install/", "/en/install/production/"],
+                    },
+                    {
+                        text: "⚙️ Configuration",
+                        children: ["/en/configure/", "/en/configure/branding.html", "/en/configure/security/"],
+                    },
+                    {
+                        text: "🤖 AI assistant",
+                        children: ["/en/ai/", "/en/ai/AI_CHAT.html", "/en/ai/KnowledgeBase.html", "/en/ai/self-hosted-llm/", "/en/ai/voice-input.html", "/en/ai/retention.html"],
+                    },
+                    {
+                        text: "📊 Simulations",
+                        children: ["/en/simulation/", "/en/simulation/install.html", "/en/simulation/operation.html"],
+                    },
+                    {
+                        text: "🏛 Architecture review",
+                        children: [
+                            "/en/architecture/",
+                            "/en/architecture/processes.html",
+                            "/en/architecture/roles-raci.html",
+                            "/en/architecture/user-management.html",
+                            "/en/architecture/functional-requirements.html",
+                            "/en/architecture/system-design.html",
+                        ],
+                    },
+                    { text: "Administration", link: "/en/operation/" },
+                    { text: "Support", link: "/en/support/" },
+                    { text: "Changelog", link: "/en/Changelog/" },
+                    {
+                        text: "💼 Contact sales",
+                        link: "https://stormbpmn.com/contact-sales",
+                        ariaLabel: "Contact Enterprise sales",
+                    },
+                ],
             },
-        ],
+        },
     }),
     plugins: [
         // Старые URL остаются живыми после переноса страниц (см. frontmatter redirectFrom).

@@ -13,3 +13,5 @@ src/.vuepress/public/changelog-index.json
 
 # Helm-репозиторий — собирается scripts/helm-repo.mjs в CI
 src/.vuepress/public/helm/
+
+src/.vuepress/public/changelog-index.en.json
