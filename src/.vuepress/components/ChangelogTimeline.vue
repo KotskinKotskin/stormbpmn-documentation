@@ -1,6 +1,10 @@
 <script setup>
-import { computed, onMounted, ref } from 'vue';
-import { withBase } from 'vuepress/client';
+import { computed, watch, ref } from 'vue';
+import { withBase, usePageLang } from 'vuepress/client';
+import { messages } from './changelog-messages.js';
+
+const lang = usePageLang();
+const t = computed(() => messages[lang.value] ?? messages['ru-RU']);
 
 const props = defineProps({
   /** Сколько релизов показать. 0 — все (полная лента на /Changelog/). */
@@ -71,14 +75,19 @@ const items = computed(() => {
   });
 });
 
-onMounted(async () => {
+watch(lang, async (_, __, onCleanup) => {
+  const controller = new AbortController();
+  onCleanup(() => controller.abort());
+  state.value = 'loading';
+  freshness.value = null;
   try {
-    const response = await fetch(withBase('/changelog-index.json'));
+    const response = await fetch(withBase(lang.value === 'en-US' ? '/changelog-index.en.json' : '/changelog-index.json'), { signal: controller.signal });
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
     releases.value = await response.json();
     state.value = 'ready';
   } catch {
+    if (controller.signal.aborted) return;
     // Молча деградируем до ссылки на левое меню — в сайдбаре тот же список
     // релизов, так что пользователь не остаётся без навигации.
     state.value = 'error';
@@ -96,20 +105,20 @@ onMounted(async () => {
   const days = Math.round((today - latest) / 86_400_000);
   if (days < 0) return;
 
-  if (days === 0) freshness.value = 'сегодня';
-  else if (days === 1) freshness.value = 'вчера';
-  else freshness.value = `${days} ${pluralize(days, 'день', 'дня', 'дней')} назад`;
-});
+  if (days === 0) freshness.value = t.value.today;
+  else if (days === 1) freshness.value = t.value.yesterday;
+  else freshness.value = `${days} ${lang.value === 'en-US' ? (days === 1 ? t.value.day[0] : t.value.day[1]) : pluralize(days, ...t.value.day)} ${t.value.ago}`;
+}, { immediate: !import.meta.env.SSR });
 </script>
 
 <template>
-  <section class="timeline" aria-label="Лента релизов">
+  <section class="timeline" :aria-label="t.timeline">
     <p v-if="caption && state === 'ready'" class="timeline__caption">{{ caption }}</p>
 
-    <p v-if="state === 'loading'" class="timeline__status">Загружаем ленту релизов…</p>
+    <p v-if="state === 'loading'" class="timeline__status">{{ t.loading }}</p>
 
     <p v-else-if="state === 'error'" class="timeline__status">
-      Не удалось загрузить ленту релизов. Полный список версий есть в левом меню.
+      {{ t.error }}
     </p>
 
     <ol v-else class="timeline__list">
@@ -143,7 +152,7 @@ onMounted(async () => {
               <!-- У ранних релизов страница состоит из одной таблички с версией
                    и docker-образом — разбирать там нечего, и честнее сказать это,
                    чем показывать пустую раскрытую запись. -->
-              <span v-if="!release.changes" class="entry__chip entry__chip--empty">без описания</span>
+              <span v-if="!release.changes" class="entry__chip entry__chip--empty">{{ t.empty }}</span>
             </span>
           </summary>
 
@@ -158,7 +167,7 @@ onMounted(async () => {
             </div>
 
             <a class="entry__link" :href="withBase(release.path)">
-              Полное описание версии {{ release.version }}
+              {{ t.full }} {{ release.version }}
               <span aria-hidden="true">→</span>
             </a>
           </div>
@@ -166,8 +175,8 @@ onMounted(async () => {
       </li>
     </ol>
 
-    <a v-if="state === 'ready' && hasMore" class="timeline__more" :href="withBase('/Changelog/')">
-      Все релизы ({{ releases.length }})
+    <a v-if="state === 'ready' && hasMore" class="timeline__more" :href="withBase(lang === 'en-US' ? '/en/Changelog/' : '/Changelog/')">
+      {{ t.all }} ({{ releases.length }})
       <span aria-hidden="true">→</span>
     </a>
   </section>

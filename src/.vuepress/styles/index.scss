@@ -409,7 +409,8 @@ html[data-theme="dark"] {
 // ~60px на другие метрики шрифта и масштаб текста.
 // shortcut: порог подобран под текущий набор пунктов; добавили пункт — перемерь.
 @media (max-width: 2059px) {
-    .vp-navbar .vp-nav-item:not(:has(> .nav-link[href="https://stormbpmn.com/contact-sales"])) {
+    // Переключатель языка (.i18n-icon) в шторку не уезжает: в шторке темы его нет вовсе.
+    .vp-navbar .vp-nav-item:not(:has(> .nav-link[href="https://stormbpmn.com/contact-sales"])):not(:has(.i18n-icon)) {
         display: none;
     }
 
@@ -538,6 +539,53 @@ html[data-theme="dark"] {
 
         .ask-ai-kbd {
             display: none;
+        }
+    }
+}
+
+// -----------------------------------------------------------------------------
+// Переключатель языка
+// -----------------------------------------------------------------------------
+// У темы это голая иконка — непонятно, что за язык сейчас. Подписываем текущий
+// по html[lang] (его ставит локаль), без JS. Нейтральный, как «Поиск»: бренд-цвет
+// уже у CTA и AI.
+.vp-navbar .dropdown-title:has(.i18n-icon) {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.25rem 0.45rem;
+    border-radius: var(--mkt-radius);
+
+    font-size: 0.875rem;
+    font-weight: 600;
+    line-height: 1.5rem;
+
+    transition: background var(--color-transition);
+
+    &:hover {
+        background: color-mix(in srgb, currentColor 8%, transparent);
+    }
+
+    &::after {
+        content: "RU";
+    }
+
+    html[lang^="en"] &::after {
+        content: "EN";
+    }
+
+    // Стрелку темы прячем: подпись уже говорит, что это выбор.
+    .arrow {
+        display: none;
+    }
+
+    // На телефоне шапка и так впритык (меню, бренд, AI, поиск, оглавление) — только значок.
+    @media (max-width: 719px) {
+        padding: 0.25rem 0.35rem;
+
+        &::after,
+        html[lang^="en"] &::after {
+            content: none;
         }
     }
 }
