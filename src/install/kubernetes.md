@@ -145,6 +145,70 @@ helm test storm -n stormbpmn
 - **`storm.security.allowedOrigins`** — домен приложения, а не `*`.
 - **Метрики**: `metrics.serviceMonitor.enabled: true`, если в кластере есть Prometheus Operator.
 - **Резервные копии** PostgreSQL и S3 по расписанию. В подах приложения нет данных, которые нужно сохранять.
+- **NetworkPolicy** (`networkPolicy.enabled`), если сетевые политики требуются по стандартам ИБ, — см. ниже.
+
+### NetworkPolicy
+
+Чарт создаёт NetworkPolicy для приложения и `storm-des`, если включить `networkPolicy.enabled`.
+Нужен CNI с поддержкой сетевых политик (Calico, Cilium и др.). По умолчанию политики выключены.
+
+**Входящий трафик.** Приложение принимает соединения только на два порта:
+
+| Порт | Что | Откуда пускать | Параметр |
+| --- | --- | --- | --- |
+| 8081 | Веб-интерфейс и API для пользователей | Ingress-контроллер или Gateway | `networkPolicy.ingress.from` |
+| 8082 | Actuator и метрики Prometheus | Prometheus | `networkPolicy.ingress.metricsFrom` |
+
+Пустой список пускает трафик с любых источников, но только на эти порты. `storm-des` принимает
+запросы только от подов приложения, это правило чарт задаёт сам. Если ограничить `ingress.from`,
+`helm test` перестанет проходить: тестовый под обращается к сервису напрямую. Health-проверки
+kubelet сетевые политики обычно не затрагивают.
+
+**Исходящий трафик.** По умолчанию не ограничивается. Если включить `networkPolicy.egress.enabled`,
+разрешены только DNS и обращения приложения к `storm-des`, а остальные направления нужно перечислить
+в `networkPolicy.egress.extraRules`:
+
+| Куда | Порт по умолчанию | Нужно |
+| --- | --- | --- |
+| PostgreSQL (основная и аудит-БД) | 5432 | Всегда (и для `storm-des`) |
+| S3-хранилище | 443 или 9000 | Всегда |
+| SMTP | 587 или 465 | Если включена почта |
+| IdP (Keycloak, OIDC, ADFS) | 443 | Если вход через SSO |
+| Redis | 6379 | Если реплик больше одной |
+| Gotenberg | 3001 | Для выгрузки в PDF |
+| PlantUML | 8090 | Если используется |
+| Syslog / SIEM | 514 или 601 | Если аудит в SIEM |
+| LLM-провайдер | 443 | Если включён AI-модуль |
+
+Пример: пускать пользователей только из ingress-nginx и разрешить исходящие только к базе и S3.
+
+```yaml
+networkPolicy:
+  enabled: true
+  ingress:
+    from:
+      - namespaceSelector:
+          matchLabels:
+            kubernetes.io/metadata.name: ingress-nginx
+    metricsFrom:
+      - namespaceSelector:
+          matchLabels:
+            kubernetes.io/metadata.name: monitoring
+  egress:
+    enabled: true
+    extraRules:
+      - to:
+          - ipBlock: { cidr: 10.10.0.15/32 }   # PostgreSQL
+        ports:
+          - { port: 5432, protocol: TCP }
+      - to:
+          - ipBlock: { cidr: 10.10.0.20/32 }   # S3
+        ports:
+          - { port: 443, protocol: TCP }
+```
+
+Приложение само в интернет не обращается, поэтому правила egress в интернет не нужны, кроме
+внешнего LLM-провайдера для AI-модуля.
 
 ### Gateway API вместо Ingress
 
@@ -307,6 +371,15 @@ Docker, около 8 ГБ свободной памяти и доступ к `cr
 helm repo update
 helm upgrade storm stormbpmn/stormbpmn -n stormbpmn -f my-values.yaml
 ```
+
+При двух и более репликах обновление идёт без простоя: чарт заменяет поды по одному
+(`maxSurge: 1`, `maxUnavailable: 0`), миграции базы применяет первый новый под. При одной
+реплике будет короткий перерыв на старт нового пода.
+
+Откат образа — `helm rollback storm -n stormbpmn`. Обратных миграций нет: предыдущая версия
+работает на обновлённой схеме, а если пострадали данные, восстановите базу из резервной копии,
+сделанной перед обновлением. Подробнее —
+[«Обновление без простоя» и «Откат версии»](/operation/README.md#обновление-без-простоя).
 
 Если обновляетесь с чарта 3.x (StormBPMN 6.6), сначала прочитайте `UPGRADING.md` в чарте. В 9.x изменились
 обязательные параметры:

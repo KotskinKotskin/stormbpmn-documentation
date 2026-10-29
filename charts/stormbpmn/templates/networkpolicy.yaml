@@ -1,0 +1,102 @@
+{{- if .Values.networkPolicy.enabled }}
+{{- $np := .Values.networkPolicy }}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "stormbpmn.fullname" . }}
+  labels:
+    {{- include "stormbpmn.labels" . | nindent 4 }}
+spec:
+  podSelector:
+    matchLabels:
+      {{- include "stormbpmn.selectorLabels" . | nindent 6 }}
+  policyTypes:
+    - Ingress
+    {{- if $np.egress.enabled }}
+    - Egress
+    {{- end }}
+  ingress:
+    # Пользовательский трафик: от Ingress-контроллера / Gateway.
+    - ports:
+        - port: {{ .Values.containerPorts.http }}
+          protocol: TCP
+      {{- with $np.ingress.from }}
+      from:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    {{- if .Values.metrics.enabled }}
+    # Метрики и Actuator: от Prometheus.
+    - ports:
+        - port: {{ .Values.containerPorts.app }}
+          protocol: TCP
+      {{- with $np.ingress.metricsFrom }}
+      from:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    {{- end }}
+    {{- with $np.ingress.extraRules }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+  {{- if $np.egress.enabled }}
+  egress:
+    {{- if $np.egress.allowDns }}
+    - ports:
+        - port: 53
+          protocol: UDP
+        - port: 53
+          protocol: TCP
+    {{- end }}
+    {{- if .Values.des.enabled }}
+    - to:
+        - podSelector:
+            matchLabels:
+              {{- include "stormbpmn.desSelectorLabels" . | nindent 14 }}
+      ports:
+        - port: 8081
+          protocol: TCP
+    {{- end }}
+    {{- with $np.egress.extraRules }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+  {{- end }}
+{{- if .Values.des.enabled }}
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "stormbpmn.desName" . }}
+  labels:
+    {{- include "stormbpmn.labels" . | nindent 4 }}
+spec:
+  podSelector:
+    matchLabels:
+      {{- include "stormbpmn.desSelectorLabels" . | nindent 6 }}
+  policyTypes:
+    - Ingress
+    {{- if $np.egress.enabled }}
+    - Egress
+    {{- end }}
+  ingress:
+    # storm-des принимает запросы только от приложения.
+    - from:
+        - podSelector:
+            matchLabels:
+              {{- include "stormbpmn.selectorLabels" . | nindent 14 }}
+      ports:
+        - port: 8081
+          protocol: TCP
+  {{- if $np.egress.enabled }}
+  egress:
+    {{- if $np.egress.allowDns }}
+    - ports:
+        - port: 53
+          protocol: UDP
+        - port: 53
+          protocol: TCP
+    {{- end }}
+    {{- with $np.egress.extraRules }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+  {{- end }}
+{{- end }}
+{{- end }}

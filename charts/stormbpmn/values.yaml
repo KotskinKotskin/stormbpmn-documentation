@@ -227,6 +227,47 @@ podDisruptionBudget:
   minAvailable: 1
 
 # =============================================================================
+# NetworkPolicy
+# =============================================================================
+# Ограничивает входящий (и по желанию исходящий) трафик подов приложения и storm-des.
+# Нужен CNI с поддержкой NetworkPolicy (Calico, Cilium и др.).
+networkPolicy:
+  enabled: false
+  ingress:
+    # -- Кому можно на containerPorts.http (8081): Ingress-контроллер / Gateway.
+    #    Пусто → с любых источников. Пример для ingress-nginx:
+    #    - namespaceSelector:
+    #        matchLabels:
+    #          kubernetes.io/metadata.name: ingress-nginx
+    from: []
+    # -- Кому можно на containerPorts.app (8082, Actuator и метрики): Prometheus.
+    #    Пусто → с любых источников. Правило есть, только если metrics.enabled.
+    metricsFrom: []
+    # -- Дополнительные правила ingress (NetworkPolicyIngressRule) как есть.
+    extraRules: []
+  egress:
+    # -- Ограничить исходящий трафик. Тогда всё, кроме DNS и storm-des,
+    #    разрешается только через extraRules: PostgreSQL, S3, Redis, SMTP, IdP,
+    #    Gotenberg, PlantUML, LLM.
+    enabled: false
+    # -- Разрешить DNS (53/UDP и 53/TCP).
+    allowDns: true
+    # -- Правила egress (NetworkPolicyEgressRule) как есть. Пример:
+    #    - to:
+    #        - ipBlock:
+    #            cidr: 10.10.0.15/32   # PostgreSQL
+    #      ports:
+    #        - port: 5432
+    #          protocol: TCP
+    #    - to:
+    #        - ipBlock:
+    #            cidr: 10.10.0.20/32   # S3
+    #      ports:
+    #        - port: 443
+    #          protocol: TCP
+    extraRules: []
+
+# =============================================================================
 # Metrics (Prometheus)
 # =============================================================================
 # Spring Boot Actuator: /actuator/prometheus на containerPorts.app=8082.

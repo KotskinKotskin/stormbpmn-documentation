@@ -4,52 +4,53 @@ order: 1
 dir:
   order: 2
   link: true
-  text: Production installation
+  text: Production Installation
   collapsible: true
 index: true
 redirectFrom:
   - /en/install/FULL_INSTALL.html
-source_hash: f9e418aaf56db22b
+source_hash: 28054f04567a0e97
 ---
 
 [[toc]]
 
-# Production-Ready Installation {#production-ready-установка}
+# Production-Ready installation {#production-ready-установка}
 
-For full-scale industrial use, you must configure additional components and ensure a high level of security, performance, and fault tolerance.
+For full industrial operation, you must configure additional components and ensure a high level of security, performance, and fault tolerance.
 
-::: warning Mandatory Components for Production
-The minimal installation from [Quick Start](/en/install/quickstart/README.md) is **not suitable** for use with real users. You must configure all components described in this document.
+::: warning Mandatory components for production
+The minimal installation from [Quick start](/en/install/quickstart/README.md) **is not suitable** for working with real users. You must configure all components from this document.
 :::
 
 ---
 
 ## Production-ready installation checklist {#чек-лист-production-ready-установки}
 
-### Mandatory components {#обязательные-компоненты}
+### Required components {#обязательные-компоненты}
 
 -   [ ] **SSL/HTTPS** - load balancer with SSL termination
 -   [ ] **S3 storage** - for files and documents
--   [ ] **Monitoring** - Prometheus + Grafana or alternative (Glaber, Zabbix, etc.)
+-   [ ] **Monitoring** - Prometheus + Grafana or an alternative (Glaber, Zabbix, etc.)
 -   [ ] **Backup** - automatic database backups
 -   [ ] **Security** - configuration hardening
 -   [ ] **Mail service** - for notifications
 
 -   [ ] **License v2** - key bound to the installation (see [Licensing](/en/operation/License.md))
 
--   [ ] **Yandex SmartCaptcha** - **SMARTCAPTCHA_SECRET** key for login form protection (see [Configuration](/en/configure/README.md))
-
 ### Additional components {#дополнительные-компоненты}
 
 -   [ ] **Redis** - for collaborative diagram editing (required for multi-instance)
 -   [ ] **PlantUML server** - UML diagram generation
 -   [ ] **Gotenberg** - PDF conversion
+-   [ ] **Yandex SmartCaptcha** - only if password login is exposed to the internet; disabled by default (see [Configuration](/en/configure/README.md))
 -   [ ] **Audit logging** - collection of user actions
 -   [ ] **Load balancing** - for high availability
 -   [ ] **Scaling** - multiple application instances
 
+
+
 ::: tip MCP server signing keys
-The MCP (Model Context Protocol) signing key is generated automatically on the first start and stored in the database in encrypted form — it persists across restarts and is common to all nodes, so no separate configuration is required. If you want to keep the key in an external secret store, set the **MCP_OAUTH_JWK_PRIVATE** / **MCP_OAUTH_JWK_PUBLIC** pair.
+The MCP (Model Context Protocol) signing key is generated automatically on the first start and stored in the database in encrypted form — it persists across restarts and is common to all nodes, so no separate configuration is required. If you wish to store the key in an external secret manager, set the **MCP_OAUTH_JWK_PRIVATE** / **MCP_OAUTH_JWK_PUBLIC** pair.
 :::
 
 ---
@@ -58,7 +59,7 @@ The MCP (Model Context Protocol) signing key is generated automatically on the f
 
 ## Installation specifics in k8s {#особенности-установки-в-k8s}
 
-In certain situations, for example when there is an explicit requirement for 1 process in a container (PID 1), it may be necessary to separate containers by their roles.
+In some situations, for example when there is an explicit requirement for 1 process per container (PID 1), it may be necessary to separate containers by their roles.
 Pass the ENV variable CONTAINER_ROLE (possible values: FRONT, BACK, FULLSTACK).
 
 -   FRONT: nginx with static content will start.
@@ -66,7 +67,7 @@ Pass the ENV variable CONTAINER_ROLE (possible values: FRONT, BACK, FULLSTACK).
 -   FULLSTACK: supervisord will start, which will launch nginx and java
 
 ::: tip "What's New" feed
-In the on-prem version, the "What's New" feed is baked into the image at build time. It displays static content without links to the blog and with the build date; access to the CMS is not required.
+In the on-prem version, the "What's New" feed is baked into the image at build time. It displays static content without links to the blog and with the build date; no access to the CMS is required.
 :::
 
 ---
@@ -159,10 +160,10 @@ Deployment of external services and post-configuration have been moved to separa
 
 ---
 
-## Support and Assistance {#поддержка-и-помощь}
+## Support and Help {#поддержка-и-помощь}
 
 ::: tip Need help?
-If you run into any issues, email **help@stormbpmn.com** or contact your account manager. We are happy to assist with configuration!
+If something isn't working, write to **help@stormbpmn.com** or contact your account manager. We will be happy to help with the configuration!
 :::
 
 ### When to contact support: {#когда-обращаться-за-поддержкои}

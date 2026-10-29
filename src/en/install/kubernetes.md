@@ -1,24 +1,24 @@
 ---
 title: Installation in Kubernetes (Helm)
 order: 3
-source_hash: b5e0450a62dcfd3d
+source_hash: 51223f098664f937
 ---
 
 [[toc]]
 
 # Installation in Kubernetes (Helm) {#установка-в-kubernetes-helm}
 
-StormBPMn is installed in Kubernetes using the official Helm chart from our Helm registry.
+StormBPMN is installed in Kubernetes using the official Helm chart from our Helm registry.
 
-::: tip Chart version = StormBPMn version
-A chart with the same version number is published for each version in the [Changelog](/en/Changelog/README.md): chart `9.1.302`
-deploys StormBPMn `9.1.302`. A new version appears in the registry on the day of the release, so
+::: tip Chart version = StormBPMN version
+A chart with the same version number is published for each release in the [Changelog](/en/Changelog/README.md): chart `9.1.302`
+deploys StormBPMN `9.1.302`. A new version appears in the registry on the day of the release, so
 updating consists of `helm repo update` and `helm upgrade`.
 :::
 
-The chart deploys the application container and, if the license includes the simulations module, the optional service `storm-des`. You deploy PostgreSQL, S3,
+The chart deploys the application container and, if the license includes the simulations module, the optional `storm-des` service. You deploy PostgreSQL, S3,
 Gotenberg, PlantUML, and SMTP yourself or use corporate instances. The requirements for them are the same as
-for the Docker installation: see [“Installation”](./README.md) and [“Production Installation”](./production/README.md).
+for the Docker installation: see [“Installation”](./README.md) and [“Production installation”](./production/README.md).
 
 ## Prerequisites {#что-нужно-заранее}
 
@@ -29,7 +29,7 @@ for the Docker installation: see [“Installation”](./README.md) and [“Produ
 | PostgreSQL | A database with UTF8 encoding and the **pgvector** and **pg_trgm** extensions. The application will not start without pgvector; see the [“PostgreSQL Requirements”](./README.md#требования-к-postgresql-расширения-и-кодировка) section for details |
 | S3 | Any S3-compatible storage |
 | Gotenberg | A dedicated service is required. If its address is not specified, PDFs will be printed via the public demo.gotenberg.dev |
-| Access to `cr.selcloud.ru` | The registry login and password are provided by your account manager |
+| Access to `cr.selcloud.ru` | Your account manager provides the registry login and password |
 
 ## Installation {#установка}
 
@@ -93,7 +93,7 @@ The command `helm show values stormbpmn/stormbpmn` outputs all parameters with c
 | File | Scenario |
 | --- | --- |
 | `single-instance.yaml` | Pilot: one pod, email disabled |
-| `on-prem-ru.yaml` | Production installation: 3+ replicas, HPA, PDB, ServiceMonitor, audit to SIEM via Syslog |
+| `on-prem-ru.yaml` | Production installation: 3+ replicas, HPA, PDB, ServiceMonitor, audit in SIEM via Syslog |
 | `airgap.yaml` | Closed environment: all images from the internal registry |
 
 ::: tip Secrets not in values
@@ -113,8 +113,8 @@ To install a specific version, add `--version <версия>`.
 
 ### 5. Activate the license {#_5-активируите-лицензию}
 
-Open `https://<ваш домен>/admin-onboarding`, copy the activation code in its entirety, and provide it to your manager.
-Specify the received key in `storm.license.keyV2` (or in the `LICENSE_KEY_V2` key of your Secret) and run
+Open `https://<ваш домен>/admin-onboarding`, copy the activation code in its entirety, and send it to your manager.
+Enter the received key in `storm.license.keyV2` (or in the `LICENSE_KEY_V2` key of your Secret) and run
 `helm upgrade`. If the key is stored in a Secret from `values`, the pods will restart automatically. If you are using your own Secret
 (`existingSecret`), the chart will not detect the key change, and the pods must be restarted manually:
 `kubectl -n stormbpmn rollout restart deployment`. Then, create the first administrator in the setup wizard.
@@ -136,14 +136,76 @@ For multiple replicas, use `examples/on-prem-ru.yaml` as a base and verify the f
 
   For a different controller, set similar limits. For Gateway API, see below.
 - **PDB and HPA** (`podDisruptionBudget.enabled`, `autoscaling.enabled`): node updates will not terminate all pods at once.
-- **Custom Gotenberg** in `storm.integrations.gotenbergUrl`, otherwise documents printed to PDF are sent to a public service.
+- **Custom Gotenberg** in `storm.integrations.gotenbergUrl`; otherwise, documents printed to PDF are sent to a public service.
 - **`storm.security.allowedOrigins`** — the application domain, not `*`.
 - **Metrics**: `metrics.serviceMonitor.enabled: true`, if the cluster has Prometheus Operator.
-- **Backups** of PostgreSQL and S3 on a schedule. The application pods contain no data that needs to be persisted.
+- **Backups** of PostgreSQL and S3 on a schedule. The application pods do not contain data that needs to be persisted.
+- **NetworkPolicy** (`networkPolicy.enabled`), if network policies are required by security standards — see below.
+
+### NetworkPolicy {#networkpolicy}
+
+The chart creates a NetworkPolicy for the application and `storm-des` if `networkPolicy.enabled` is enabled.
+A CNI with network policy support (Calico, Cilium, etc.) is required. Policies are disabled by default.
+
+**Inbound traffic.** The application accepts connections only on two ports:
+
+| Port | Purpose | Allowed sources | Parameter |
+| --- | --- | --- | --- |
+| 8081 | Web interface and API for users | Ingress controller or Gateway | `networkPolicy.ingress.from` |
+| 8082 | Actuator and Prometheus metrics | Prometheus | `networkPolicy.ingress.metricsFrom` |
+
+An empty list allows traffic from any source, but only on these ports. `storm-des` accepts
+requests only from application pods; the chart sets this rule automatically. If you restrict `ingress.from`,
+`helm test` will fail: the test pod connects to the service directly. Kubelet health checks are usually not affected by network policies.
+
+**Outbound traffic.** Not restricted by default. If you enable `networkPolicy.egress.enabled`,
+only DNS and application requests to `storm-des` are allowed, and other destinations must be listed
+in `networkPolicy.egress.extraRules`:
+
+| Destination | Default port | Requirement |
+| --- | --- | --- |
+| PostgreSQL (primary and audit DB) | 5432 | Always (and for `storm-des`) |
+| S3 storage | 443 or 9000 | Always |
+| SMTP | 587 or 465 | If email is enabled |
+| IdP (Keycloak, OIDC, ADFS) | 443 | If SSO login is used |
+| Redis | 6379 | If more than one replica |
+| Gotenberg | 3001 | For PDF export |
+| PlantUML | 8090 | If used |
+| Syslog / SIEM | 514 or 601 | If audit is sent to SIEM |
+| LLM provider | 443 | If the AI module is enabled |
+
+Example: allow users only from ingress-nginx and permit outbound traffic only to the database and S3.
+
+```yaml
+networkPolicy:
+  enabled: true
+  ingress:
+    from:
+      - namespaceSelector:
+          matchLabels:
+            kubernetes.io/metadata.name: ingress-nginx
+    metricsFrom:
+      - namespaceSelector:
+          matchLabels:
+            kubernetes.io/metadata.name: monitoring
+  egress:
+    enabled: true
+    extraRules:
+      - to:
+          - ipBlock: { cidr: 10.10.0.15/32 }   # PostgreSQL
+        ports:
+          - { port: 5432, protocol: TCP }
+      - to:
+          - ipBlock: { cidr: 10.10.0.20/32 }   # S3
+        ports:
+          - { port: 443, protocol: TCP }
+```
+
+The application does not make direct requests to the internet, so egress rules to the internet are not required, except for an external LLM provider for the AI module.
 
 ### Gateway API instead of Ingress {#gateway-api-вместо-ingress}
 
-If your cluster uses the Gateway API (Envoy Gateway, Istio, Cilium, Traefik, NGINX Gateway Fabric, etc.) instead of an Ingress controller, disable `ingress` and enable `httpRoute`:
+If your cluster uses Gateway API (Envoy Gateway, Istio, Cilium, Traefik, NGINX Gateway Fabric, etc.) instead of an Ingress controller, disable `ingress` and enable `httpRoute`:
 
 ```yaml
 ingress:
@@ -159,7 +221,7 @@ httpRoute:
     request: "300s"               # долгие запросы: импорт, выгрузки
 ```
 
-The TLS certificate, upload size limit (at least 50 MB), and timeouts are configured on the Gateway or in your controller's policies.
+The TLS certificate, upload size limit (no less than 50 MB), and timeouts are configured on the Gateway or in your controller's policies.
 
 After `helm install` and `helm upgrade`, the chart outputs hints and warnings about what is missing in your values. Read them.
 
@@ -169,8 +231,8 @@ To inspect the chart before deploying it to a production cluster, deploy everyth
 [minikube](https://minikube.sigs.k8s.io/) along with test PostgreSQL and MinIO instances. You will need
 Docker, approximately 8 GB of free memory, and access to `cr.selcloud.ru`.
 
-::: warning For verification purposes only
-The passwords below are exposed, and data is stored inside the pods and will be lost upon their restart. This setup is not suitable for production use.
+::: warning For verification only
+The passwords below are exposed, and the data is stored inside the pods and will be lost upon pod restart. This setup is not suitable for production use.
 :::
 
 1. Start the cluster and create a namespace with the registry secret:
@@ -286,7 +348,7 @@ The passwords below are exposed, and data is stored inside the pods and will be 
    kubectl -n storm port-forward svc/storm-stormbpmn 8081:8081
    ```
 
-   Then navigate to `http://127.0.0.1:8081/admin-onboarding` and activate the installation as in step 5 of the installation.
+   Then navigate to `http://127.0.0.1:8081/admin-onboarding` and activate the installation, as in step 5 of the installation.
 
 To remove everything: `minikube delete`.
 
@@ -299,9 +361,15 @@ helm repo update
 helm upgrade storm stormbpmn/stormbpmn -n stormbpmn -f my-values.yaml
 ```
 
+With two or more replicas, the update proceeds without downtime: the chart replaces pods one by one (`maxSurge: 1`, `maxUnavailable: 0`), and the first new pod applies the database migrations. With a single replica, there will be a brief pause while the new pod starts.
+
+Rolling back the image is `helm rollback storm -n stormbpmn`. There are no reverse migrations: the previous version works with the updated schema, but if data was affected, restore the database from the backup taken before the update. For details, see
+["Zero-Downtime Update" and "Version Rollback"](/en/operation/README.md#обновление-без-простоя).
+
 If you are upgrading from chart 3.x (StormBPMN 6.6), first read `UPGRADING.md` in the chart. In 9.x, the required parameters have changed:
 
-- `SESSION_EXPIRATION` is specified in **seconds** (`storm.security.sessionExpirationSeconds`). The old value of `86400000` in milliseconds will prevent the application from starting.
+- `SESSION_EXPIRATION` is set in **seconds** (`storm.security.sessionExpirationSeconds`). The old
+  value of `86400000` in milliseconds will prevent the application from starting.
 - `JWTSECRET` must be at least 64 characters long.
 - The license now uses the key `LICENSE_KEY_V2` (`storm.license.keyV2`).
 - PostgreSQL requires pgvector.
@@ -310,7 +378,7 @@ If you are upgrading from chart 3.x (StormBPMN 6.6), first read `UPGRADING.md` i
 
 ::: info Optional module
 `storm-des` is required only for process simulations and works only if the simulation module is included in your
-license key. Without it, StormBPMN functions fully. By default, the module is disabled (`des.enabled: false`).
+license key. Without it, Stormbpmn functions fully. By default, the module is disabled (`des.enabled: false`).
 :::
 
 If the license includes the simulation module, enable it in the same release:
@@ -324,7 +392,7 @@ des:
 ```
 
 The chart automatically sets `storm-des` the same database, time zone, and image version as the application, and passes
-`DES_BASE_URL` to the application. For more information about the module: [“Simulations”](/en/simulation/install.md).
+`DES_BASE_URL` to the application. For more details about the module: [“Simulations”](/en/simulation/install.md).
 
 ## Closed Loop {#закрытыи-контур}
 
@@ -348,7 +416,7 @@ Download the chart itself on a machine with internet access using the command `h
 | `helm install` rejects `storm.jwt.secret` | Key is shorter than 64 characters |
 | `helm install` rejects `sessionExpirationSeconds` | More than 90 days specified. Most likely, this is milliseconds |
 | Pod is restarting, error `extension "vector"` in the log | pgvector is missing in PostgreSQL |
-| Simulations fail with "DES node did not respond" | `storm-des` has a different time zone. It is shared in the chart, check `des.extraEnv` |
-| On first installation, error `relation "sm_background_tasks" does not exist` in the log `storm-des` | `storm-des` started before the application created the tables. The error resolves itself a few seconds after the application starts |
-| Application pod in `ImagePullBackOff` with `pull access denied` | Secret `regcred` not created in the release namespace or `imagePullSecrets` not specified |
+| Simulations fail with "DES node did not respond" | `storm-des` has a different time zone. It is common in the chart, check `des.extraEnv` |
+| On first installation, error `relation "sm_background_tasks" does not exist` in log `storm-des` | `storm-des` started before the application created the tables. The error resolves itself a few seconds after the application starts |
+| Pod in `ImagePullBackOff` with `pull access denied` | Secret `regcred` is not created in the release namespace or `imagePullSecrets` is not specified |
 | Application pod in `CrashLoopBackOff` shortly after start | Insufficient memory: check `resources.limits.memory` and `storm.general.javaOpts` (`-Xmx` must be less than the limit) |
