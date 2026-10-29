@@ -1,7 +1,7 @@
 ---
 title: 'Monitoring, hardening, backup'
 order: 3
-source_hash: 6ef03e9113ea544f
+source_hash: 2260e726510a877d
 ---
 
 [[toc]]
@@ -12,10 +12,10 @@ Operational post-configuration of a production installation. Application and ext
 
 ## Monitoring and Metrics {#мониторинг-и-метрики}
 
-Stormbpmn provides metrics in Prometheus format for monitoring system status.
+StormBPMN provides metrics in Prometheus format for monitoring system status.
 
 ::: tip Monitoring is an optional component
-Prometheus and Grafana are listed as the recommended solution but **are not mandatory**. You can use any monitoring system compatible with the Prometheus metrics format or your existing corporate monitoring infrastructure.
+Prometheus and Grafana are listed as a recommended solution but are **not mandatory**. You can use any monitoring system compatible with the Prometheus metrics format or your existing corporate monitoring infrastructure.
 :::
 
 ### Option 1: Prometheus + Grafana (recommended) {#вариант-1-prometheus-grafana-рекомендуемыи}
@@ -41,29 +41,29 @@ services:
 
 ### Option 2: Alternative Monitoring Systems {#вариант-2-альтернативные-системы-мониторинга}
 
-StormBPMN is compatible with any systems that support collecting metrics in Prometheus format:
+StormBPMN is compatible with any system that supports collecting metrics in Prometheus format:
 
 | System | Description | Note |
 |---------|----------|------------|
 | **Glaber** | Zabbix fork with Prometheus support | Suitable for import substitution |
-| **Zabbix** | With prometheus-exporter | Corporate standard |
+| **Zabbix** | With a Prometheus exporter | Corporate standard |
 | **VictoriaMetrics** | High-performance Prometheus alternative | For high loads |
-| **InfluxDB + Telegraf** | Time-series database with collection agent | Universal solution |
+| **InfluxDB + Telegraf** | Time-series database with a collection agent | Universal solution |
 
 #### Configuration for Glaber / Zabbix {#настроика-для-glaber-zabbix}
 
 StormBPMN exports metrics at endpoint `/actuator/prometheus`. To connect:
 
 1. Configure a scrape task for the URL: `http://stormbpmn-host:8082/actuator/prometheus`
-2. Collection interval: 15-30 seconds recommended
+2. Collection interval: 15–30 seconds recommended
 3. Metrics include: JVM, HTTP requests, application business metrics
 
 ::: tip Corporate Monitoring
-If the organization already has a centralized monitoring system (Zabbix, Glaber, Nagios, etc.), it is recommended to integrate with it rather than deploying a separate Prometheus.
+If the organization already has a centralized monitoring system (Zabbix, Glaber, Nagios, etc.), it is recommended to integrate with it rather than deploying a separate Prometheus instance.
 :::
 
 ::: tip Detailed Instructions
-A detailed guide on configuring monitoring: [Monitoring and Support](/en/support/README.md)
+A ready-made Grafana dashboard, alert thresholds, and health checks: [Administration → System Monitoring](/en/operation/README.md#мониторинг-системы)
 :::
 
 ---
@@ -77,7 +77,7 @@ A detailed guide on configuring monitoring: [Monitoring and Support](/en/support
 1. **SSL/TLS** - all communication only over HTTPS
 2. **Strong passwords** - for all service accounts
 3. **Network isolation** - database in a private network
-4. **Regular updates** - OS and containers
+4. **Regular updates** - for the OS and containers
 
 
 ### Audit Logging {#аудит-логирование}
@@ -120,7 +120,7 @@ Configuration and audit channels: [Audit Logging](/en/configure/security/audit-l
 | **enableCommonRoles**           | Common roles for all teams                 | Enable for standardization                  |
 | **enableCommonUsers**           | Common org structure                         | Enable for centralized management |
 | **allDiagramsAnonAccess**       | Anonymous access to all diagrams        | Disable for security               |
-| **enableAnonSearchPage**        | Search for anonymous users          | As required by business                    |
+| **enableAnonSearchPage**        | Search for anonymous users          | As required by the business                    |
 | **autoEnableEnterpriseLicense** | Automatic license issuance             | Enable for simplification                   |
 | **autoJoinTeamId**              | Automatic addition to a team        | Specify the ID of the main team              |
 | **disableTeamPopUp**            | Disable the prompt to create a team      | Enable for centralized management      |
@@ -128,7 +128,7 @@ Configuration and audit channels: [Audit Logging](/en/configure/security/audit-l
 
 ### AI features {#ai-функции}
 
-AI features are invoked as a REST API in OpenAI format, so you must specify a compatible endpoint and token.
+AI features are invoked as a REST API in OpenAI format, so a compatible endpoint and token must be specified.
 
 **How to enable:**
 
@@ -145,7 +145,7 @@ Autocomplete works only when the AI module is activated in the licenses.
 
 #### Custom Menu Items {#пользовательские-пункты-меню}
 
-StormBPMn allows you to add custom menu items to the top-right corner of the interface for quick access to important company resources.
+StormBPMN allows you to add custom menu items to the top-right corner of the interface for quick access to important company resources.
 
 **Accessing the configuration:**
 
@@ -167,7 +167,7 @@ StormBPMn allows you to add custom menu items to the top-right corner of the int
 
 -   **`label`** - the display name of the menu item
 -   **`icon`** - an icon from the PrimeVue library (the list is available at [primevue.org/icons](https://v3.primevue.org/icons/))
--   **`link`** - the URL for navigation
+-   **`link`** - the URL to navigate to
 -   **`type`** - the link type:
     -   `external` - opens in a new tab
 

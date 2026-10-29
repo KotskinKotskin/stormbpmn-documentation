@@ -5,7 +5,7 @@ dir:
   order: 2
   link: true
 index: true
-source_hash: 0d0e72b6c8639945
+source_hash: 18cc8ca6b8fd7bd1
 ---
 
 [[toc]]
@@ -43,13 +43,31 @@ This will simplify deployment, ensure better support, and comply with corporate 
 
 ## System Requirements {#системные-требования}
 
-### General minimum requirements for the entire system {#общие-минимальные-требования-для-всеи-системы}
+### General Minimum Requirements for the Entire System {#общие-минимальные-требования-для-всеи-системы}
 
-| Component         | CPU         | RAM       | Disk       | Note                         |
-| ----------------- | ----------- | --------- | ---------- | ---------------------------- |
-| **General resources** | **12 vCPU** | **24 GB** | **300 GB** | Minimum for the full system  |
-| **Recommended**   | **16 vCPU** | **32 GB** | **500 GB** | For stable operation         |
-| **Production**    | **24 vCPU** | **32 GB** | **500 GB** | For high load                |
+| Component         | CPU         | RAM       | Disk       | Note                     |
+| ----------------- | ----------- | --------- | ---------- | ------------------------ |
+| **General Resources** | **12 vCPU** | **24 GB** | **300 GB** | Minimum for the full system |
+| **Recommended**   | **16 vCPU** | **32 GB** | **500 GB** | For stable operation     |
+| **Production**    | **24 vCPU** | **32 GB** | **500 GB** | For high load            |
+
+The values above are for the full system with all services, including monitoring and Keycloak. If
+PostgreSQL, S3, SSO, and email are corporate, resources are required only for the application — see
+["Deployment Configurations"](#конфигурации-развертывания).
+
+### User Count Reference {#ориентир-по-числу-пользователеи}
+
+The load profile is interactive work in the browser: opening and saving process models, searching, and viewing the registry. The load is determined by the number of people working simultaneously, not the number of user accounts. The values below are a reference for the application and database without the simulations module; target metrics should be verified during acceptance testing on your infrastructure.
+
+| Users | StormBPMN Application | PostgreSQL | PostgreSQL Disk |
+| --- | --- | --- | --- |
+| **up to 50** | 1 instance, 4 vCPU, 8 GB | 2 vCPU, 4 GB | SSD, 50–100 GB |
+| **50–300** | 1–2 instances of 4 vCPU, 8 GB | 4 vCPU, 8 GB | SSD, 100–200 GB |
+| **more than 300** | 2 or more instances of 4–8 vCPU, 8–16 GB, Redis | 4–8 vCPU, 16 GB | SSD, from 200 GB |
+
+-   **Disks.** PostgreSQL requires an SSD: the database handles short transactions when opening and saving process models, and disk latency is directly visible to users. The reference is at least 1,000 IOPS and latency up to 5 ms; this is provided by any server SSD or cloud provider SSD disk. The database size grows primarily due to the history of process model versions.
+-   **Files.** Attachments, images, and exports are stored in S3. Storage volume depends on how many files are attached to processes; 50–100 GB is sufficient to start.
+-   **Simulations module** adds 4 vCPU and 16 GB regardless of the number of users.
 
 ### Container Requirements {#требования-по-контеинерам}
 
@@ -107,14 +125,14 @@ Redis is **required** when deploying multiple instances of StormBPMN (multi-inst
 
 ### PostgreSQL Requirements: Extensions and Encoding {#требования-к-postgresql-расширения-и-кодировка}
 
-**PostgreSQL 14 or later** is required for the main and audit databases; for new installations, we recommend **16–17**. On PostgreSQL 13 or earlier, the application stops before running migrations.
+**PostgreSQL 14 or later** is required for the main and audit databases; we recommend **16–17** for new installations. On PostgreSQL 13 and earlier, the application stops before migrations are executed.
 
 StormBPMN uses several PostgreSQL extensions. Before installation, ensure they are **available in your database build** and that the database is created with **UTF8** encoding.
 
 | Extension / Parameter | Purpose | Requirement |
 |---|---|---|
-| **UTF8** encoding | Correct text storage, ICU collation, and natural sorting of names | Mandatory |
-| **pgvector** (`vector`) | Fast universal (semantic) search across the platform; also used by the AI chat knowledge base. Required for **all** deployments, not just those with the AI module | Mandatory (see warning below) |
+| **UTF8** Encoding | Correct text storage, ICU collation, and natural sorting of names | Mandatory |
+| **pgvector** (`vector`) | Fast universal (semantic) search across the platform; also used by the AI chat knowledge base. Required for **all** installations, not just those with the AI module | Mandatory (see warning below) |
 | **pg_trgm** | User autocomplete and search by partial name/email (trigrams) | Mandatory for autocomplete |
 | **pgcrypto** | Cryptographic functions | Mandatory |
 | **uuid-ossp** | UUID generation | Mandatory |
@@ -122,11 +140,11 @@ StormBPMN uses several PostgreSQL extensions. Before installation, ensure they a
 
 **What is created automatically vs. manually:**
 
-- Extensions `vector`, `uuid-ossp`, `hstore`, `pgcrypto` are created by migrations on the first run (`CREATE EXTENSION IF NOT EXISTS …`) — **provided** that the corresponding packages are installed in the PostgreSQL build and the database user has the privilege to create extensions (superuser or a role with the necessary privileges).
+- Extensions `vector`, `uuid-ossp`, `hstore`, and `pgcrypto` are created by migrations on the first run (`CREATE EXTENSION IF NOT EXISTS …`) — **provided** that the corresponding packages are installed in the PostgreSQL build and the database user has the privilege to create extensions (superuser or a role with the necessary privileges).
 - The **`pg_trgm`** extension is **not created** by the application. If it is missing, the autocomplete index migrations are **silently skipped**, and user search by partial name/email will not work. Create it in advance.
 
 ::: warning The official postgres image does not include pgvector
-The standard image `postgres:17` includes contrib modules (`pg_trgm`, `pgcrypto`, `uuid-ossp`, `hstore`), but **does not include pgvector**. For self-managed deployments, use the **`pgvector/pgvector:pg17`** image — this is the same PostgreSQL with all standard modules plus pgvector. For managed databases (DBaaS), ensure in advance that the provider offers the `pgvector` extension and that the user has the privilege to create it.
+The standard image `postgres:17` includes contrib modules (`pg_trgm`, `pgcrypto`, `uuid-ossp`, `hstore`) but **does not include pgvector**. For self-managed deployments, use the **`pgvector/pgvector:pg17`** image — this is the same PostgreSQL with all standard modules plus pgvector. For managed databases (DBaaS), ensure in advance that the provider offers the `pgvector` extension and that the user has the privilege to create it.
 :::
 
 ::: tip The pgvector image is available from our registry
@@ -136,11 +154,11 @@ If external registries (Docker Hub) are blocked, you do not need to pull `pgvect
 docker pull cr.selcloud.ru/stormbpmn-enterprise/pgvector:pg17
 ```
 
-Transferring it to your corporate registry follows the same steps as for the main image (see [Quick Start](/en/install/quickstart/QUICKSTART_MANUAL.md)). Signature verification is the same as for the main image (see [Changelog → "Image Signature Verification (Cosign)"](/en/Changelog/README.md)).
+Transferring to your corporate registry follows the same steps as for the main image (see [Quick Start](/en/install/quickstart/QUICKSTART_MANUAL.md)). Signature verification is the same as for the main image (see [Changelog → “Image Signature Verification (Cosign)”](/en/Changelog/README.md)).
 :::
 
 ::: tip Full set with a single command
-If you are installing extensions manually — run the following in the **application database** as a superuser:
+If you are installing extensions manually — execute the following in the **application database** as a superuser:
 ```sql
 CREATE EXTENSION IF NOT EXISTS vector;
 CREATE EXTENSION IF NOT EXISTS pg_trgm;
@@ -152,7 +170,7 @@ CREATE EXTENSION IF NOT EXISTS hstore;
 
 ### Deployment Configurations {#конфигурации-развертывания}
 
-#### Minimal Configuration (for Testing) {#минимальная-конфигурация-для-тестирования}
+#### Minimal Configuration (for testing) {#минимальная-конфигурация-для-тестирования}
 
 ```yaml
 # Только основные компоненты
@@ -160,7 +178,7 @@ StormBPMN + PostgreSQL + Nginx
 Итого: 7 vCPU, 13 GB RAM, 125 GB диск
 ```
 
-#### Basic Configuration (for Operation) {#базовая-конфигурация-для-работы}
+#### Basic Configuration (for operation) {#базовая-конфигурация-для-работы}
 
 ```yaml
 # Основные + авторизация + хранилище
@@ -168,7 +186,7 @@ StormBPMN + PostgreSQL + Nginx + MinIO + Keycloak + SMTP
 Итого: 10.5 vCPU, 18.5 GB RAM, 240 GB диск
 ```
 
-#### Corporate Configuration (with Centralized Services) {#корпоративная-конфигурация-с-централизованными-сервисами}
+#### Corporate Configuration (with centralized services) {#корпоративная-конфигурация-с-централизованными-сервисами}
 
 ```yaml
 # Только StormBPMN + внешние корпоративные сервисы
@@ -235,35 +253,46 @@ To meet the requirements of the registry of domestic software, **Podman** can be
 -   **To users**: < 100ms
 -   **To external APIs**: < 500ms
 
-## Network requirements {#сетевые-требования-1}
+## Network Requirements {#сетевые-требования-1}
 
 ### Required ports {#обязательные-порты}
 
-| Service        | Port             | Protocol   | Purpose                    |
-| -------------- | ---------------- | ---------- | ----------------------------- |
-| **StormBPMN**  | 8080, 8081, 8082 | HTTP/HTTPS | Main web application       |
-| **PostgreSQL** | 5432             | TCP        | Database                   |
+| Service        | Port             | Protocol   | Purpose                     |
+| -------------- | ---------------- | ---------- | --------------------------- |
+| **StormBPMN**  | 8080, 8081, 8082 | HTTP/HTTPS | Main web application        |
+| **PostgreSQL** | 5432             | TCP        | Database                    |
 | **Nginx**      | 80, 443          | HTTP/HTTPS | Load balancer, SSL termination |
-| **MinIO**      | 9000, 9001       | HTTP/HTTPS | S3 API + web console          |
+| **MinIO**      | 9000, 9001       | HTTP/HTTPS | S3 API + web console        |
 
-### Additional Ports (Optional) {#дополнительные-порты-опционально}
+### Additional ports (optional) {#дополнительные-порты-опционально}
 
-| Service        | Port         | Protocol   | Purpose                                |
-| -------------- | ------------ | ---------- | -------------------------------------- |
-| **Keycloak**   | 8180         | HTTP/HTTPS | Authorization system                   |
-| **SMTP**       | 25, 587, 465 | SMTP/SMTPS | Mail server                            |
-| **Redis**      | 6379         | TCP        | Collaborative editing (multi-instance) |
-| **Prometheus** | 9090         | HTTP       | Metrics collection                     |
-| **Grafana**    | 3000         | HTTP       | Metrics visualization                  |
-| **ListMonk**   | 9000         | HTTP       | Mailing system                         |
-| **PlantUML**   | 8090         | HTTP       | Diagram generation                     |
-| **Gotenberg**  | 3001         | HTTP       | PDF conversion                         |
+| Service        | Port         | Protocol   | Purpose                                   |
+| -------------- | ------------ | ---------- | ----------------------------------------- |
+| **Keycloak**   | 8180         | HTTP/HTTPS | Authorization system                      |
+| **SMTP**       | 25, 587, 465 | SMTP/SMTPS | Mail server                               |
+| **Redis**      | 6379         | TCP        | Collaborative editing (multi-instance)    |
+| **Prometheus** | 9090         | HTTP       | Metrics collection                        |
+| **Grafana**    | 3000         | HTTP       | Metrics visualization                     |
+| **ListMonk**   | 9000         | HTTP       | Mailing system                            |
+| **PlantUML**   | 8090         | HTTP       | Diagram generation                        |
+| **Gotenberg**  | 3001         | HTTP       | PDF conversion                            |
 
 ### External Connections {#внешние-соединения}
 
 -   **SMTP server**: port 587/465 (for notifications)
 -   **LDAP/AD**: port 389/636 (for authentication)
--   **Internet**: for downloading updates
+
+### Offline operation (closed environment) {#работа-без-интернета-закрытыи-контур}
+
+The application does not require internet access: it does not make requests to external networks, and the license is verified locally, without a licensing server (see ["How licenses work"](/en/operation/License.md)).
+Internet access is only required if you enable one of the following features:
+
+| Feature | External dependency | How to operate without internet |
+| --- | --- | --- |
+| Image loading during installation and updates | Registry `cr.selcloud.ru` | Download images on a machine with internet access and transfer them to the internal registry — see [Quick start](/en/install/quickstart/QUICKSTART_MANUAL.md) and [Kubernetes → Closed environment](./kubernetes.md#закрытыи-контур) |
+| PDF export | Public `demo.gotenberg.dev`, if `GOTENBERG_URL` is not specified | Deploy your own Gotenberg instance and specify its address |
+| AI module | External LLM provider | Connect a model deployed within the closed environment — see [AI module](/en/ai/) |
+| Captcha on the login form | Yandex SmartCaptcha | Disabled by default; do not enable it in a closed environment — see [Configuration](/en/configure/README.md) |
 
 ## DNS Names and Certificates {#dns-имена-и-сертификаты}
 
@@ -271,12 +300,12 @@ To meet the requirements of the registry of domestic software, **Podman** can be
 
 #### Required Records: {#обязательные-записи}
 
--   **stormbpmn.company.com** - the main application domain. Must point to 8081
+-   **stormbpmn.company.com** - main application domain. Must point to 8081
 -   **stormbpmn-api.company.com** - API endpoints (optional). Must point to 8082
 
 ## Docker Alternatives (Import Substitution) {#альтернативы-docker-импортозамещение}
 
-Stormbpmn is provided as **OCI-compatible container images**, which allows the use of alternative containerization tools instead of Docker.
+StormBPMN is provided as **OCI-compatible container images**, which allows the use of alternative containerization tools instead of Docker.
 
 ### Podman (recommended for import substitution) {#podman-рекомендуется-для-импортозамещения}
 
@@ -319,5 +348,5 @@ When deploying to Kubernetes, you can use **CRI-O** — a lightweight container 
 **Containerd** is a low-level runtime used in Kubernetes and compatible with all StormBPMN OCI images.
 
 ::: warning Important
-Regardless of the chosen containerization tool, StormBPMN OCI images work identically. All instructions with `docker` in the documentation apply to `podman` without changes.
+Regardless of the containerization tool chosen, StormBPMN OCI images work identically. All instructions with `docker` in the documentation apply to `podman` without changes.
 :::

@@ -29,6 +29,7 @@ helm install storm stormbpmn/stormbpmn -n stormbpmn -f my-values.yaml
 | HTTPRoute (Gateway API) | `httpRoute.enabled` |
 | HPA / PDB | `autoscaling.enabled` / `podDisruptionBudget.enabled` |
 | ServiceMonitor | `metrics.serviceMonitor.enabled` (Prometheus Operator) |
+| NetworkPolicy | `networkPolicy.enabled`, исходящие — `networkPolicy.egress.*` |
 | Deployment + Service `storm-des` | `des.enabled` (модуль симуляций) |
 | Pod `helm test` | `helm test <релиз>` |
 
