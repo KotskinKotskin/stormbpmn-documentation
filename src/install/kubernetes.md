@@ -28,7 +28,7 @@ Gotenberg, PlantUML и SMTP вы поднимаете сами или берёт
 | PostgreSQL | База в UTF8 с расширениями **pgvector** и **pg_trgm**. Без pgvector приложение не запустится, подробнее в разделе [«Требования к PostgreSQL»](./README.md#требования-к-postgresql-расширения-и-кодировка) |
 | S3 | Любое S3-совместимое хранилище |
 | Gotenberg | Нужен свой сервис. Если не указать его адрес, PDF будут печататься через публичный demo.gotenberg.dev |
-| Доступ к `cr.selcloud.ru` | Логин и пароль реестра выдаёт ваш менеджер |
+| Доступ к `registry.stormbpmn.com` | Логин и секрет robot-аккаунта — в [портале Enterprise](./portal.md#доступ-к-образам), раздел «Доступ к образам». Не зарегистрированы в портале — зарегистрируйтесь до установки |
 
 ## Установка
 
@@ -46,8 +46,8 @@ helm search repo stormbpmn -l       # все доступные версии
 ```bash
 kubectl create namespace stormbpmn
 kubectl -n stormbpmn create secret docker-registry regcred \
-  --docker-server=cr.selcloud.ru \
-  --docker-username='<логин>' --docker-password='<пароль>'
+  --docker-server=registry.stormbpmn.com \
+  --docker-username='<логин из портала>' --docker-password='<секрет из портала>'
 ```
 
 ### 3. Подготовьте values
@@ -115,8 +115,8 @@ helm test storm -n stormbpmn
 
 ### 5. Активируйте лицензию
 
-Откройте `https://<ваш домен>/admin-onboarding`, скопируйте код активации целиком и передайте его менеджеру.
-Полученный ключ укажите в `storm.license.keyV2` (или в ключе `LICENSE_KEY_V2` вашего Secret) и выполните
+Откройте `https://<ваш домен>/admin-onboarding`, скопируйте код активации целиком и получите по нему ключ
+в [портале Enterprise](./portal.md#лицензионныи-ключ), раздел «Лицензионные ключи». Полученный ключ укажите в `storm.license.keyV2` (или в ключе `LICENSE_KEY_V2` вашего Secret) и выполните
 `helm upgrade`. Если ключ лежит в Secret из `values`, поды перезапустятся сами. Если вы используете свой Secret
 (`existingSecret`), чарт не узнаёт об изменении ключа, и поды нужно перезапустить вручную:
 `kubectl -n stormbpmn rollout restart deployment`. Затем создайте первого администратора в мастере настройки.
@@ -239,7 +239,7 @@ TLS-сертификат, лимит размера загрузки (не ме�
 
 Чтобы посмотреть чарт в деле до установки в рабочий кластер, разверните всё в
 [minikube](https://minikube.sigs.k8s.io/) вместе с тестовыми PostgreSQL и MinIO. Понадобятся
-Docker, около 8 ГБ свободной памяти и доступ к `cr.selcloud.ru`.
+Docker, около 8 ГБ свободной памяти и логин к `registry.stormbpmn.com` из [портала Enterprise](./portal.md#доступ-к-образам).
 
 ::: warning Только для проверки
 Пароли ниже открытые, данные хранятся внутри подов и пропадут при их перезапуске. Для работы эта
@@ -252,8 +252,8 @@ Docker, около 8 ГБ свободной памяти и доступ к `cr
    minikube start --cpus=4 --memory=12g --addons=ingress
    kubectl create namespace storm
    kubectl -n storm create secret docker-registry regcred \
-     --docker-server=cr.selcloud.ru \
-     --docker-username='<логин>' --docker-password='<пароль>'
+     --docker-server=registry.stormbpmn.com \
+     --docker-username='<логин из портала>' --docker-password='<секрет из портала>'
    ```
 
 2. Сохраните зависимости в `deps.yaml` и примените их командой `kubectl -n storm apply -f deps.yaml`:
@@ -278,7 +278,7 @@ Docker, около 8 ГБ свободной памяти и доступ к `cr
          imagePullSecrets: [{name: regcred}]
          containers:
            - name: pg
-             image: cr.selcloud.ru/stormbpmn-enterprise/pgvector:pg17
+             image: registry.stormbpmn.com/stormbpmn-enterprise/pgvector:pg17
              env:
                - {name: POSTGRES_DB, value: storm}
                - {name: POSTGRES_USER, value: stormuser}
@@ -412,13 +412,15 @@ des:
 
 ## Закрытый контур
 
-Перенесите образы во внутренний реестр. Нужны те же версии, что у чарта:
+Перенесите образы во внутренний реестр. Нужны те же версии, что у чарта. Логин к
+`registry.stormbpmn.com` — из [портала Enterprise](./portal.md#доступ-к-образам):
 
 ```bash
+docker login registry.stormbpmn.com -u '<логин из портала>'
 V=<версия чарта>
 for img in stormbpmn_fullstack_enterprise storm-des; do
-  docker pull cr.selcloud.ru/stormbpmn-enterprise/$img:$V
-  docker tag  cr.selcloud.ru/stormbpmn-enterprise/$img:$V harbor.company.local/stormbpmn/$img:$V
+  docker pull registry.stormbpmn.com/stormbpmn-enterprise/$img:$V
+  docker tag  registry.stormbpmn.com/stormbpmn-enterprise/$img:$V harbor.company.local/stormbpmn/$img:$V
   docker push harbor.company.local/stormbpmn/$img:$V
 done
 ```

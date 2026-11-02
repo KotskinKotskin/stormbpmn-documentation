@@ -37,7 +37,7 @@ helm install storm stormbpmn/stormbpmn -n stormbpmn -f my-values.yaml
 
 | Параметр | По умолчанию | ENV / описание |
 |---|---|---|
-| `image.registry` / `image.repository` | `cr.selcloud.ru` / `stormbpmn-enterprise/stormbpmn_fullstack_enterprise` | Для закрытого контура — свой реестр |
+| `image.registry` / `image.repository` | `registry.stormbpmn.com` / `stormbpmn-enterprise/stormbpmn_fullstack_enterprise` | Для закрытого контура — свой реестр |
 | `image.tag` | `""` → версия чарта | |
 | `storm.database.*` | — | `JDBC_URL`, `JDBC_USERNAME`, `JDBC_PASSWORD` (PostgreSQL c pgvector) |
 | `storm.license.keyV2` | `""` | `LICENSE_KEY_V2` (ключ по коду с `/admin-onboarding`) |

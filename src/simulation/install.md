@@ -26,10 +26,10 @@ order: 1
 ## Шаг 1. Получение образа
 
 Образ `storm-des` находится в том же приватном реестре, что и основной образ StormBPMN, и доступен
-по тем же учётным данным:
+по тому же логину из [портала Enterprise](/install/portal.md#доступ-к-образам):
 
 ```bash
-docker pull cr.selcloud.ru/stormbpmn-enterprise/storm-des:<версия>
+docker pull registry.stormbpmn.com/stormbpmn-enterprise/storm-des:<версия>
 ```
 
 ::: warning Версии должны совпадать
@@ -50,7 +50,7 @@ docker pull cr.selcloud.ru/stormbpmn-enterprise/storm-des:<версия>
 ```yaml
 services:
     storm-des:
-        image: cr.selcloud.ru/stormbpmn-enterprise/storm-des:<версия>
+        image: registry.stormbpmn.com/stormbpmn-enterprise/storm-des:<версия>
         container_name: storm-des
         restart: unless-stopped
         environment:

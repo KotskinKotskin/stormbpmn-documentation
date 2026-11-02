@@ -1,7 +1,7 @@
 ---
 title: Installation in Kubernetes (Helm)
 order: 3
-source_hash: 51223f098664f937
+source_hash: b14727624f630b38
 ---
 
 [[toc]]
@@ -18,7 +18,7 @@ updating consists of `helm repo update` and `helm upgrade`.
 
 The chart deploys the application container and, if the license includes the simulations module, the optional `storm-des` service. You deploy PostgreSQL, S3,
 Gotenberg, PlantUML, and SMTP yourself or use corporate instances. The requirements for them are the same as
-for the Docker installation: see [“Installation”](./README.md) and [“Production installation”](./production/README.md).
+for Docker installation: see [“Installation”](./README.md) and [“Production installation”](./production/README.md).
 
 ## Prerequisites {#что-нужно-заранее}
 
@@ -26,10 +26,10 @@ for the Docker installation: see [“Installation”](./README.md) and [“Produ
 | --- | --- |
 | Kubernetes | 1.23 or later |
 | Helm | 3.8 or later |
-| PostgreSQL | A database with UTF8 encoding and the **pgvector** and **pg_trgm** extensions. The application will not start without pgvector; see the [“PostgreSQL Requirements”](./README.md#требования-к-postgresql-расширения-и-кодировка) section for details |
+| PostgreSQL | Database in UTF8 with **pgvector** and **pg_trgm** extensions. The application will not start without pgvector; see the [“PostgreSQL Requirements”](./README.md#требования-к-postgresql-расширения-и-кодировка) section for details |
 | S3 | Any S3-compatible storage |
 | Gotenberg | A dedicated service is required. If its address is not specified, PDFs will be printed via the public demo.gotenberg.dev |
-| Access to `cr.selcloud.ru` | Your account manager provides the registry login and password |
+| Access to `registry.stormbpmn.com` | Robot account login and secret — available in the [Enterprise portal](./portal.md#доступ-к-образам), “Image Access” section. If you are not registered in the portal, register before installation |
 
 ## Installation {#установка}
 
@@ -47,8 +47,8 @@ helm search repo stormbpmn -l       # все доступные версии
 ```bash
 kubectl create namespace stormbpmn
 kubectl -n stormbpmn create secret docker-registry regcred \
-  --docker-server=cr.selcloud.ru \
-  --docker-username='<логин>' --docker-password='<пароль>'
+  --docker-server=registry.stormbpmn.com \
+  --docker-username='<portal login>' --docker-password='<portal secret>'
 ```
 
 ### 3. Prepare values {#_3-подготовьте-values}
@@ -93,7 +93,7 @@ The command `helm show values stormbpmn/stormbpmn` outputs all parameters with c
 | File | Scenario |
 | --- | --- |
 | `single-instance.yaml` | Pilot: one pod, email disabled |
-| `on-prem-ru.yaml` | Production installation: 3+ replicas, HPA, PDB, ServiceMonitor, audit in SIEM via Syslog |
+| `on-prem-ru.yaml` | Production deployment: 3+ replicas, HPA, PDB, ServiceMonitor, audit to SIEM via Syslog |
 | `airgap.yaml` | Closed environment: all images from the internal registry |
 
 ::: tip Secrets not in values
@@ -113,8 +113,7 @@ To install a specific version, add `--version <версия>`.
 
 ### 5. Activate the license {#_5-активируите-лицензию}
 
-Open `https://<ваш домен>/admin-onboarding`, copy the activation code in its entirety, and send it to your manager.
-Enter the received key in `storm.license.keyV2` (or in the `LICENSE_KEY_V2` key of your Secret) and run
+Open `https://<ваш домен>/admin-onboarding`, copy the activation code in its entirety, and obtain the key from it in the [Enterprise portal](./portal.md#лицензионныи-ключ), in the "License keys" section. Specify the obtained key in `storm.license.keyV2` (or in the `LICENSE_KEY_V2` key of your Secret) and run
 `helm upgrade`. If the key is stored in a Secret from `values`, the pods will restart automatically. If you are using your own Secret
 (`existingSecret`), the chart will not detect the key change, and the pods must be restarted manually:
 `kubectl -n stormbpmn rollout restart deployment`. Then, create the first administrator in the setup wizard.
@@ -159,7 +158,7 @@ requests only from application pods; the chart sets this rule automatically. If 
 `helm test` will fail: the test pod connects to the service directly. Kubelet health checks are usually not affected by network policies.
 
 **Outbound traffic.** Not restricted by default. If you enable `networkPolicy.egress.enabled`,
-only DNS and application requests to `storm-des` are allowed, and other destinations must be listed
+only DNS and application requests to `storm-des` are allowed; other destinations must be listed
 in `networkPolicy.egress.extraRules`:
 
 | Destination | Default port | Requirement |
@@ -168,7 +167,7 @@ in `networkPolicy.egress.extraRules`:
 | S3 storage | 443 or 9000 | Always |
 | SMTP | 587 or 465 | If email is enabled |
 | IdP (Keycloak, OIDC, ADFS) | 443 | If SSO login is used |
-| Redis | 6379 | If more than one replica |
+| Redis | 6379 | If replicas > 1 |
 | Gotenberg | 3001 | For PDF export |
 | PlantUML | 8090 | If used |
 | Syslog / SIEM | 514 or 601 | If audit is sent to SIEM |
@@ -225,14 +224,14 @@ The TLS certificate, upload size limit (no less than 50 MB), and timeouts are co
 
 After `helm install` and `helm upgrade`, the chart outputs hints and warnings about what is missing in your values. Read them.
 
-## Trial installation on a laptop {#пробная-установка-на-ноутбуке}
+## Trial Installation on a Laptop {#пробная-установка-на-ноутбуке}
 
 To inspect the chart before deploying it to a production cluster, deploy everything in
 [minikube](https://minikube.sigs.k8s.io/) along with test PostgreSQL and MinIO instances. You will need
-Docker, approximately 8 GB of free memory, and access to `cr.selcloud.ru`.
+Docker, approximately 8 GB of free memory, and credentials for `registry.stormbpmn.com` from the [Enterprise portal](./portal.md#доступ-к-образам).
 
-::: warning For verification only
-The passwords below are exposed, and the data is stored inside the pods and will be lost upon pod restart. This setup is not suitable for production use.
+::: warning For verification purposes only
+The passwords below are exposed, and data is stored inside the pods and will be lost upon their restart. This setup is not suitable for production use.
 :::
 
 1. Start the cluster and create a namespace with the registry secret:
@@ -241,8 +240,8 @@ The passwords below are exposed, and the data is stored inside the pods and will
    minikube start --cpus=4 --memory=12g --addons=ingress
    kubectl create namespace storm
    kubectl -n storm create secret docker-registry regcred \
-     --docker-server=cr.selcloud.ru \
-     --docker-username='<логин>' --docker-password='<пароль>'
+     --docker-server=registry.stormbpmn.com \
+     --docker-username='<portal login>' --docker-password='<portal secret>'
    ```
 
 2. Save the dependencies to `deps.yaml` and apply them using the `kubectl -n storm apply -f deps.yaml` command:
@@ -267,7 +266,7 @@ The passwords below are exposed, and the data is stored inside the pods and will
          imagePullSecrets: [{name: regcred}]
          containers:
            - name: pg
-             image: cr.selcloud.ru/stormbpmn-enterprise/pgvector:pg17
+             image: registry.stormbpmn.com/stormbpmn-enterprise/pgvector:pg17
              env:
                - {name: POSTGRES_DB, value: storm}
                - {name: POSTGRES_USER, value: stormuser}
@@ -363,7 +362,7 @@ helm upgrade storm stormbpmn/stormbpmn -n stormbpmn -f my-values.yaml
 
 With two or more replicas, the update proceeds without downtime: the chart replaces pods one by one (`maxSurge: 1`, `maxUnavailable: 0`), and the first new pod applies the database migrations. With a single replica, there will be a brief pause while the new pod starts.
 
-Rolling back the image is `helm rollback storm -n stormbpmn`. There are no reverse migrations: the previous version works with the updated schema, but if data was affected, restore the database from the backup taken before the update. For details, see
+Rolling back the image is `helm rollback storm -n stormbpmn`. There are no reverse migrations: the previous version works with the updated schema, and if data was affected, restore the database from the backup taken before the update. For details, see
 ["Zero-Downtime Update" and "Version Rollback"](/en/operation/README.md#обновление-без-простоя).
 
 If you are upgrading from chart 3.x (StormBPMN 6.6), first read `UPGRADING.md` in the chart. In 9.x, the required parameters have changed:
@@ -378,7 +377,7 @@ If you are upgrading from chart 3.x (StormBPMN 6.6), first read `UPGRADING.md` i
 
 ::: info Optional module
 `storm-des` is required only for process simulations and works only if the simulation module is included in your
-license key. Without it, Stormbpmn functions fully. By default, the module is disabled (`des.enabled: false`).
+license key. Without it, StormBPMN functions fully. By default, the module is disabled (`des.enabled: false`).
 :::
 
 If the license includes the simulation module, enable it in the same release:
@@ -392,22 +391,26 @@ des:
 ```
 
 The chart automatically sets `storm-des` the same database, time zone, and image version as the application, and passes
-`DES_BASE_URL` to the application. For more details about the module: [“Simulations”](/en/simulation/install.md).
+`DES_BASE_URL` to the application. For more information about the module: [“Simulations”](/en/simulation/install.md).
 
-## Closed Loop {#закрытыи-контур}
+## Closed loop {#закрытыи-контур}
 
-Transfer the images to the internal registry. The versions must match those of the chart:
+Transfer the images to the internal registry. The versions must match those in the chart. The login for
+`registry.stormbpmn.com` is available from the [Enterprise portal](./portal.md#доступ-к-образам):
 
 ```bash
+docker login registry.stormbpmn.com -u '<portal login>'
 V=<версия чарта>
 for img in stormbpmn_fullstack_enterprise storm-des; do
-  docker pull cr.selcloud.ru/stormbpmn-enterprise/$img:$V
-  docker tag  cr.selcloud.ru/stormbpmn-enterprise/$img:$V harbor.company.local/stormbpmn/$img:$V
+  docker pull registry.stormbpmn.com/stormbpmn-enterprise/$img:$V
+  docker tag  registry.stormbpmn.com/stormbpmn-enterprise/$img:$V harbor.company.local/stormbpmn/$img:$V
   docker push harbor.company.local/stormbpmn/$img:$V
 done
 ```
 
-Download the chart itself on a machine with internet access using the command `helm pull stormbpmn/stormbpmn --version $V` and install it from the file `.tgz`. Specify the registry as shown in the example `examples/airgap.yaml`. Before transferring, verify the image signatures as described in [Changelog → "Image Signature Verification"](/en/Changelog/README.md).
+Download the chart on a machine with internet access using the command `helm pull stormbpmn/stormbpmn --version $V` and install it
+from the file `.tgz`. Specify the registry as shown in the example `examples/airgap.yaml`. Before transferring, verify the image
+signatures as described in [Changelog → "Image signature verification"](/en/Changelog/README.md).
 
 ## If Something Went Wrong {#если-что-то-пошло-не-так}
 
@@ -416,7 +419,7 @@ Download the chart itself on a machine with internet access using the command `h
 | `helm install` rejects `storm.jwt.secret` | Key is shorter than 64 characters |
 | `helm install` rejects `sessionExpirationSeconds` | More than 90 days specified. Most likely, this is milliseconds |
 | Pod is restarting, error `extension "vector"` in the log | pgvector is missing in PostgreSQL |
-| Simulations fail with "DES node did not respond" | `storm-des` has a different time zone. It is common in the chart, check `des.extraEnv` |
+| Simulations fail with "DES node did not respond" | `storm-des` has a different time zone. In the chart, it is shared; check `des.extraEnv` |
 | On first installation, error `relation "sm_background_tasks" does not exist` in log `storm-des` | `storm-des` started before the application created the tables. The error resolves itself a few seconds after the application starts |
 | Pod in `ImagePullBackOff` with `pull access denied` | Secret `regcred` is not created in the release namespace or `imagePullSecrets` is not specified |
 | Application pod in `CrashLoopBackOff` shortly after start | Insufficient memory: check `resources.limits.memory` and `storm.general.javaOpts` (`-Xmx` must be less than the limit) |

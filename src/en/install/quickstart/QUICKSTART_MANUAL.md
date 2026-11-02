@@ -3,7 +3,7 @@ order: 2
 dir:
   link: true
 index: true
-source_hash: 9d50ce1dc6f42cdb
+source_hash: b2700b9f302d5047
 ---
 
 # Manual installation {#ручная-установка}
@@ -49,9 +49,9 @@ The database must be created with **UTF8** encoding, and the following extension
 - `vector`, `uuid-ossp`, `hstore`, `pgcrypto` are created automatically by the application on first launch (if the packages are installed and the database user has the `CREATE EXTENSION` privilege).
 - **Create `pg_trgm` manually** — without it, searching for users by part of their name or email will not work.
 
-The standard `postgres:17` image **does not include pgvector**. Use the **`pgvector/pgvector:pg17`** image (the same PostgreSQL + pgvector + standard contrib modules) or install pgvector in your build/DBaaS. If Docker Hub is blocked, pull the image from our registry: `cr.selcloud.ru/stormbpmn-enterprise/pgvector:pg17` (signed with the same Cosign signature, accessible with the same Selectel credentials).
+The standard `postgres:17` image **does not include pgvector**. Use the **`pgvector/pgvector:pg17`** image (the same PostgreSQL + pgvector + standard contrib modules) or install pgvector in your build/DBaaS. If Docker Hub is blocked — get the image from our registry: `registry.stormbpmn.com/stormbpmn-enterprise/pgvector:pg17` (signed with the same Cosign signature, accessible with the same login from the [Enterprise portal](/en/install/portal.md#доступ-к-образам)).
 
-Full set in one command — execute as a superuser **in the application database**:
+The full set in a single command — execute as a superuser **in the application database**:
 
 ```sql
 CREATE EXTENSION IF NOT EXISTS vector;
@@ -61,18 +61,17 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE EXTENSION IF NOT EXISTS hstore;
 ```
 
-For details, see the [“PostgreSQL Requirements”](/en/install/README.md) section.
+For more details, see the [“PostgreSQL Requirements”](/en/install/README.md) section.
 :::
 
-## Configuring the application via environment variables {#настроика-приложения-через-переменные-окружения}
+## Configuring the Application via Environment Variables {#настроика-приложения-через-переменные-окружения}
 
 ### Getting the image {#получение-образа}
 
-Download the application image from the registry (request the link and authentication parameters from our team).
+Download the application image from the repository `registry.stormbpmn.com`. The login and secret for it are issued in the **"Image access"** section of the [Enterprise portal](/en/install/portal.md#доступ-к-образам); if you are not yet registered on the portal, register.
 
 ### Transferring the image to a private registry {#перенос-образа-в-приватныи-репозитории}
 In some organizations, the use of external container repositories is prohibited, so the image must be transferred from our repository to the organization's repository.
-
 
 #### Steps {#шаги}
 
@@ -88,24 +87,24 @@ https://docs.docker.com/desktop/setup/install/windows-install/
 
 3. Authenticate to our Docker Registry:
 ```bash
-docker login cr.selcloud.ru
+docker login registry.stormbpmn.com -u '<portal login>'
 ```
-(enter the username and password provided earlier)
+(enter the robot account secret from the **"Image access"** section of the [Enterprise portal](/en/install/portal.md#доступ-к-образам); if you are not yet registered on the portal — register)
 
 4. Pull the image:
 ```bash
-docker pull cr.selcloud.ru/stormbpmn-enterprise/stormbpmn_fullstack_enterprise:6.6.1879
+docker pull registry.stormbpmn.com/stormbpmn-enterprise/stormbpmn_fullstack_enterprise:6.6.1879
 ```
 
 5. Authenticate to the private registry of KB (for example, Harbor):
 ```bash
 docker login <адрес_вашего_registry>
 ```
-(enter the username and password provided by KB)
+(enter the login and password provided by KB)
 
 6. Retag the image for their registry:
 ```bash
-docker tag cr.selcloud.ru/stormbpmn-enterprise/stormbpmn_fullstack_enterprise:6.6.1879 <адрес_вашего_registry>/<проект>/stormbpmn_fullstack_enterprise:6.6.1879
+docker tag registry.stormbpmn.com/stormbpmn-enterprise/stormbpmn_fullstack_enterprise:6.6.1879 <адрес_вашего_registry>/<проект>/stormbpmn_fullstack_enterprise:6.6.1879
 ```
 
 7. Push the image to the private registry:
@@ -115,14 +114,14 @@ docker push <адрес_вашего_registry>/<проект>/stormbpmn_fullstac
 
 8. Verify that the image appears in the Harbor interface.
 
-::: tip Gotenberg can also be pulled from our registry
-If external registries (Docker Hub) are blocked, it is not necessary to pull `gotenberg/gotenberg:8` from an external source — we mirror the official Gotenberg image to our private registry and **sign it with the same Cosign signature** as the main StormBPMN image. It is available using the **same** credentials `cr.selcloud.ru`:
+::: tip Gotenberg can also be obtained from our registry
+If external registries (Docker Hub) are blocked, it is not necessary to pull `gotenberg/gotenberg:8` from outside — we mirror the official Gotenberg image to our private registry and **sign it with the same Cosign signature** as the main StormBPMN image. It is available using the **same** login from the Enterprise portal:
 
 ```bash
-docker pull cr.selcloud.ru/stormbpmn-enterprise/gotenberg:8
+docker pull registry.stormbpmn.com/stormbpmn-enterprise/gotenberg:8
 ```
 
-Next, retag and push it to your corporate registry using the same steps 5–8 as for the main image. Signature verification is performed in the same way as for the main image (see [Changelog → “Image signature verification (Cosign)”](/en/Changelog/README.md)).
+Next — retag and push it to your corporate registry using the same steps 5–8 as for the main image. Signature verification is the same as for the main image (see [Changelog → "Image Signature Verification (Cosign)"](/en/Changelog/README.md)).
 :::
 
 
@@ -137,7 +136,7 @@ Next, retag and push it to your corporate registry using the same steps 5–8 as
 | **JAVA_OPTS**              | JVM memory settings         | `"-Xmx8g"`                                 |
 | **SPRING_PROFILES_ACTIVE** | Spring Boot profile              | `prod`                                     |
 | **JWTSECRET**              | Salt for password encryption      | At least 64 random characters             |
-| **TZ**              | Container timezone      |`Europe/Moscow`           |
+| **TZ**              | Container time zone      |`Europe/Moscow`           |
 
 > **Note on JDBC_URL:**
 >
@@ -147,44 +146,46 @@ Next, retag and push it to your corporate registry using the same steps 5–8 as
 ### Starting the container {#запуск-контеинера}
 
 1. Start the container with the configured environment variables
-2. Upon successful startup, the database migration will be performed automatically
-3. Configure the ports for application access: 8080 (legacy interface), 8081 (new interface), and 8082 (API)
+2. Upon successful startup, database migrations will be executed automatically
+3. Configure ports for application access: 8080 (legacy interface), 8081 (new interface), and 8082 (API)
 
 ::: tip Congratulations!
 The minimal installation is ready! You can now access the application through the web interface on the configured port.
 :::
 
-## Obtaining the license key {#получение-лицензионного-ключа}
+## Obtaining the License Key {#получение-лицензионного-ключа}
 
 For a new Enterprise installation, use a separate v2 key. The existing `LICENSE_KEY`
 is temporarily supported without immediate replacement, but v1 licenses are deprecated and have a known
 security limitation.
 
-Use the v2-compatible image agreed upon with the manager. Do not open the installation to regular users before activation: an empty v2 selects the legacy path, and the absence of both keys does not guarantee access blocking.
+Use the v2-compatible image: the current version is listed in the Changelog section. Do not open the
+installation to regular users before activation: an empty v2 selects the legacy path, and the absence of both keys
+does not guarantee access blocking.
 
-1. Open `/admin-onboarding` without logging in during the initial installation and copy the **entire activation code without truncation**.
-2. Provide the full code to the manager and receive the key for this installation.
+1. Open `/admin-onboarding` without logging in during the initial installation and copy **the entire activation code without truncation**.
+2. In the [Enterprise portal](/en/install/portal.md#лицензионныи-ключ), register the installation, paste the code in the **"License keys"** section, and obtain the key for this installation.
 3. Add the key to the environment variable **`LICENSE_KEY_V2`**. If `LICENSE_KEY` is set nearby,
-   a non-empty `LICENSE_KEY_V2` has exclusive priority; in case of a v2 error, there is no fallback to v1.
+   a non-empty `LICENSE_KEY_V2` takes exclusive priority; in case of a v2 error, there is no fallback to v1.
 4. Restart the container, wait for successful health checks, and verify the license status on
-   `/admin-onboarding`. Then, create an administrator according to the instructions below, configure
+   `/admin-onboarding`. Then create an administrator according to the instructions below, configure
    users, and verify login and required modules (including DES) with a regular account.
 
-For a test environment, DR site, and each clone, request a separate key.
-Agree on AI and DES rights in the key — in v2, they are disabled by default; see the
-[section on v2 format](/en/operation/License.md#формат-v2-и-доступ-к-модулям) for details.
+A separate key is required for each test environment, DR site, and clone.
+AI and DES permissions are included in the key from the license agreement — in v2, they are disabled by default; see the
+[v2 format section](/en/operation/License.md#формат-v2-и-доступ-к-модулям) for details.
 
-::: tip Existing installation
+::: tip Existing Installation
 If Storm is already installed and running with `LICENSE_KEY`, the activation code is obtained on the same page
-`/admin-onboarding` without logging in and without launching the wizard. The procedure for migrating to v2 is in the section
-["Where to get the activation code on an existing installation"](/en/operation/License.md#где-взять-код-активации-на-существующеи-инсталляции).
+`/admin-onboarding` without logging in and without running the wizard. The procedure for migrating to v2 is in the
+["Where to get the activation code on an existing installation"] section (/operation/License.md#где-взять-код-активации-на-существующеи-инсталляции).
 :::
 
 ## Creating an Administrative Account {#создание-административнои-учетнои-записи}
 
 Storm administrator privileges are granted to a **team**, not to an individual user. Each team member with administrative rights automatically gains access to system settings.
 
-Create a separate administrative team — exclusively for those who need to configure and administer Storm. It should contain 1–2 accounts.
+Create a separate administrative team — only for those who need to configure and administer Storm. It should contain 1–2 accounts.
 
 ### Step-by-step instructions: {#пошаговая-инструкция}
 
@@ -203,7 +204,7 @@ Do not add regular employees to the administrative team. This team is intended o
 
 ## Creating a working team for employees {#создание-рабочеи-команды-для-сотрудников}
 
-A separate team is required for employees' daily work. By default, a new team does not have Storm administration rights — no additional actions in the database are required.
+A separate team is required for employees' day-to-day work. By default, a new team does not have Storm administration rights — no additional actions in the database are required.
 
 | Team | Members | Purpose |
 |---|---|---|
@@ -231,7 +232,7 @@ UPDATE sm_teams SET full_access = false WHERE id = '<id команды>';
 
 ## Authorization Configuration {#настроика-авторизации}
 
-To configure the application login system, refer to the [detailed information security guide](/en/configure/security/authorization.md) and select the option that best suits your organization.
+To configure the application login system, refer to the [detailed information security guide](/en/configure/security/authorization.md) and select the option suitable for your organization.
 
 ---
 
@@ -245,7 +246,7 @@ To configure the application login system, refer to the [detailed information se
 ### Why this setup is not suitable for production: {#почему-эта-установка-не-подходит-для-продакшена}
 
 -   **No SSL/HTTPS** - data is transmitted in plaintext
--   **Unprotected database** - no backup or fault tolerance
+-   **Database is not protected** - no backup or fault tolerance
 -   **No monitoring** - impossible to track issues and performance
 -   **Simplified authentication** - no integration with corporate systems
 -   **No notifications** - users will not receive emails about processes
@@ -261,9 +262,9 @@ To configure the application login system, refer to the [detailed information se
 
 ### Next steps for production: {#следующие-шаги-для-продакшена}
 
-1. **[Production Ready](/en/install/production/)** - configuration for industrial operation
+1. **[Production Ready](/en/install/production/)** - configuration for industrial use
 2. **[Security](/en/configure/security/)** - configuration of HTTPS, authentication, and auditing
-3. **[System Administration](/en/operation/README.md)** - monitoring performance and availability, protection against data loss
+3. **[System administration](/en/operation/README.md)** - monitoring performance and availability, protection against data loss
 
 :::info Tip
 Plan the transition to a production-ready configuration **before** connecting real users.

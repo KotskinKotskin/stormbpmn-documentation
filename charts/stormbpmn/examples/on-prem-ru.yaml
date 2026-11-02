@@ -17,7 +17,7 @@
 replicaCount: 3
 
 image:
-  registry: cr.selcloud.ru
+  registry: registry.stormbpmn.com
   repository: stormbpmn-enterprise/stormbpmn_fullstack_enterprise
   tag: ""    # = версия чарта (версия StormBPMN)
   pullPolicy: IfNotPresent

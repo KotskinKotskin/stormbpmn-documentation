@@ -1,17 +1,17 @@
 ---
-source_hash: 38be3352e2a2570f
+source_hash: 26659ced1bcdcc80
 ---
 # StormBPMN Enterprise Implementation Plan {#план-внедрения-stormbpmn-enterprise}
 
-This article outlines the complete plan for implementing StormBPMN Enterprise on the customer's side: from license procurement to production launch. The plan is high-level — details for each step are available in the corresponding sections of the documentation.
+This article outlines the complete plan for implementing StormBPMN Enterprise on the client side: from license procurement to production launch. The plan is high-level — details for each step are available in the corresponding sections of the documentation.
 
 [[toc]]
 
 ## Project Overview {#сводка-проекта}
 
-StormBPMN Enterprise is a corporate on-premise platform for business process modeling in BPMN 2.0. For a full description of features and architecture, see [Architecture Diagram](/en/get-started.html).
+StormBPMN Enterprise is a corporate on-premise platform for business process modeling in BPMN 2.0. For a full description of capabilities and architecture, see [Architecture Diagram](/en/get-started.html).
 
-The documentation describes 4 deployment levels (minimal, basic, corporate, full). **Recommendation for full implementation — "Full Configuration"** (11 components). Details — [System Requirements](/en/install/).
+The documentation describes four deployment levels (minimal, basic, corporate, full). **Recommendation for full implementation — "Full Configuration"** (11 components). Details — [System Requirements](/en/install/).
 
 ### Estimated Timelines {#ориентировочные-сроки}
 
@@ -30,18 +30,18 @@ The documentation describes 4 deployment levels (minimal, basic, corporate, full
 
 ---
 
-## Key Roles on the Customer Side {#ключевые-роли-у-заказчика}
+## Key roles on the customer side {#ключевые-роли-у-заказчика}
 
 ::: warning Important
-Without the assignment of these roles, the implementation project is doomed to stall. The customer must designate specific individuals and formalize this with an order/directive before the project starts.
+Without assigning these roles, the implementation project is doomed to stall. The customer must designate specific individuals and formalize this with an order or directive before the project starts.
 :::
 
 ### Mandatory Roles {#обязательные-роли}
 
-| Role | Who | Purpose | Without them... |
+| Role | Who | Purpose | Without it... |
 |------|---------|-------------|-------------|
-| **System Owner (Business)** | Department Director / CFO level executive | Makes decisions on scope, priorities, and budget. Responsible for adoption. Removes organizational blockers | No quorum for approvals, no one drives progress within the organization |
-| **IT System Owner** | IT department head or designated team lead | Makes technical decisions (infrastructure, integrations, security). Allocates IT team resources. Escalation point for technical issues | Servers are not allocated, security is not approved, network access is not opened — the project stalls |
+| **System Owner (Business)** | Department Director / CFO level executive | Makes decisions regarding scope, priorities, and budget. Responsible for adoption. Removes organizational blockers | No quorum for approvals, no one drives progress within the organization |
+| **IT System Owner** | Head of the IT department or designated team lead | Makes technical decisions (infrastructure, integrations, security). Allocates IT team resources. Escalation point for technical issues | Servers are not allocated, security is not approved, network access is not granted — the project stalls |
 
 ### Recommended Roles {#желательные-роли}
 
@@ -56,8 +56,8 @@ Without the assignment of these roles, the implementation project is doomed to s
 ### Antipatterns {#антипаттерны}
 
 -   "The system owner is the IT director, but he is busy" — appoint a deputy with full authority
--   "We haven't decided who is responsible yet" — **STOP**, do not start the project
--   "One admin does everything" — bus factor = 1 risk, require at least two people
+-   "We have not yet determined who is responsible" — **STOP**, do not start the project
+-   "One admin does everything for us" — bus factor = 1 risk, require at least two people
 
 ---
 
@@ -65,10 +65,10 @@ Without the assignment of these roles, the implementation project is doomed to s
 
 > The Storm team is the provider of licenses and software. The Customer performs the primary implementation work. The Storm team provides consultations and support.
 
-**Notations in tables:**
+**Notation in tables:**
 
 -   **Customer** — entirely on the Customer's side
--   **Storm assists** — The Customer performs the work; the Storm team provides consultations / answers questions
+-   **Storm assists** — The Customer performs the work, the Storm team provides consultations / answers questions
 -   **Storm + Customer** — joint work
 -   **Storm team** — on the Storm side
 
@@ -82,20 +82,20 @@ Without the assignment of these roles, the implementation project is doomed to s
 | Obtaining SSL certificates | Customer |
 | Reserving DNS names | Customer |
 | Determining the type and quantity of licenses | Storm assists |
-| Providing the license key | Storm team |
-| Providing access to Docker images (registry token) | Storm team |
-| Providing documentation | Storm team |
+| Providing the license key | Storm Team |
+| Providing access to Docker images (registry token) | Storm Team |
+| Providing documentation | Storm Team |
 
 ### Phase 1: Infrastructure and Installation {#фаза-1-инфраструктура-и-установка}
 
 | Task | Who |
 |--------|-----|
 | OS, Docker, and network installation | Customer |
-| Transfer of the image to the corporate Registry | Customer |
-| Deployment of all components (PostgreSQL with pgvector/pg_trgm extensions and others — see [requirements](/en/install/README.md), MinIO, Redis, Nginx, etc.) | Customer (per documentation) |
+| Transferring the image to the corporate Registry | Customer |
+| Deploying all components (PostgreSQL with pgvector/pg_trgm extensions, etc. — see [requirements](/en/install/README.md), MinIO, Redis, Nginx, etc.) | Customer (per documentation) |
 | Starting StormBPMN, initial configuration | Customer (per documentation) |
 | License activation (full activation code — Storm Team — v2 key) | Storm + Customer |
-| Assistance with installation issues | Storm provides support |
+| Assistance with installation issues | Storm provides help |
 
 ### Phase 2: Security {#фаза-2-безопасность}
 
@@ -106,7 +106,7 @@ Without the assignment of these roles, the implementation project is doomed to s
 | Configuration of OAuth2 ENV in StormBPMN | Customer (per documentation) |
 | Security configuration (CORS, disabling simple auth, etc.) | Customer (per documentation) |
 | Completion of the security checklist | Customer |
-| Consultations on configuring OAuth2, Claims, truststore | Storm provides assistance |
+| Consultation on configuring OAuth2, Claims, truststore | Storm provides assistance |
 
 ### Phase 3: Monitoring and SIEM {#фаза-3-мониторинг-и-siem}
 
@@ -121,17 +121,17 @@ Without the assignment of these roles, the implementation project is doomed to s
 
 | Task | Who |
 |--------|-----|
-| Admin panel configuration (commands, access rights, email) | Customer (per documentation) |
+| Admin panel configuration (commands, access, email) | Customer (per documentation) |
 | Definition of the access model to diagrams | Customer |
 | Best practices consulting | Storm assists |
 
-### Phase 5: Integrations (Optional) {#фаза-5-интеграции-опционально}
+### Phase 5: Integrations (optional) {#фаза-5-интеграции-опционально}
 
 | Task | Who |
 |--------|-----|
 | Development of synchronization scripts (org structure, architecture, BPM) | Customer |
-| Documentation of the REST API | Already included in the documentation |
-| Consultation on API usage | Storm provides assistance |
+| REST API documentation | Already in the documentation |
+| Consultations on API usage | Stormbpmn provides support |
 
 ### Phase 6: Backups, DR {#фаза-6-бэкапы-dr}
 
@@ -165,7 +165,7 @@ Without the assignment of these roles, the implementation project is doomed to s
 2.  **Images** — provides access to the Docker registry
 3.  **Documentation** — keeps it up to date
 4.  **Training** — provides user training (~1 month)
-5.  **Technical Support** — answers questions and helps with issues (Enterprise SLA)
+5.  **Technical support** — answers questions and helps with issues (Enterprise SLA)
 6.  **Consulting** — assists with configuration, integrations, and methodology
 7.  **Updates** — releases new versions with a changelog
 
@@ -195,15 +195,15 @@ This is the first step. Without a license and access to the images, there is no 
 
 | # | Task | Who | Details |
 |---|--------|-----|--------|
-| L.1 | Determine license type | Storm + Customer | **Named** or **Concurrent** — see [Licensing](/en/operation/License.html) |
-| L.2 | Determine number of licenses | Storm + Customer | Named: number of users + 1. Concurrent: peak load + 1 |
+| L.1 | Determine the license type | Storm + Customer | **Named** or **Concurrent** — see [Licensing](/en/operation/License.html) |
+| L.2 | Determine the number of licenses | Storm + Customer | Named: number of users + 1. Concurrent: peak load + 1 |
 | L.3 | Agree on and sign the contract | Storm + Customer | Including the support contract (Enterprise SLA) |
 | L.4 | Payment | Customer | — |
-| L.5 | Provide access to Docker registry (token) | Storm Team | — |
+| L.5 | Register in the [Enterprise portal](/en/install/portal.md) and obtain access to the Docker registry | Customer | Access is granted based on the license agreement |
 | L.6 | Provide documentation | Storm Team | — |
-| L.7 | Agree on budget for server resources | Customer | See [System Requirements](/en/install/) |
+| L.7 | Approve the budget for server resources | Customer | See [System requirements](/en/install/) |
 
-After installation, obtain the full activation code without truncation at `/admin-onboarding` and pass it to the manager. Set the received key in `LICENSE_KEY_V2` and restart the application. A separate key is required for production, each test environment, DR site, and clone. Existing installations may temporarily continue operating with an outdated `LICENSE_KEY` without immediate replacement; due to a known security limitation, plan their phased migration to v2.
+After installation, obtain the full activation code without truncation at `/admin-onboarding` and use it to get a key from the [Enterprise portal](/en/install/portal.md#лицензионныи-ключ). Set the obtained key in `LICENSE_KEY_V2` and restart the application. A separate key is required for production, each test environment, the DR site, and clones. Existing installations may temporarily continue operating with the outdated `LICENSE_KEY` without immediate replacement; due to a known security limitation, plan their phased migration to v2.
 
 ---
 
@@ -211,20 +211,20 @@ After installation, obtain the full activation code without truncation at `/admi
 
 ### Security Approval {#согласование-с-иб}
 
-**Owner**: Customer's Information Security Administrator + System IT Owner
+**Responsible**: Customer's Security Administrator + System IT Owner
 
 | # | Task | Artifact |
 |---|--------|----------|
-| 0.1 | Request to deploy new software in the corporate network | Request in the IS form |
+| 0.1 | Request to deploy new software in the corporate network | Request in the Security form |
 | 0.2 | Approval of architecture and component composition | [Architecture Diagram](/en/get-started.html) |
 | 0.3 | Approval of network ports and protocols | Access matrix from [System Requirements](/en/install/) |
 | 0.4 | Approval of the authentication method (Keycloak/ADFS/OAuth2) | [Security — OAuth2](/en/configure/security/) |
-| 0.5 | Approval of data storage (PostgreSQL, MinIO) | IS card in the IS registry |
+| 0.5 | Approval of data storage (PostgreSQL, MinIO) | IS card in the Security registry |
 | 0.6 | Approval of SIEM integration (Syslog) | [Security — SIEM](/en/configure/security/) |
-| 0.7 | Vulnerability scan of Docker images (Cosign signature) | Scanning report |
-| 0.8 | Approval of disabling simple authentication | [IS Checklist](/en/configure/security/) |
+| 0.7 | Scanning Docker images for vulnerabilities (Cosign signature) | Scanning report |
+| 0.8 | Approval of disabling simple authentication | [Security Checklist](/en/configure/security/) |
 | 0.9 | Approval of the backup policy | [Maintenance — Backup](/en/operation/) |
-| 0.10 | Approval of AI feature usage (if planned, separate project) | IS risk assessment |
+| 0.10 | Approval of AI feature usage (if planned, separate project) | Security risk assessment |
 | 0.11 | Obtaining SSL certificates (wildcard or per-host) | Certificates + keys |
 
 ### DNS and Certificates {#dns-и-сертификаты}
@@ -256,12 +256,12 @@ Reserve the following DNS names:
 
 **Documentation**:
 -   [System requirements and components](/en/install/)
--   [Quick start (scripted)](/en/install/quickstart/QUICKSTART_SCRIPT.html) or [manual](/en/install/quickstart/QUICKSTART_MANUAL.html)
+-   [Quick start (script)](/en/install/quickstart/QUICKSTART_SCRIPT.html) or [manual](/en/install/quickstart/QUICKSTART_MANUAL.html)
 -   [Production-ready installation](/en/install/production/)
 -   [Configuration (ENV + admin panel)](/en/configure/)
 -   [Licensing](/en/operation/License.html)
 
-**Outcome**: The application is accessible via HTTPS, and the smoke test has passed (login, diagram creation, S3, PlantUML, PDF, collaborative editing).
+**Result**: The application is accessible over HTTPS, and the smoke test has passed (login, diagram creation, S3, PlantUML, PDF, collaborative editing).
 
 ---
 
@@ -309,17 +309,17 @@ Reserve the following DNS names:
 
 > Performed only upon the Customer's request, if there is a need to integrate with external systems.
 
-**Who does it**: The Customer develops, the Storm Team consults on the API.
+**Who does it**: The Customer develops, the Storm team consults on the API.
 
 **Documentation**:
 -   [REST API](/en/REST%20API/) — org structure, architectural elements, diagrams, metrics
--   [Recipe: Architectural registry](/en/recipes/ARC_REPO.html)
+-   [Recipe: Architectural repository](/en/recipes/ARC_REPO.html)
 
 ---
 
 ## Phase 6: Backups, DR, Updates {#фаза-6-бэкапы-dr-обновления}
 
-**Goal**: Configure backup, test restore, define RPO/RTO, and master the version update procedure.
+**Goal**: Configure backup, test restore, define RPO/RTO, and master the version upgrade procedure.
 
 **Who does it**: The Customer, following the documentation.
 
@@ -337,7 +337,7 @@ Reserve the following DNS names:
 
 > **Duration: ~1 month.** Training is delivered by the StormBPMN team. Format, schedule, and curriculum are agreed upon separately.
 
-Indicative program:
+Indicative curriculum:
 
 | Block | Audience | Format |
 |------|-----------|--------|
@@ -404,7 +404,7 @@ Additionally: BPMN course in Content Hub (built into the product, self-study).
 
 ## Capacity Allocation {#выделение-мощностеи}
 
-For minimum and recommended requirements, see [System Requirements](/en/install/).
+Minimum and recommended requirements — see [System Requirements](/en/install/).
 
 **Summary**: 16-24 vCPU, 20-34 GB RAM, 270-420 GB SSD for the full configuration.
 
@@ -441,7 +441,7 @@ A staging environment must be available for testing updates before production.
 | **DevOps engineer** | CI/CD, monitoring, automation | 1 |
 | **Business analyst (lead)** | Methodology, training, pilot | 1 |
 | **Integration developer** | REST API, synchronization scripts | 1 |
-| **Storm team** | License, support, consulting, training | Vendor |
+| **Storm team** | License, support, consultations, training | Vendor |
 
 ### RACI Matrix {#raci-матрица}
 
@@ -467,7 +467,7 @@ A staging environment must be available for testing updates before production.
 |---|------|---------|---------|-----------|
 | 1 | Delay in security approval | High | High | Involve security team from day one, start before server procurement |
 | 2 | Incompatibility with corporate AD | Medium | High | Keycloak as a proxy, testing on staging |
-| 3 | Insufficient server resources | Low | Medium | 30% buffer, monitoring from day one |
+| 3 | Insufficient server resources | Low | Medium | 30% reserve, monitoring from day one |
 | 4 | Issues during version updates | Medium | High | Staging environment, backup before each update |
 | 5 | Low user adoption | Medium | High | Pilot, training, Champions, Content Hub |
 | 6 | File loss (MinIO failure) | Low | Critical | Regular backups, disk monitoring |
@@ -479,7 +479,7 @@ A staging environment must be available for testing updates before production.
 
 ## Acceptance Criteria {#критерии-приемки}
 
-The system is considered deployed when the **outcome of each phase** has been achieved and the Go/No-Go criteria have been passed before the production launch.
+The system is considered deployed when the **outcome of each phase** has been achieved and the Go/No-Go criteria have been passed prior to the production launch.
 
 
 ## How to measure implementation results {#как-измерять-результат-внедрения}

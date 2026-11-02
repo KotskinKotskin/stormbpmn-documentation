@@ -1,7 +1,7 @@
 ---
 title: Installation and Integration
 order: 1
-source_hash: 417d3515742ff842
+source_hash: 8cce9fd1e745ada0
 ---
 
 [[toc]]
@@ -14,30 +14,30 @@ It is assumed that the base StormBPMN installation has already been completed ac
 
 Procedure:
 
-1.  Obtain the `storm-des` image;
-2.  Run the container alongside the main application (shared database, shared docker network);
-3.  Specify the service address (`DES_BASE_URL`) in the main application and restart it;
+1.  Obtain the image `storm-des`;
+2.  Start the container alongside the main application (shared database, shared docker network);
+3.  Specify the service address (`DES_BASE_URL`) for the main application and restart it;
 4.  Verify functionality.
 
 ::: info License
 The Simulations module is licensed separately — ensure it is included in your license (see
-[module overview](./README.md)). Access to the image is provided along with the module.
+[module overview](./README.md)). Access to the image is provided with the module.
 :::
 
 ## Step 1. Obtaining the image {#шаг-1-получение-образа}
 
-The image `storm-des` is located in the same private registry as the main StormBPMN image and is accessible using the same credentials:
+The image `storm-des` is located in the same private registry as the main StormBPMN image and is available using the same login from the [Enterprise portal](/en/install/portal.md#доступ-к-образам):
 
 ```bash
-docker pull cr.selcloud.ru/stormbpmn-enterprise/storm-des:<версия>
+docker pull registry.stormbpmn.com/stormbpmn-enterprise/storm-des:<версия>
 ```
 
 ::: warning Versions must match
 Use `storm-des` **of the same version as the main image** StormBPMN — they are built from the same codebase, and compatibility is guaranteed only for identical versions. The current version is specified in the [Changelog](/en/Changelog/README.md) section.
 :::
 
-Transferring the image to the corporate registry and verifying the Cosign signature are performed using the same steps as for the main image — see [“Manual installation”](/en/install/quickstart/QUICKSTART_MANUAL.md) and
-[Changelog → “Image signature verification”](/en/Changelog/README.md).
+Transferring the image to the corporate registry and verifying the Cosign signature are performed using the same steps as for the main image — see ["Manual installation"](/en/install/quickstart/QUICKSTART_MANUAL.md) and
+[Changelog → "Image signature verification"](/en/Changelog/README.md).
 
 ## Step 2. Starting the container {#шаг-2-запуск-контеинера}
 
@@ -47,7 +47,7 @@ then the containers will automatically be in the same docker network):
 ```yaml
 services:
     storm-des:
-        image: cr.selcloud.ru/stormbpmn-enterprise/storm-des:<версия>
+        image: registry.stormbpmn.com/stormbpmn-enterprise/storm-des:<версия>
         container_name: storm-des
         restart: unless-stopped
         environment:
@@ -78,9 +78,9 @@ services:
 
 ::: danger Time zone: TZ must match the main application
 Timestamps for the start and end of simulations are written to the database in the JVM time zone. If the `TZ`
-of the `storm-des` container does not match the `TZ` of the main application, the application's protection mechanism
+of the `storm-des` container does not match the `TZ` of the main application, the application's protective mechanism
 considers running simulations as "hung" and forcibly terminates them with an error. Symptom — simulations
-fail with the message "DES node did not respond," although the service is alive.
+fail with the message "DES node did not respond," even though the service is alive.
 :::
 
 ::: tip Do not publish the port externally
@@ -99,22 +99,22 @@ the containers are on different hosts — open the port only for the application
 | `TZ` | — | Time zone. **Required**, must match the main application |
 | `JAVA_OPTS` | automatically based on container memory | JVM parameters; for predictability, we recommend setting `-Xmx` explicitly |
 | `SIMULATION_MAX_CONCURRENT` | `2` | Number of simulations run in parallel; the rest wait in the queue |
-| `SIMULATION_TIMEOUT_MINUTES` | `10` | Hard limit for a single run — beyond this, the simulation is forcibly stopped |
+| `SIMULATION_TIMEOUT_MINUTES` | `10` | Hard limit for a single run — beyond this duration, the simulation is forcibly stopped |
 | `DES_NODE_ID` | container host name | Node name in reports and metrics; change only when multiple nodes run on the same host |
 | `HIKARI_MAX_POOL_SIZE` | `5` | Database connection pool size |
 | `SIMULATION_DEBUG_ENABLED` | `false` | Save debug files for runs (see [Operations](./operation.md)) |
 
 ## Step 3. Connecting the main application {#шаг-3-подключение-основного-приложения}
 
-Add the following environment variables to the **main application** container and restart it:
+Add environment variables to the **main application** container and restart it:
 
 | Variable | Default | Description |
 | --- | --- | --- |
 | `DES_BASE_URL` | `http://localhost:8081` | Address of the simulations service, for example `http://storm-des:8081`. The application uses this address to check simulation configurations and build previews |
 | `SIMULATION_JANITOR_STALE_QUEUED_MINUTES` | `30` | How many minutes of waiting in the queue before a simulation is marked as an error (protection against a non-functional `storm-des`) |
-| `SIMULATION_JANITOR_STUCK_RUNNING_MINUTES` | `20` | How many minutes without a response from a node before an ongoing simulation is marked as an error |
+| `SIMULATION_JANITOR_STUCK_RUNNING_MINUTES` | `20` | How many minutes without a response from a node before a running simulation is marked as an error |
 
-The actual **run** of the simulation via `DES_BASE_URL` does not occur directly — it is passed through a queue in the database. Therefore, brief unavailability of `storm-des` does not fail tasks started from the queue: they will wait until the service returns (within the limit of `SIMULATION_JANITOR_STALE_QUEUED_MINUTES`).
+The actual **run** of a simulation via `DES_BASE_URL` does not occur directly — it is passed through a queue in the database. Therefore, a brief unavailability of `storm-des` does not fail tasks started from the queue: they will wait until the service returns (within the limit of `SIMULATION_JANITOR_STALE_QUEUED_MINUTES`).
 
 ## Step 4. Operational Check {#шаг-4-проверка-работоспособности}
 
@@ -132,11 +132,10 @@ The actual **run** of the simulation via `DES_BASE_URL` does not occur directly 
     docker exec <контейнер-приложения> wget -qO- http://storm-des:8081/actuator/health
     ```
 
-3.  **End-to-end check** — in the application** — open the **«Simulations»** section, create a simulation on
-    any diagram, and run it. The run must transition from «Queued» to «Running» and
-    complete with a report.
+3.  **End-to-end check** — in the application, open the **"Simulations"** section, create a simulation on
+    any diagram, and run it. The run must transition from "Queued" to "Running" and complete with a report.
 
-If any step fails — see [«Common issues»](./operation.md#типовые-проблемы).
+If any step fails — see ["Common Issues"](./operation.md#типовые-проблемы).
 
 ## Scaling {#масштабирование}
 
@@ -145,4 +144,4 @@ Multiple containers `storm-des` (on the same or different hosts) process a share
 -   start additional containers with the same database settings (if running multiple nodes on a single host, assign a unique `DES_NODE_ID` to each);
 -   or increase the `SIMULATION_MAX_CONCURRENT` and memory of a single node.
 
-A load balancer is not required: the database queue distributes tasks on its own. `DES_BASE_URL` should point to any live node (or to a load balancer if you require high availability and synchronous operations).
+A load balancer is not required: the database queue distributes tasks automatically. `DES_BASE_URL` should point to any live node (or to a load balancer if you require high availability and synchronous operations).
