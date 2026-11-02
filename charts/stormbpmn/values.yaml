@@ -412,8 +412,6 @@ storm:
 
   # ---- AI-модуль (нужна лицензия с AI) -------------------------------------
   ai:
-    # -- MCP_ENABLED. Включает AI-чат и связанные сервисы на бэкенде.
-    mcpEnabled: "false"
     # -- STORM_RETENTION_ENABLED. Ночные AI-прогревы (см. /ai/retention.html).
     retentionEnabled: "false"
 

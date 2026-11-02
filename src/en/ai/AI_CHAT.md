@@ -28,8 +28,8 @@ or your own — and configure the chat behavior.
 ::: tip Two levels of configuration
 Like all StormBPMN configuration (see [System Configuration](/en/configure/README.md)), chat configuration is divided into:
 
-**Level 1 — Server-side enablement:** the environment variable `MCP_ENABLED` and a **license with the AI module**
-(`enableAiFeatures`). The ENV variable requires an application restart; the AI module requires the corresponding license.
+**Level 1 — License:** the AI module (`enableAiFeatures`). There is nothing to enable on the server: AI is
+present in every installation, and the license opens access to it.
 
 **Level 2 — Admin panel (fine-tuning):** the **"Enable AI Chat"** toggle, model, token,
 temperature, prompts, and quality threshold. These are applied **on the fly**, without a restart.
@@ -43,21 +43,19 @@ For the chat button to appear for the user, **all** of the following conditions 
 
 | Parameter                       | Location                                  | Description                                                                                          | Default |
 | ------------------------------ | ------------------------------------ | ------------------------------------------------------------------------------------------------- | ------------ |
-| **MCP_ENABLED**                | Environment variable (ENV)           | Enables all chat services on the backend. Without it, the chat is completely disabled.                              | `false`      |
 | **AI module in the license**       | License (`enableAiFeatures`)        | The chat, like all AI functionality, is part of the **AI module**. Without it, the chat API is closed, and the button is not displayed. | —            |
-| **AI Chat enablement**          | Admin panel → “🤖 AI assistant”     | Toggle to display the chat button. Allows enabling/disabling the chat without modifying the license and ENV.            | enabled      |
+| **AI Chat enablement**          | Admin panel → “🤖 AI assistant”     | Toggle to display the chat button. Allows enabling/disabling the chat without modifying the license.            | enabled      |
 
 In total, for the chat to be available to the user:
 
-1. `MCP_ENABLED=true` is set on the backend (after changing it — **restart the container**);
-2. The license includes the **AI module** (`enableAiFeatures`);
-3. The **“AI Chat enablement”** toggle is enabled in the admin panel (enabled by default);
-4. The user is authenticated.
+1. The license includes the **AI module** (`enableAiFeatures`);
+2. The **“AI Chat enablement”** toggle is enabled in the admin panel (enabled by default);
+3. The user is authenticated.
 
-::: warning The chat button is missing, although `MCP_ENABLED=true`?
+::: warning The chat button is missing?
 Check in order: (1) the license contains the **AI module** (`enableAiFeatures`); (2) in the admin panel,
 section **“🤖 AI assistant”**, the **“AI Chat enablement”** toggle is enabled; (3) you are authenticated. The toggle is
-the fastest way to hide or show the chat without changing the license or ENV.
+the fastest way to hide or show the chat without changing the license.
 :::
 
 ---
@@ -388,12 +386,11 @@ Increase the **Token Limit** in the model settings.
 :::
 
 ::: details Chat button is missing from the interface
-Check: (1) `MCP_ENABLED=true` on the backend and the container has been restarted; (2) the license includes the AI module
-(`enableAiFeatures`); (3) in the admin panel, the "🤖 AI Assistant" section, the "Enable AI Chat" toggle is on;
-(4) you are authorized.
+Check: (1) the license includes the AI module (`enableAiFeatures`); (2) in the admin panel, the "🤖 AI Assistant"
+section, the "Enable AI Chat" toggle is on; (3) you are authorized.
 :::
 
 ::: details Changed settings — not applied
 Model/prompt settings from the admin panel are applied **on the next request** in the chat, no restart is
-needed. However, `MCP_ENABLED` (ENV) requires a **restart** of the container.
+needed.
 :::

@@ -43,8 +43,7 @@ can be deployed on a machine without a graphics card.
 
 | Condition | Location | Comment |
 | ------- | --- | ----------- |
-| `MCP_ENABLED=true` | Main application ENV | Voice input is part of the AI module, just like chat (see [Enabling chat](./AI_CHAT.md)) |
-| AI module in the license | License (`enableAiFeatures`) | Without it, the chat API is disabled |
+| AI module in the license | License (`enableAiFeatures`) | Voice input is part of the AI module, just like chat (see [Enabling chat](./AI_CHAT.md)); without the module, the chat API is disabled |
 | HTTPS for Storm | Your proxy/load balancer | Browser requirement for microphone access |
 | storm-media service | Separate host/container | See Step 2. Local recognition requires an **NVIDIA GPU** |
 
@@ -164,7 +163,7 @@ All settings are located in the **Admin Panel**, in the **«🤖 AI Assistant»*
 Final checklist:
 
 1. storm-media is running, and `GET /ready` responds successfully;
-2. `MCP_ENABLED=true`, license with the AI module;
+2. License with the AI module;
 3. In the admin panel, `stormMediaBaseUrl` and `stormMediaToken` are filled in, and the "Voice input in chat" toggle is enabled;
 4. Storm is opened via HTTPS — the microphone button appears in the chat input field.
 
@@ -172,7 +171,7 @@ Final checklist:
 
 | Symptom | Cause | Solution |
 | ------- | ------- | ------- |
-| Microphone button is missing | Toggle `voiceInputEnabled` is off, chat is unavailable (`MCP_ENABLED`/license) | Verify the conditions from the checklist; the chat itself must be working |
+| Microphone button is missing | Toggle `voiceInputEnabled` is off, chat is unavailable (no AI module in the license) | Verify the conditions from the checklist; the chat itself must be working |
 | Browser denies microphone access | Storm is opened over HTTP | Configure HTTPS (a browser requirement, not a Storm requirement) |
 | “Voice input is not configured” | Empty `stormMediaBaseUrl` or `stormMediaToken` | Fill in both settings in the admin panel |
 | “Voice input is disabled” | Toggle `voiceInputEnabled` is off | Enable the toggle |

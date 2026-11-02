@@ -65,7 +65,6 @@ data:
   {{- end }}
 
   # ---- AI ----
-  MCP_ENABLED: {{ .Values.storm.ai.mcpEnabled | toString | quote }}
   STORM_RETENTION_ENABLED: {{ .Values.storm.ai.retentionEnabled | toString | quote }}
 
   # ---- Security flags ----
