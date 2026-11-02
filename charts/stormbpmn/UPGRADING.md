@@ -29,7 +29,7 @@ kubectl -n stormbpmn create secret docker-registry regcred \n  --docker-server=r
 | `storm.jwt.secret` ≥ 32 символов | ≥ 64 символов | HS512: с коротким ключом вход падает с `WeakKeyException` |
 | `storm.license.key` | `storm.license.keyV2` (+ `key` на время проверки) | Лицензия v2 на инсталляцию: код с `/admin-onboarding` → ключ в портале Enterprise |
 | — | `storm.s3.externalEndpoint` | `S3_EXTERNAL_ENDPOINT`, если браузер ходит в S3 по другому адресу |
-| — | `storm.ai.mcpEnabled`, `storm.ai.retentionEnabled` | AI-модуль |
+| — | `storm.ai.retentionEnabled` | AI-модуль |
 | `storm.audit.channel`: console / syslog | + `database` и `storm.audit.database.*` | Аудит в TimescaleDB |
 | `storm.redis.*` | удалён | Redis в enterprise не нужен, чарт всегда передаёт `REDIS_ENABLED=false`. Если Redis разворачивали для StormBPMN, его можно удалить |
 | ingress-аннотации `affinity: cookie` | удалены из умолчаний | Sticky-сессии не нужны |

@@ -82,7 +82,7 @@ Pressing the button again **does not create a duplicate** — the already create
 
 | Condition | Location | Comment |
 | ------- | --- | ----------- |
-| `MCP_ENABLED=true` + AI module in the license | ENV / license | Attachments are part of the AI chat (see [Enabling chat](./AI_CHAT.md)) |
+| AI module in the license | License (`enableAiFeatures`) | Attachments are part of the AI chat (see [Enabling chat](./AI_CHAT.md)) |
 | Connected LLM | Admin panel | Required for chat in general and for the LLM path of schema import |
 | storm-media service | Separate host/container | **For documents only.** Schemas work without it |
 | S3 is accessible from the storm-media host | Your network | storm-media downloads files via presigned links |
@@ -118,7 +118,7 @@ Section **«🤖 AI Assistant»**, file settings subgroup. Changes take effect i
 
 Final checklist:
 
-1.  Chat is working (LLM connected, `MCP_ENABLED=true`, license with the AI module);
+1.  Chat is working (LLM connected, license with the AI module);
 2.  storm-media is running, `GET /ready` responds successfully, `stormMediaBaseUrl` and `stormMediaToken` are populated (for documents);
 3.  The S3 address from presigned links is accessible from the storm-media host;
 4.  The **«Files in chat»** toggle is enabled — a paperclip icon has appeared in the input field.

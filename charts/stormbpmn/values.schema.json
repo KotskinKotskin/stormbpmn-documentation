@@ -275,14 +275,6 @@
         "ai": {
           "type": "object",
           "properties": {
-            "mcpEnabled": {
-              "enum": [
-                "true",
-                "false",
-                true,
-                false
-              ]
-            },
             "retentionEnabled": {
               "enum": [
                 "true",

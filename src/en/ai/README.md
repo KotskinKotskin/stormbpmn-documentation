@@ -15,7 +15,7 @@ source_hash: 17286e9d7fd83549
 
 The AI Assistant is a chat built into the application that reads your diagrams, processes, roles, and documents, answers questions from the knowledge base, and **actually creates and edits BPMN diagrams**, assigns roles, and links documents — by invoking tools, rather than fabricating results.
 
-All AI functionality is included in the **AI module** of the license (`enableAiFeatures`) and is enabled on the server via the environment variable `MCP_ENABLED`. Fine-tuning is available in the admin panel, under the “🤖 AI Assistant” section.
+All AI functionality is included in the **AI module** of the license (`enableAiFeatures`); there is nothing to enable on the server, the license opens access. Fine-tuning is available in the admin panel, under the “🤖 AI Assistant” section.
 
 ::: tip pgvector Required
 The vector engine (which powers the knowledge base and the platform's fast semantic search) requires the **pgvector** extension in PostgreSQL. This is a basic platform requirement, not part of the AI module — see [“PostgreSQL Requirements”](/en/install/README.md).
