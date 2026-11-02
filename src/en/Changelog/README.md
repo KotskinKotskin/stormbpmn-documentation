@@ -63,7 +63,7 @@ Starting from version [6.6.5952](./6.6.5952.md) (dated 09.06.2026), the **pgvect
 
 Without the extension, the database migration will not complete, and the backend **will not start** (there is no graceful degradation). Versions **up to and including `6.6.5694`** did not require the extension — when updating from them, prepare PostgreSQL **before** changing the application version:
 
-1. Switch PostgreSQL to a build with pgvector — for example, the **`pgvector/pgvector:pgXX`** image for your PostgreSQL major version (`pg15`/`pg16`/`pg17`); an internal mirror `cr.selcloud.ru/stormbpmn-enterprise/pgvector:pg17` is available for enterprise. Alternatively, install the extension package in the current DBMS (for example, `postgresql-17-pgvector`) and restart it. For managed databases (DBaaS), ensure that the provider offers `pgvector`.
+1. Switch PostgreSQL to a build with pgvector — for example, the **`pgvector/pgvector:pgXX`** image for your PostgreSQL major version (`pg15`/`pg16`/`pg17`); a mirror `registry.stormbpmn.com/stormbpmn-enterprise/pgvector:pg17` is available for enterprise (login in the [Enterprise portal](https://portal.enterprise.stormbpmn.com)). Alternatively, install the extension package in the current DBMS (for example, `postgresql-17-pgvector`) and restart it. For managed databases (DBaaS), ensure that the provider offers `pgvector`.
 2. Pre-create the extensions in the **application database** (as a superuser or a role with the `CREATE EXTENSION` privilege):
 
 ```sql
