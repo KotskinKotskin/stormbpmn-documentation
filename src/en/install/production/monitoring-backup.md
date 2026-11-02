@@ -66,6 +66,28 @@ If the organization already has a centralized monitoring system (Zabbix, Glaber,
 A ready-made Grafana dashboard, alert thresholds, and health checks: [Administration → System Monitoring](/en/operation/README.md#мониторинг-системы)
 :::
 
+### Email Delivery Monitoring {#мониторинг-доставки-писем}
+
+When using UniSender Go as the email provider, StormBPMN exposes a gauge metric for undelivered activation emails.
+
+**Metric:** `unisender_activation_undelivered`
+
+- **Description:** The number of activation emails that have not been delivered.
+- **Refresh interval:** 30 seconds (configurable via `outbox.metrics.refresh-ms`).
+- **Condition:** The metric is available only when `email.provider` is set to `unisender`.
+
+::: warning Alerting
+Configure an alert if the value of `unisender_activation_undelivered` is greater than 0 for a sustained period (e.g., 5 minutes). This indicates that users are unable to activate their accounts, which may be caused by issues with the UniSender Go service or network connectivity.
+:::
+
+**Webhook endpoint:**
+
+- **URL:** `/api/v1/webhooks/unisender-go`
+- **Method:** `POST`
+- **Content-Type:** `application/json`
+- **Authentication:** Signature verification is performed. Requests with an invalid signature are rejected with `401 Unauthorized`.
+- **Health check:** `GET /api/v1/webhooks/unisender-go` returns `200 OK` if the webhook is available.
+
 ---
 
 ---

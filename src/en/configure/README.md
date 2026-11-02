@@ -95,6 +95,15 @@ When logging in via SSO (OAuth2/OIDC, Keycloak, ADFS), the captcha is not used: 
 | PDF          | **For PDF** - required for document generation                                             |
 | Collaboration | **Collaborative editing** - Redis for multi-instance, not required for a single instance   |
 | Security     | **For security** - required to meet information security requirements                                 |
+| **UNISENDER_API_KEY** | API key for the UniSender Go provider (header `X-API-KEY`) | `usk_...` | When `EMAIL_PROVIDER=unisender` |
+| **DASHA_API_KEY** | DashaMail API key for managing mailing lists (registration, trial, payment, unsubscribe) | `dasha_key_...` | When `EMAIL_PROVIDER=unisender` and DashaMail lists are used |
+
+::: tip UniSender Go provider
+
+To use the UniSender Go provider for transactional emails, set `EMAIL_PROVIDER=unisender` and specify the `UNISENDER_API_KEY`.
+
+When this provider is active, mailing lists (registration, trial, payment, unsubscribe) continue to work via DashaMail. To enable them, specify the `DASHA_API_KEY`. If this key is not specified, the mailing lists are disabled.
+:::
 
 ## Level 2: Admin Panel {#уровень-2-административная-панель}
 

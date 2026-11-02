@@ -283,6 +283,12 @@ Upon license expiration:
 To restore functionality, the license key must be updated.
 :::
 
+::: tip Owner access on an expired key
+When the license key expires, the system owner (an account with full access) retains the ability to log in and export telemetry data from the **Activity** section to facilitate license renewal. Other users are blocked from logging in.
+
+The error message displayed to blocked users includes the full names of the system owners (up to 3) to indicate who to contact. Email addresses and login names are not disclosed in this message.
+:::
+
 ---
 
 ## License Status Page `/license-active` {#страница-статуса-лицензии-license-active}

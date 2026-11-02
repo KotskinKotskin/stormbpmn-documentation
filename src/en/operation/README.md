@@ -44,6 +44,24 @@ StormBPMN provides an HTTP endpoint with metrics in Micrometer format for monito
 Use the [Spring Boot Statistics Dashboard](https://grafana.com/grafana/dashboards/12835-spring-boot-statistics-6756-tomcat/) to visualize the metrics.
 :::
 
+### Integration Queue (Outbox) Metrics {#метрики-очереди-интеграций}
+
+StormBPMN exposes metrics for the integration queue (outbox) and the DashaMail circuit breaker via the same Prometheus endpoint. These metrics help monitor the health of email delivery and external integrations.
+
+**Key metrics:**
+
+| Metric | Description |
+| --- | --- |
+| `resilience4j_circuitbreaker_state` | Current state of the DashaMail circuit breaker (CLOSED, OPEN, HALF_OPEN) |
+| `resilience4j_circuitbreaker_failure_rate` | Failure rate of the circuit breaker |
+| `resilience4j_circuitbreaker_slow_call_rate` | Slow call rate of the circuit breaker |
+| `outbox_pending_count` | Number of pending items in the integration queue |
+| `outbox_processing_duration` | Duration of processing items from the queue |
+
+::: tip Monitoring the circuit breaker
+Use the `resilience4j_circuitbreaker_state` metric to detect when the DashaMail circuit breaker opens. An OPEN state indicates that email delivery is temporarily disabled due to high failure rates.
+:::
+
 ### Alert Configuration {#настроика-алертов}
 
 Recommended thresholds for alert triggers:
@@ -54,6 +72,7 @@ Recommended thresholds for alert triggers:
 | **Request Count /api/v1/** | > 100 requests per minute | Abnormally high load  |
 | **HEAP Memory Used**       | > 90% for 5 minutes | JVM memory shortage         |
 | **No Data**                | > 5 minutes without data    | Service unavailability       |
+| **Circuit Breaker State** | OPEN for 1 minute | DashaMail email delivery disabled due to failures |
 
 ::: warning When alerts are triggered
 Proceed to the [Disaster Recovery](#при-базовои-эксплуатации) section
