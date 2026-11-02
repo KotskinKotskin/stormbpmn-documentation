@@ -62,7 +62,7 @@ order: 10
 
 Без расширения миграция базы не выполнится и бэкенд **не запустится** (мягкой деградации нет). Версии **до `6.6.5694` включительно** расширение не требовали — при обновлении с них подготовьте PostgreSQL **до** смены версии приложения:
 
-1. Переведите PostgreSQL на сборку с pgvector — например, образ **`pgvector/pgvector:pgXX`** под вашу мажорную версию PostgreSQL (`pg15`/`pg16`/`pg17`); для enterprise доступно внутреннее зеркало `cr.selcloud.ru/stormbpmn-enterprise/pgvector:pg17`. Либо установите пакет расширения в текущую СУБД (например, `postgresql-17-pgvector`) и перезапустите её. Для управляемых БД (DBaaS) убедитесь, что провайдер предоставляет `pgvector`.
+1. Переведите PostgreSQL на сборку с pgvector — например, образ **`pgvector/pgvector:pgXX`** под вашу мажорную версию PostgreSQL (`pg15`/`pg16`/`pg17`); для enterprise доступно зеркало `registry.stormbpmn.com/stormbpmn-enterprise/pgvector:pg17` (логин — в [портале Enterprise](https://portal.enterprise.stormbpmn.com)). Либо установите пакет расширения в текущую СУБД (например, `postgresql-17-pgvector`) и перезапустите её. Для управляемых БД (DBaaS) убедитесь, что провайдер предоставляет `pgvector`.
 2. Заранее заведите расширения в **базе приложения** (от суперпользователя или роли с правом `CREATE EXTENSION`):
 
 ```sql
