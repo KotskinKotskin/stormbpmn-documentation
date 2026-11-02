@@ -1,5 +1,5 @@
 ---
-source_hash: f6dbf495ce956211
+source_hash: 78da4f3799beaf6f
 ---
 # Installing pgvector in PostgreSQL {#установка-pgvector-в-postgresql}
 
@@ -9,13 +9,13 @@ source_hash: f6dbf495ce956211
 
 ## Why {#зачем}
 
-Starting with version `6.6.5952`, the application **requires** PostgreSQL with the **`pgvector`** extension. On startup, the migration performs `CREATE EXTENSION vector`; without the extension, the container terminates abnormally — there is no graceful degradation.
+Starting from version `6.6.5952`, the application **requires** PostgreSQL with the **`pgvector`** extension. On startup, the migration performs `CREATE EXTENSION vector`; without the extension, the container terminates abnormally — there is no graceful degradation.
 
 **Update order:** First, start PostgreSQL **with pgvector**, and only then update the application.
 
 > ℹ️ **Do not change the major version of PostgreSQL.** Tag `pg17` corresponds to PostgreSQL 17. Changing the major version (17 → 18) is a separate `pg_upgrade` and `postgresql-18-pgvector` package, and is not performed "on the fly." Substitute **your** major version everywhere below.
 >
-> The Enterprise mirror contains an image for **PostgreSQL 17** (`cr.selcloud.ru/stormbpmn-enterprise/pgvector:pg17`).
+> The Enterprise mirror contains an image for **PostgreSQL 17** (`registry.stormbpmn.com/stormbpmn-enterprise/pgvector:pg17`).
 > If you have a different major version and need a mirror — **contact technical support**, and we will provide an image for your version.
 
 ## Which scenario to choose {#какои-сценарии-выбрать}
@@ -29,7 +29,7 @@ Starting with version `6.6.5952`, the application **requires** PostgreSQL with t
 
 ### 1.1. Switch to the official image `pgvector/pgvector:pgXX` + REINDEX {#_1-1-переити-на-официальныи-образ-pgvector-pgvector-pgxx-reindex}
 
-**When:** You want the simplest path and are ready for a one-time reindexing (on small DBs — seconds). The official image is built on a different Debian base, so glibc/ICU change → `REINDEX` + collation marker update is required.
+**When:** You want the simplest path and are ready for a one-time reindexing (on small DBs — seconds). The official image is built on a different Debian base, so glibc/ICU change → `REINDEX` + updating collation markers is required.
 
 **1. Swap the image** (do not touch the volume — data is on it):
 
@@ -42,7 +42,7 @@ Starting with version `6.6.5952`, the application **requires** PostgreSQL with t
   `pgvector/pgvector:pg17` → the same mount `/var/lib/postgresql/data` to the same volume →
   **Deploy**.
 
-**2. After startup — reindexing and collation marker update**:
+**2. After startup — reindexing and updating collation markers**:
 
 Open a psql session as the superuser:
 
@@ -76,7 +76,7 @@ WHERE collversion IS NOT NULL AND collversion <> pg_collation_actual_version(oid
 
 **3. Verify the extension:**
 
-Choose based on the application schema. It is specified in the `JDBC_URL` container of Storm, parameter `currentSchema` (no parameter → `public`).
+Select based on the application schema. It is specified in the `JDBC_URL` container of Storm, parameter `currentSchema` (no parameter → `public`).
 
 ```sql
 -- public
@@ -95,7 +95,7 @@ docker logs <pg> --since 2m 2>&1 | grep -i collation || echo "OK: no collation w
 
 > ⚠️ **Order matters: first `REINDEX`, then `REFRESH`.** `REINDEX` rebuilds indexes
 > for the current libraries, `REFRESH` only removes the warning. `REFRESH` without `REINDEX`
-> is **not allowed** — it hides potentially incorrect indexes.
+> must **not** be done — it hides potentially incorrect indexes.
 
 ### 1.2. Build your own pgvector image based on the current PostgreSQL (without reindex) {#_1-2-собрать-свои-образ-pgvector-на-базе-текущего-postgresql-без-reindex}
 
@@ -126,7 +126,7 @@ docker build -t storm-postgres:pgvector .
 ```
 *(or Portainer → Images → Build a new image → Web editor)*
 
-**3. Recreate the container** on the `storm-postgres:pgvector` image, using the same volume (similar to p.1.1.1).
+**3. Recreate the container** on the `storm-postgres:pgvector` image, using the same volume (similar to section 1.1.1).
 In Portainer, when using Duplicate/Edit — **disable Always pull the image** (the image is local,
 it is not in the registry).
 
@@ -148,7 +148,7 @@ SELECT '[1,2,3]'::<schema>.vector;
 
 ## Option 2. Install the package in the OS {#вариант-2-установить-пакет-в-ос}
 
-**When:** PostgreSQL is installed as a package in the OS (not in Docker). OS libraries are not modified →
+**When:** PostgreSQL is installed via a package in the OS (not in Docker). OS libraries are not modified →
 `REINDEX` is not required, and the package is installed permanently.
 
 ```bash
@@ -164,7 +164,7 @@ sudo -u postgres psql -d <db>
 ```
 
 Select based on the application schema. It is specified in the `JDBC_URL` Storm container,
-parameter `currentSchema` (if the parameter is absent → `public`).
+parameter `currentSchema` (if the parameter is missing → `public`).
 
 ```sql
 -- public

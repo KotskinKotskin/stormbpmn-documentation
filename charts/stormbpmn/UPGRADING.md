@@ -3,13 +3,31 @@
 С этой версии номер чарта совпадает с версией StormBPMN, а сам чарт публикуется в
 `https://enterprise.stormbpmn.com/helm` (`helm repo add stormbpmn …`).
 
+## Реестр образов: `registry.stormbpmn.com`
+
+По умолчанию чарт берёт образы из `registry.stormbpmn.com` (раньше — `cr.selcloud.ru`). Логин к
+нему выдаётся только в портале Enterprise https://portal.enterprise.stormbpmn.com, раздел
+«Доступ к образам». Перед `helm upgrade` пересоздайте секрет `regcred` с логином и секретом из
+портала:
+
+```bash
+kubectl -n stormbpmn delete secret regcred
+kubectl -n stormbpmn create secret docker-registry regcred \n  --docker-server=registry.stormbpmn.com \n  --docker-username='<логин из портала>' --docker-password='<секрет из портала>'
+```
+
+Если в ваших values явно задан `image.registry: cr.selcloud.ru`, замените его на
+`registry.stormbpmn.com`. В закрытом контуре со своим реестром ничего не меняется: образы для
+переноса скачивайте из `registry.stormbpmn.com`.
+
+## Миграция values
+
 Перед `helm upgrade` сделайте бэкап PostgreSQL и S3, затем приведите values:
 
 | Было (3.x) | Стало | Почему |
 |---|---|---|
 | `storm.security.sessionExpirationMs: "86400000"` | `storm.security.sessionExpirationSeconds: "86400"` или пусто | `SESSION_EXPIRATION` теперь в секундах; значение больше 90 суток не даёт приложению стартовать |
 | `storm.jwt.secret` ≥ 32 символов | ≥ 64 символов | HS512: с коротким ключом вход падает с `WeakKeyException` |
-| `storm.license.key` | `storm.license.keyV2` (+ `key` на время проверки) | Лицензия v2 на инсталляцию: код с `/admin-onboarding` → ключ у менеджера |
+| `storm.license.key` | `storm.license.keyV2` (+ `key` на время проверки) | Лицензия v2 на инсталляцию: код с `/admin-onboarding` → ключ в портале Enterprise |
 | — | `storm.s3.externalEndpoint` | `S3_EXTERNAL_ENDPOINT`, если браузер ходит в S3 по другому адресу |
 | — | `storm.ai.mcpEnabled`, `storm.ai.retentionEnabled` | AI-модуль |
 | `storm.audit.channel`: console / syslog | + `database` и `storm.audit.database.*` | Аудит в TimescaleDB |
@@ -215,7 +233,7 @@ helm get values storm -n stormbpmn > old-values.yaml
 | `ELASTICSEARCH_URL` | **удалено** |
 | `CRM_TRACKING` | **удалено** |
 | `STORM_ENABLE_SAAS_FEATURES` | **удалено** |
-| `image.repository: cr.yandex/...` | `image.registry: cr.selcloud.ru` + `image.repository: stormbpmn-enterprise/stormbpmn_fullstack_enterprise` |
+| `image.repository: cr.yandex/...` | `image.registry: registry.stormbpmn.com` + `image.repository: stormbpmn-enterprise/stormbpmn_fullstack_enterprise` |
 | `image.tag: latest` | `image.tag: ""` (=appVersion из Chart.yaml) или конкретный тег |
 
 ### 3. Сгенерируйте JWTSECRET ≥32 символов

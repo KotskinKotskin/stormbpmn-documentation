@@ -30,7 +30,7 @@ replicaCount: 1
 image:
   # -- Хост private registry. Для air-gap перенесите образ в свой Harbor/JFrog
   #    и переопределите: --set image.registry=harbor.bank.local
-  registry: cr.selcloud.ru
+  registry: registry.stormbpmn.com
   repository: stormbpmn-enterprise/stormbpmn_fullstack_enterprise
   # -- Тег. Пусто → .Chart.AppVersion (= версия чарта = версия StormBPMN).
   #    Не используйте `latest` в проде.
@@ -39,9 +39,10 @@ image:
 
 # -- imagePullSecrets. Создайте Secret заранее:
 #      kubectl create secret docker-registry regcred \
-#        --docker-server=cr.selcloud.ru \
-#        --docker-username='<token-id>' --docker-password='<token-secret>'
-#    Учётные данные выдаёт ваш менеджер StormBPMN.
+#        --docker-server=registry.stormbpmn.com \
+#        --docker-username='<логин из портала>' --docker-password='<секрет из портала>'
+#    Логин и секрет robot-аккаунта выдаются только в портале Enterprise
+#    https://portal.enterprise.stormbpmn.com, раздел «Доступ к образам».
 imagePullSecrets:
   - name: regcred
 

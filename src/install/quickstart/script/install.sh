@@ -14,7 +14,8 @@ LOG_FILE="./install.log"
 CREDENTIALS_FILE="./credentials.txt"
 DOCKER_COMPOSE_FILE="./docker-compose.yml"
 
-REQUIRED_VARS=("TIMEZONE" "STORMBPMN_VERSION" "SELECTEL_TOKEN")
+REQUIRED_VARS=("TIMEZONE" "STORMBPMN_VERSION" "REGISTRY_USERNAME" "REGISTRY_PASSWORD")
+REGISTRY_HOST="registry.stormbpmn.com"
 
 ### SETUP LOGGING
 exec > >(tee -a "$LOG_FILE") 2>&1
@@ -130,8 +131,8 @@ services:
     # pgcrypto, uuid-ossp, hstore) + расширение pgvector. pgvector — базовое требование
     # платформы (быстрый универсальный поиск + база знаний AI-чата), в ближайших версиях
     # станет обязательным. Официальный postgres:17 pgvector НЕ содержит.
-    # Можно заменить на наше подписанное зеркало (тот же токен Selectel, что и у основного образа):
-    #   image: cr.selcloud.ru/stormbpmn-enterprise/pgvector:pg17
+    # Можно заменить на наше подписанное зеркало (тот же логин из портала, что и у основного образа):
+    #   image: registry.stormbpmn.com/stormbpmn-enterprise/pgvector:pg17
     image: pgvector/pgvector:pg17
     container_name: postgres
     restart: always
@@ -175,8 +176,8 @@ services:
       - /etc/localtime:/etc/localtime:ro
 
   gotenberg:
-    # Можно заменить на наше подписанное зеркало (тот же токен Selectel, что и у основного образа):
-    #   image: cr.selcloud.ru/stormbpmn-enterprise/gotenberg:8
+    # Можно заменить на наше подписанное зеркало (тот же логин из портала, что и у основного образа):
+    #   image: registry.stormbpmn.com/stormbpmn-enterprise/gotenberg:8
     image: gotenberg/gotenberg:8
     container_name: gotenberg
     restart: always
@@ -185,7 +186,7 @@ services:
       - /etc/localtime:/etc/localtime:ro
 
   stormbpmn:
-    image: cr.selcloud.ru/stormbpmn-enterprise/stormbpmn_fullstack_enterprise:$STORMBPMN_VERSION
+    image: $REGISTRY_HOST/stormbpmn-enterprise/stormbpmn_fullstack_enterprise:$STORMBPMN_VERSION
     container_name: stormbpmn
     restart: always
     depends_on:
@@ -217,8 +218,8 @@ services:
 
 EOF
 
-log "Logging into private registry cr.selcloud.ru..."
-echo "$SELECTEL_TOKEN" | docker login cr.selcloud.ru --username token --password-stdin || abort "Failed to login to cr.selcloud.ru registry"
+log "Logging into private registry $REGISTRY_HOST..."
+printf '%s' "$REGISTRY_PASSWORD" | docker login "$REGISTRY_HOST" --username "$REGISTRY_USERNAME" --password-stdin || abort "Failed to login to $REGISTRY_HOST registry"
 
 ### START SERVICES
 log "Starting services..."
@@ -241,18 +242,13 @@ PORTAINER_TOKEN=$(curl -sSfk -X POST http://localhost:9080/api/auth \
   -d "{\"Username\":\"admin\",\"Password\":\"$PORTAINER_PASSWORD\"}" \
   | jq -r .jwt) || abort "Failed to retrieve Portainer admin JWT"
 
-log "Adding Selectel to Portainer registries..."
+log "Adding Stormbpmn registry to Portainer registries..."
 curl -sSfk -X POST http://localhost:9080/api/registries \
   -H "Authorization: Bearer $PORTAINER_TOKEN" \
   -H 'Content-Type: application/json' \
-  -d '{
-        "Name": "Selectel",
-        "URL": "cr.selcloud.ru",
-        "Type": 3,
-        "Authentication": true,
-        "Username": "'"token"'",
-        "Password": "'"$SELECTEL_TOKEN"'"
-      }' && echo || abort "Failed to add Selectel to Portainer registries"
+  -d "$(jq -n --arg url "$REGISTRY_HOST" --arg user "$REGISTRY_USERNAME" --arg pass "$REGISTRY_PASSWORD" \
+        '{Name: "Stormbpmn", URL: $url, Type: 3, Authentication: true, Username: $user, Password: $pass}')" \
+  && echo || abort "Failed to add Stormbpmn registry to Portainer registries"
 
 ### CONFIGURE POSTGRES
 log "Waiting for Postgres to be healthy..."

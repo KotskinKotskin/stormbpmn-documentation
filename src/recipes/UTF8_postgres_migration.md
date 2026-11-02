@@ -49,7 +49,7 @@ Enterprise ([install](https://enterprise.stormbpmn.com/install/),
       При необходимости: `localedef -i ru_RU -f UTF-8 ru_RU.UTF-8` (Debian/RHEL).
 - [ ] **Приёмник** (новый сервер/контейнер БД, куда переедет база) — PostgreSQL **14+**, рекомендуем **16–17**.
       Проще всего взять готовый образ `pgvector/pgvector:pg17` (зеркало
-      `cr.selcloud.ru/stormbpmn-enterprise/pgvector:pg17`): в нём **уже есть** PostgreSQL 17,
+      `registry.stormbpmn.com/stormbpmn-enterprise/pgvector:pg17`): в нём **уже есть** PostgreSQL 17,
       пакет pgvector и поддержка ICU — отдельно их ставить или собирать **не нужно**. Конкретно
       PG17 не обязателен (минимум — 14), но этот образ — самый простой способ получить сборку,
       где pgvector и ICU уже на месте.

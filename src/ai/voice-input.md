@@ -61,10 +61,10 @@ storm-media поддерживает два режима распознаван�
 
 ## Шаг 2. Развернуть storm-media
 
-Образ собирается в том же реестре, что и enterprise-приложение:
+Образ лежит в том же реестре, что и enterprise-приложение, и скачивается по тому же логину из [портала Enterprise](/install/portal.md#доступ-к-образам):
 
 ```bash
-docker pull cr.selcloud.ru/stormbpmn-enterprise/storm-media:latest
+docker pull registry.stormbpmn.com/stormbpmn-enterprise/storm-media:latest
 ```
 
 Пример `docker-compose.yml` для локального распознавания на GPU:
@@ -72,7 +72,7 @@ docker pull cr.selcloud.ru/stormbpmn-enterprise/storm-media:latest
 ```yaml
 services:
   storm-media:
-    image: cr.selcloud.ru/stormbpmn-enterprise/storm-media:latest
+    image: registry.stormbpmn.com/stormbpmn-enterprise/storm-media:latest
     restart: unless-stopped
     environment:
       INTERNAL_TOKEN: "<секрет — придумайте длинную случайную строку>"

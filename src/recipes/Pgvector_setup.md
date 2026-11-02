@@ -19,7 +19,7 @@
 > (17 → 18) — это отдельный `pg_upgrade` и пакет `postgresql-18-pgvector`, «на лету» не
 > выполняется. Везде ниже подставляйте **свою** мажорную версию.
 >
-> Enterprise-зеркало содержит образ под **PostgreSQL 17** (`cr.selcloud.ru/stormbpmn-enterprise/pgvector:pg17`). 
+> Enterprise-зеркало содержит образ под **PostgreSQL 17** (`registry.stormbpmn.com/stormbpmn-enterprise/pgvector:pg17`). 
 > Если у вас другой мажор и нужно зеркало — **напишите в техподдержку**, предоставим образ под вашу версию.
 
 ## Какой сценарий выбрать

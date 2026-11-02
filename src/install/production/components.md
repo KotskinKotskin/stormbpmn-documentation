@@ -284,13 +284,13 @@ docker run -d \
 ```
 
 ::: tip Можно использовать наш образ Gotenberg
-Если в организации запрещены внешние реестры (Docker Hub), используйте зеркало Gotenberg в нашем приватном реестре — это официальный образ `gotenberg/gotenberg:8`, **подписанный той же подписью Cosign**, что и основной образ StormBPMN, и доступный по **тем же** учётным данным `cr.selcloud.ru`:
+Если в организации запрещены внешние реестры (Docker Hub), используйте зеркало Gotenberg в нашем приватном реестре — это официальный образ `gotenberg/gotenberg:8`, **подписанный той же подписью Cosign**, что и основной образ StormBPMN, и доступный по **тому же** логину из [портала Enterprise](/install/portal.md#доступ-к-образам):
 
 ```bash
 docker run -d \
   -p 3001:3000 \
   --name gotenberg \
-  cr.selcloud.ru/stormbpmn-enterprise/gotenberg:8
+  registry.stormbpmn.com/stormbpmn-enterprise/gotenberg:8
 ```
 
 Подпись проверяется так же, как у основного образа (см. [Changelog → «Проверка подписи образа (Cosign)»](/Changelog/README.md)). Перенос образа в корпоративный реестр — по инструкции из [Быстрого старта](/install/quickstart/QUICKSTART_MANUAL.md).

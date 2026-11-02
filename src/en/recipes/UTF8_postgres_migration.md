@@ -1,28 +1,19 @@
 ---
-source_hash: 6a21628633c93af6
+source_hash: 21f7489444e2ff3f
 ---
 # Migrating the StormBPMN Database to UTF-8 {#миграция-бд-stormbpmn-на-utf-8}
 
 A guide for the database administrator of an on-premise installation. The goal is to convert the StormBPMN database from `SQL_ASCII` to `UTF-8` to ensure that case-insensitive search and deduplication for Cyrillic characters work correctly.
 
-> All commands and thresholds have been verified on PostgreSQL 16, database `SQL_ASCII | C | C` (matching the target installation). Before proceeding, read the entire document, especially section **3 (data diagnostics)**.
+> All commands and thresholds have been verified on PostgreSQL 16, database `SQL_ASCII | C | C` (matching the target installation). Before proceeding, read the entire guide, especially section **3 (data diagnostics)**.
 
 ---
 
 ## 1. Why {#_1-зачем}
 
-StormBPMN supports databases only in **UTF-8** encoding — this is an official requirement of Storm
-Storm Enterprise ([install](https://enterprise.stormbpmn.com/install/),
-[get-started](https://enterprise.stormbpmn.com/get-started.html)): *"UTF8 encoding — correct text storage, ICU collation, and natural sorting of names"*. This
-instruction aligns the installation on `SQL_ASCII` with this requirement.
+StormBPMN supports databases only in **UTF-8** encoding — this is an official requirement of Storm Enterprise ([install](https://enterprise.stormbpmn.com/install/), [get-started](https://enterprise.stormbpmn.com/get-started.html)): *“UTF8 encoding ensures correct text storage, ICU collation, and natural sorting of names”*. This guide aligns the installation on `SQL_ASCII` with this requirement.
 
-In addition to the official requirement: encoding alone is insufficient — a **UTF-8-compatible locale** is also
-required. ICU collation fixes *sorting*, but case handling (`lower()`,
-case-insensitive search) depends on `LC_CTYPE`. On `SQL_ASCII` (and on `UTF-8` with the
-`C` locale), the `lower()` function does not convert Cyrillic characters to
-lowercase → case-insensitive search for Russian names/titles (employees, roles,
-diagrams, departments, comments, etc.) and deduplication during import do not work correctly: searching
-for "иванов" does not find "Иванов".
+In addition to the official requirement: encoding alone is insufficient — a **UTF-8-compatible locale** is also required. ICU collation fixes *sorting*, but case handling (`lower()`, case-insensitive search) depends on `LC_CTYPE`. On `SQL_ASCII` (and on `UTF-8` with locale `C`), the `lower()` function does not convert Cyrillic characters to lowercase → case-insensitive search for Russian names/titles (employees, roles, diagrams, departments, comments, etc.) and deduplication during import work incorrectly: searching for “ivanov” does not find “Ivanov”.
 
 | encoding \| LC_CTYPE | `lower('Иванов')` | `'Иванов' ILIKE '%иванов%'` |
 |---|---|---|
@@ -31,16 +22,15 @@ for "иванов" does not find "Иванов".
 | `UTF8` \| `C.UTF-8` | `иванов` ✅ | `true` ✅ |
 | `UTF8` \| `ru_RU.UTF-8` / `en_US.UTF-8` | `иванов` ✅ | `true` ✅ |
 
-> **Important:** changing only `encoding` is not enough — the locale (`LC_CTYPE`) must also be
-> UTF-8-compatible (`C.UTF-8`, `ru_RU.UTF-8`, `en_US.UTF-8`), **not `C`**.
+> **Important:** changing only `encoding` is not enough — the locale (`LC_CTYPE`) must also be UTF-8-compatible (`C.UTF-8`, `ru_RU.UTF-8`, `en_US.UTF-8`), **not `C`**.
 
 ---
 
 
 ## 2. Preparation (pre-flight) {#_2-подготовка-pre-flight}
 
-- [ ] Agree on the **downtime window** (the application is stopped during the dump → restore process;
-      duration ≈ depends on the database size, estimate it on a copy).
+- [ ] Agree on the **downtime window** (the application is stopped for the duration of the dump → restore;
+      duration ≈ depends on the database size, estimate on a copy).
 - [ ] **Fresh backup** of the entire database, verified for restorability.
 - [ ] **Free disk space** ≈ 2× the database size (dump + new database simultaneously).
 - [ ] Verify that the required UTF-8 locale is installed in the OS: `locale -a | grep -i utf`.
@@ -48,16 +38,16 @@ for "иванов" does not find "Иванов".
       If necessary: `localedef -i ru_RU -f UTF-8 ru_RU.UTF-8` (Debian/RHEL).
 - [ ] **Target** (new database server/container where the database will be migrated) — PostgreSQL **14+**, **16–17** recommended.
       The easiest option is to use the ready-made image `pgvector/pgvector:pg17` (mirror
-      `cr.selcloud.ru/stormbpmn-enterprise/pgvector:pg17`): it **already includes** PostgreSQL 17,
+      `registry.stormbpmn.com/stormbpmn-enterprise/pgvector:pg17`): it **already includes** PostgreSQL 17,
       the pgvector package, and ICU support — there is **no need** to install or build them separately. Specifically,
-      PG17 is not mandatory (minimum is 14), but this image is the simplest way to get a build
+      PG17 is not mandatory (minimum is 14), but this image is the simplest way to obtain a build
       where pgvector and ICU are already in place.
 - [ ] **Required extensions** for Storm — `pgvector`, `pg_trgm`, `pgcrypto`, `uuid-ossp`,
-      `hstore`. Their packages are already included in the `pgvector/pgvector:pg17` image; nothing needs to be installed —
-      they are enabled via the `CREATE EXTENSION` commands in step 4 (therefore, the base `postgres` image without
+      `hstore`. Their packages are already included in the `pgvector/pgvector:pg17` image; there is nothing to install —
+      they are enabled by the `CREATE EXTENSION` commands in step 4 (therefore, the base `postgres` image without
       pgvector will not work). ICU is not an extension but a collation provider; it is built into the image.
-- [ ] The source and target PG versions **do not need** to match: a dump from an older version
-      restores correctly to a newer one (PG17).
+- [ ] The source and target PG versions **do not have to match**: a dump from an older version
+      restores normally to a newer version (PG17).
 - [ ] Performed by a **DBA** — especially if "corrupted" bytes are detected in step 3.
 
 ---
@@ -82,9 +72,9 @@ SELECT lower('Иванов');
 `SQL_ASCII` stores bytes "as is," without validation. The subsequent fate of the migration depends on the encoding in which the Cyrillic characters are actually stored:
 
 - **Storm writes data as UTF-8** (the driver uses `client_encoding=UTF8`) — the expected case, in which the migration is straightforward (scenario **A**).
-- However, if data from legacy sources or manual edits in **CP1251 (Windows-1251)** or another single-byte encoding ended up in the database, it cannot simply be "renamed" to UTF-8; transcoding is required (scenario **B**).
+- However, if data from legacy sources or manual edits in **CP1251 (Windows-1251)** or another single-byte encoding ended up in the database, they cannot simply be "re-labeled" as UTF-8; transcoding is required (scenario **B**).
 
-**Quick indicator (single-byte vs. UTF-8).** For UTF-8, Cyrillic characters occupy 2 bytes per character, while for CP1251 they occupy 1 byte. Take a known value and compare its length in bytes:
+**Quick indicator (single-byte vs. UTF-8).** For UTF-8, Cyrillic characters occupy 2 bytes per character, whereas for CP1251 they occupy 1 byte. Take a known value and compare its length in bytes:
 
 ```sql
 -- для 'Иванов' (6 символов): 12 → UTF-8; 6 → однобайтовая (CP1251)
@@ -118,7 +108,7 @@ BEGIN
 END $$;
 ```
 
-> ⚠️ **Dangerous nuance.** A standard `pg_dump` (without `--encoding=UTF8`) + `pg_restore` will **silently carry over** corrupted bytes to the new UTF-8 database (restore inherits `client_encoding=SQL_ASCII` from the dump and does not validate). The database will be "UTF-8," but it will contain invalid byte mines inside. Therefore, always use `--encoding=UTF8` for dumps — it prevents dirty data from migrating unnoticed.
+> ⚠️ **Dangerous nuance.** A standard `pg_dump` (without `--encoding=UTF8`) + `pg_restore` will **silently carry** corrupted bytes into the new UTF-8 database (restore inherits `client_encoding=SQL_ASCII` from the dump and does not validate). The database will be "UTF-8," but with invalid byte mines inside. Therefore, always use `--encoding=UTF8` for the dump — it will not allow dirty data to migrate unnoticed.
 
 ---
 
@@ -159,9 +149,9 @@ EOSQL
 # 6. Переключить datasource приложения на storm_utf8 и запустить backend.
 ```
 
-### Scenario B — data in CP1251 (if step 2 failed) {#сценарии-b-—-данные-в-cp1251-если-шаг-2-упал}
+### Scenario B — Data in CP1251 (if Step 2 Failed) {#сценарии-b-—-данные-в-cp1251-если-шаг-2-упал}
 
-Transcoding is required. It is safer to do this on a text dump via `iconv` (ASCII parts are invariant):
+Transcoding is required. It is safer to perform this on a text dump via `iconv` (ASCII portions are invariant):
 
 ```bash
 pg_dump -U <user> -Fp -d <db> -f /tmp/storm.plain.sql          # plain-text дамп (как есть)
@@ -171,8 +161,8 @@ iconv -f WINDOWS-1251 -t UTF-8 /tmp/storm.plain.sql -o /tmp/storm.win1251-to-utf
 PGCLIENTENCODING=UTF8 psql -U <user> -d storm_utf8 -f /tmp/storm.win1251-to-utf8.sql
 ```
 
-> If the database **mixes** UTF-8 and CP1251 (a common result of a long life with SQL_ASCII) — a single `iconv`
-> is not enough; such cases are handled by the DBA line by line (based on the list from 3.2). Do not migrate "blindly".
+> If the database **contains a mix** of UTF-8 and CP1251 (a common result of long-term SQL_ASCII usage) — a single `iconv`
+> is insufficient; such cases are handled by the DBA on a line-by-line basis (based on the list from 3.2). Do not migrate "blindly."
 
 ---
 
@@ -196,16 +186,16 @@ SELECT extname FROM pg_extension
 WHERE extname IN ('vector','pg_trgm','pgcrypto','uuid-ossp','hstore') ORDER BY extname;
 ```
 
-- [ ] Compare the **row count of key tables** with the source.
+- [ ] Compare **row count for key tables** with the source.
 - [ ] Spot-check Cyrillic characters: values are read correctly, without garbage.
 - [ ] **5 required extensions** are present (especially `pg_trgm` — otherwise autocomplete silently fails).
-- [ ] Smoke test in the application: searching for the employee "ivanov" finds "Ivanov".
+- [ ] Smoke test in the application: searching for employee "ivanov" finds "Ivanov".
 
 ---
 
 ## 6. Rollback {#_6-откат}
 
-- Do **not** delete the old database until the new one has been verified and the application has run normally.
+- Do **not delete** the old database until the new one has been verified and the application has operated normally.
 - Rollback = revert the application's datasource to the old database and restart the backend.
 
 ---
@@ -220,4 +210,4 @@ WHERE extname IN ('vector','pg_trgm','pgcrypto','uuid-ossp','hstore') ORDER BY e
 
 ## 8. If migration is not performed {#_8-если-миграцию-не-делают}
 
-Case-insensitive search and deduplication for Cyrillic characters on `SQL_ASCII` will not work — this is a limitation of the specific installation, not a defect of Stormbpmn. Workarounds on the application side for unsupported encodings are not provided.
+Case-insensitive search and deduplication for Cyrillic characters will not work on `SQL_ASCII` — this is a limitation of the specific installation, not a defect in Stormbpmn. Workarounds on the application side for unsupported encodings are not provided.
