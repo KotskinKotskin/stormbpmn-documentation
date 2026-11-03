@@ -1,6 +1,6 @@
 ---
 title: System Check
-source_hash: 348aba9ccc33a0d1
+source_hash: 4880de5bd25f9aaf
 ---
 
 [[toc]]
@@ -107,7 +107,7 @@ In addition to the checks, upon completion, the wizard asks you to specify:
 
 -   the date of the last backup restore check (it cannot be in the future);
 -   the name and email or phone number of the responsible administrator;
--   confirmation that you are ready to send HAR files, logs, and the version tag to support when submitting requests.
+-   confirmation that you are ready to send [HAR files](../support/har.md), logs, and the version tag to support when submitting requests.
 
 ### Bypassing checks: `?skipChecks=1` {#обход-проверок-skipchecks-1}
 
