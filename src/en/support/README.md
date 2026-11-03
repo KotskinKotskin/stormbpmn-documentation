@@ -5,7 +5,7 @@ dir:
   text: 8. Technical Support
   collapsible: false
 order: 8
-source_hash: f89384801f5fd313
+source_hash: 06e5381743fad458
 ---
 
 [[toc]]
@@ -53,7 +53,7 @@ When contacting support, you **must** provide the following:
 -   [ ] **Contents of the sm_settings table**
 
 ::: tip HAR archive
-The [instructions for creating a HAR archive](https://yandex.cloud/ru/docs/support/create-har) will help us quickly diagnose browser issues.
+[How to record a HAR archive](./har.md) in Yandex Browser, Chrome, Edge, Firefox and Safari. It lets us quickly find which request failed in the browser.
 :::
 
 ---
