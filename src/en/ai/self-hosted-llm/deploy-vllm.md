@@ -2,119 +2,142 @@
 title: Deployment on vLLM
 order: 2
 redirectFrom:
-    - /en/configure/VLLM.html
-source_hash: e101dc4412f9a709
+  - /en/configure/VLLM.html
+source_hash: 67ae1f3ef68d235f
 ---
 
 [[toc]]
 
 # Deploying a Custom Model on vLLM {#развертывание-собственнои-модели-на-vllm}
 
-This article is a step-by-step guide on how to spin up a **custom OpenAI-compatible LLM endpoint on
-[vLLM](https://docs.vllm.ai/)**, which is then connected to the [Storm AI assistant](../AI_CHAT.md).
-The breakdown is based on **our actual production configuration** — explaining **why** each
-parameter was chosen and what performance lessons we learned.
+A step-by-step guide on how to start a **custom OpenAI-compatible model server on
+[vLLM](https://docs.vllm.ai/)** and connect the [Stormbpmn AI assistant](../AI_CHAT.md) to it. The configuration
+below is the one used by our cloud AI chat; each parameter is explained to clarify its purpose.
+For information on which model to choose and how many users a single GPU can handle, see the [Model Selection](./README.md) page.
 
-::: tip Why self-hosting
-Cloud providers (OpenAI, Anthropic, ProxyAPI) offer the fastest start. However, if you need **data to remain
-within the perimeter**, no external dependencies, or cost control — you host the model yourself.
-vLLM provides an OpenAI-compatible API, so Storm works with it just as it does with the cloud.
-:::
-
-::: warning What this article does NOT cover
-- Installing NVIDIA / CUDA / `nvidia-container-toolkit` drivers — it is assumed that `nvidia-smi`
+::: warning What this article does not cover
+- Installing NVIDIA drivers, CUDA, and `nvidia-container-toolkit`: it is assumed that `nvidia-smi`
   and `docker run --gpus all` are already working.
-- Other engines (Ollama, llama.cpp, TGI) — the principle is the same (OpenAI-compatible endpoint), but the flags differ.
-- Hardware selection/rental — we only provide VRAM guidelines.
+- Other engines (Ollama, llama.cpp, SGLang): the principle is the same (OpenAI-compatible server), but the flags differ.
 :::
 
 ---
 
 ## Hardware Requirements {#требования-к-железу}
 
-vLLM keeps the **model weights + KV cache** in video memory. A rough VRAM guideline:
+| | Our server | Minimum |
+|---|---|---|
+| GPU | 1× NVIDIA RTX PRO 6000 Blackwell, 96 GB | A card with 48 GB (with reduced context, see [Model Selection](./README.md#если-gpu-не-blackwell)) |
+| CPU / RAM | 32 vCPU, 186 GB | Lightly loaded: all processing is done on the GPU |
+| Disk | SSD for weight cache | At least 50 GB of free space (vLLM image and weights) |
+| Driver | NVIDIA with CUDA 12.8+ support | Same |
 
-| Model | Quantization | Required VRAM (weights) | + KV cache |
-| ------ | ----------- | ----------------- | -------- |
-| 8–14B  | fp8/awq     | ~10–16 GB         | + headroom for context |
-| 30–32B | fp8         | ~32–40 GB         | + headroom |
-| 80B (MoE A3B) | fp8  | ~80 GB            | + headroom |
-
-**Our example (production):**
-- 1× GPU **NVIDIA RTX PRO 6000 Blackwell, 96 GB VRAM** — the recommended Qwen3.6-35B-A3B model in fp8
-  takes up ~35 GB, with the remainder allocated for the KV cache, parallelism, and voice input (the card can also handle 80B in fp8).
-- 32 vCPU, 186 GB RAM (CPU/RAM are barely loaded — all processing happens on the GPU).
-- Disk space for the HuggingFace weights cache (35B ≈ 35–70 GB on disk).
+The Qwen3.8-27B weights in NVFP4 occupy approximately 22 GB of VRAM. The rest is allocated by vLLM to the KV cache, which determines how many requests of what length are processed simultaneously.
 
 ::: tip Main rule
-**The weights must fit entirely in VRAM** (vLLM does not handle offloading to RAM well). What remains after the weights
-is allocated to the KV cache, which determines how many requests of what length can be served in parallel.
+The weights must fit entirely in VRAM: vLLM does not offload them to system memory.
 :::
 
 ---
 
-## Model Selection — Brief Overview {#выбор-модели-—-кратко}
+## Files on the server {#фаилы-на-сервере}
 
-We deploy **`Qwen/Qwen3.6-35B-A3B`**. Why this specific model — a benchmark of 10 models via a real Storm chat (with verification against the database), a candidate table under 96 GB, and measured speeds are on the adjacent page **[Model Selection](./README.md)**. In short: it grounds answers through the knowledge base (91% versus 0% for the previous choice, Qwen3-Next-80B), assembles a large process model, and is **measured to be faster** than the previous choice (245 vs. 154 tok/s). Here, one requirement for any model you deploy is critical:
+```
+/opt/storm-llm/
+├── docker-compose.yml
+├── nginx.conf
+├── pr-48375.patch        # исправление vLLM для MTP + кэша префиксов
+├── patch-and-run.sh      # накладывает исправление и запускает vLLM
+└── hf-cache/             # кэш весов HuggingFace
+```
 
-::: danger Function-calling is mandatory
-The Storm AI assistant works **exclusively through tool calls** (diagram creation/editing, search, assignments). A model without reliable tool/function-calling is unsuitable — it will "talk" rather than act. Ensure the model supports tool-calling and that the **correct tool parser** is specified for it in vLLM (`--tool-call-parser`; for Qwen3.6 — `qwen3_coder`, for Qwen3-Next — `hermes`, see the parser table on the [Model Selection](./README.md) page). Without this, the Storm chat will not function.
+### vLLM Fix {#исправление-vllm}
+
+In vLLM `v0.27.1`, MTP speculative decoding combined with prefix caching on hybrid models (which includes Qwen3.8) sometimes restores state from unverified tokens. The fix is available in [vllm-project/vllm#48375](https://github.com/vllm-project/vllm/pull/48375). Until it is included in a release, we apply it at container startup.
+
+Download the patch without tests:
+
+```bash
+cd /opt/storm-llm
+gh pr diff 48375 --repo vllm-project/vllm \
+  | awk '/^diff --git /{keep = ($0 !~ /tests\//)} keep' > pr-48375.patch
+```
+
+`patch-and-run.sh`:
+
+```sh
+#!/bin/sh
+set -eu
+TARGET=/usr/local/lib/python3.12/dist-packages
+FILE=$TARGET/vllm/v1/core/single_type_kv_cache_manager.py
+if grep -q 'max_num_blocks -= 1' "$FILE"; then
+  echo "[pr-48375] уже наложен"
+elif patch -p1 -d "$TARGET" --fuzz=3 --forward < /tmp/pr-48375.patch && grep -q 'max_num_blocks -= 1' "$FILE"; then
+  echo "[pr-48375] наложен"
+else
+  echo "[pr-48375] не наложился, запуск без исправления отменён" >&2
+  exit 1
+fi
+exec vllm serve "$@"
+```
+
+::: warning Without the fix
+If the patch cannot be applied, remove `--speculative-config` from the command. The model will work correctly, but generation will be slower.
 :::
 
 ---
 
 ## docker-compose.yml {#docker-compose-yml}
 
-We run vLLM in Docker (image `vllm/vllm-openai`) + a lightweight **nginx proxy** in front of it. Full example
-(secrets as placeholders):
-
 ```yaml
 services:
   vllm:
-    image: vllm/vllm-openai:latest
+    image: vllm/vllm-openai:v0.27.1            # версия закреплена, см. «Обновление vLLM»
     container_name: storm-vllm
     restart: unless-stopped
     runtime: nvidia
-    shm_size: 16gb                       # vLLM активно использует /dev/shm; мало — будут падения
+    shm_size: 16gb                             # vLLM активно использует /dev/shm
     environment:
-      - HF_HUB_ENABLE_HF_TRANSFER=1      # быстрая загрузка весов с HuggingFace
-      - HF_TOKEN=hf_xxxxxxxxxxxxxxxxx    # токен HF (для gated-моделей)
+      - HF_HUB_ENABLE_HF_TRANSFER=1            # быстрая загрузка весов
+      - HF_TOKEN=${HF_TOKEN}                   # токен HuggingFace из .env, в файл не вписывать
     volumes:
-      - ./hf-cache:/root/.cache/huggingface   # кэш весов — чтобы не качать при каждом рестарте
+      - ./hf-cache:/root/.cache/huggingface    # кэш весов: не качать при каждом рестарте
+      - ./pr-48375.patch:/tmp/pr-48375.patch:ro
+      - ./patch-and-run.sh:/usr/local/bin/patch-and-run.sh:ro
+    entrypoint: ["/bin/sh", "/usr/local/bin/patch-and-run.sh"]
     ports:
-      - "127.0.0.1:8000:8000"           # vLLM слушает ТОЛЬКО на localhost — наружу его даёт nginx
+      - "127.0.0.1:8000:8000"                  # только localhost, наружу публикует nginx
     deploy:
       resources:
         reservations:
           devices:
             - capabilities: ["gpu"]
     command:
-      - "--model"
-      - "Qwen/Qwen3.6-35B-A3B"
+      - "unsloth/Qwen3.8-27B-NVFP4"
       - "--served-model-name"
-      - "qwen36-35b-a3b"
-      - "--quantization"
-      - "fp8"
+      - "qwen3.8-27b"
       - "--trust-remote-code"
       - "--max-model-len"
-      - "65536"
-      - "--gpu-memory-utilization"
-      - "0.92"
-      - "--max-num-seqs"
-      - "8"
-      - "--attention-backend"
-      - "flashinfer"
+      - "262144"
       - "--kv-cache-dtype"
-      - "fp8_e4m3"
+      - "fp8"
+      - "--gpu-memory-utilization"
+      - "0.85"
+      - "--max-num-seqs"
+      - "16"
       - "--enable-prefix-caching"
-      - "--enable-chunked-prefill"             # обязательно для гибридных Qwen (mamba/gated-delta)
+      - "--enable-chunked-prefill"
       - "--speculative-config"
-      - '{"method": "mtp", "num_speculative_tokens": 3}'   # MTP-спекулятив — ускоряет decode
+      - '{"method":"mtp","num_speculative_tokens":3}'
       - "--enable-auto-tool-choice"
       - "--tool-call-parser"
       - "qwen3_coder"
       - "--reasoning-parser"
       - "qwen3"
+      - "--default-chat-template-kwargs"
+      - '{"enable_thinking": false, "preserve_thinking": true}'
+      - "--override-generation-config"
+      - '{"temperature":0.7,"top_p":0.8,"top_k":20,"repetition_penalty":1.0}'
       - "--host"
       - "0.0.0.0"
       - "--port"
@@ -124,7 +147,7 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
-      start_period: 1800s               # первый старт 80B долгий (загрузка + компиляция CUDA-графов)
+      start_period: 1800s                      # первый старт: загрузка весов и компиляция CUDA-графов
 
   nginx:
     image: nginx:alpine
@@ -137,69 +160,55 @@ services:
       - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
 ```
 
+On non-Blackwell cards, replace the first line `command` with `Qwen/Qwen3.8-27B-FP8`, and leave the rest unchanged.
+
 ---
 
-## Breaking Down vLLM Flags (and Why) {#разбор-флагов-vllm-и-почему-так}
+## Flag Breakdown {#разбор-флагов}
 
-This is the most important part. Each parameter `command` and its rationale:
+| Flag | Value | Purpose |
+| ---- | -------- | ----- |
+| model (first argument) | `unsloth/Qwen3.8-27B-NVFP4` | Weights on HuggingFace or a path to a local folder with weights. |
+| `--served-model-name` | `qwen3.8-27b` | Model name in the API. **This is the value to enter in `bpmnAiCompletionModel` in Stormbpmn.** |
+| `--trust-remote-code` | enabled | The Qwen3.8 architecture is provided by the model code. |
+| `--max-model-len` | `262144` | Full model context window. On 96 GB, it fits along with 16 parallel requests thanks to the fp8 KV cache. |
+| `--kv-cache-dtype` | `fp8` | KV cache is half the size of bf16, with no noticeable loss in quality. |
+| `--gpu-memory-utilization` | `0.85` | Share of VRAM for vLLM. The remainder is allocated for voice input on the same card and system needs. |
+| `--max-num-seqs` | `16` | Number of requests processed simultaneously. At peak, our cloud uses this fully. |
+| `--enable-prefix-caching` | enabled | **Main optimization for chat**: the system prompt, tool descriptions, and dialogue history are repeated in each request and are retrieved from the cache rather than recalculated. |
+| `--enable-chunked-prefill` | enabled | **Required** for hybrid Qwen models; otherwise, vLLM crashes during cache validation. |
+| `--speculative-config` | MTP, 3 tokens | The model predicts several tokens ahead and verifies them in a single step. Speeds up generation, most significantly with a low number of concurrent requests. A value of 4 on `v0.27.1` crashes under load. |
+| `--enable-auto-tool-choice` | enabled | **Required**: the model decides which tool to invoke. |
+| `--tool-call-parser` | `qwen3_coder` | **Required**: parses tool calls in the Qwen3.8 format. |
+| `--reasoning-parser` | `qwen3` | Separates the model's reasoning from the response. |
+| `--default-chat-template-kwargs` | `enable_thinking: false`, `preserve_thinking: true` | By default, the model responds without reasoning. Stormbpmn enables them automatically if `bpmnAiChatThinking = enabled`. `preserve_thinking` preserves past reasoning in the history, so the prefix cache hits more often. |
+| `--override-generation-config` | `temperature 0.7, top_p 0.8, top_k 20` | Recommended Qwen parameters for the no-reasoning mode. The temperature from the Stormbpmn request (`bpmnAiCompletionTemperature`, 0.2) is applied by vLLM on top of this. |
+| `--host` / `--port` | `0.0.0.0` / `8000` | Inside the container; externally, the port is accessible only on localhost. |
 
-| Flag | Our Value | Why |
-| ---- | ------------- | ------ |
-| `--model` | `Qwen/Qwen3.6-35B-A3B` | The model ID on HuggingFace (or a path to local weights). |
-| `--served-model-name` | `qwen36-35b-a3b` | The name under which the model is visible in the API. **This is exactly what goes into the "Model" field in the Storm admin panel.** |
-| `--quantization` | `fp8` | 35B-A3B in fp8 ≈ 35 GB — fits on a single 96 GB card with plenty of headroom for the KV-cache and voice input. fp8 loses almost no quality. |
-| `--trust-remote-code` | (enabled) | The Qwen3.6 architecture ships with model code — vLLM must execute it. |
-| `--max-model-len` | `65536` | Maximum context (input+output) per request. **A direct trade-off with parallelism** — see below. 64K is more than enough for the Storm chat (diagrams + knowledge base + tool schemas). |
-| `--gpu-memory-utilization` | `0.92` | The share of VRAM allocated to vLLM. The rest goes to the system; for a lightweight 35B-A3B, this is more than sufficient. |
-| `--max-num-seqs` | `8` | How many requests the engine processes **simultaneously** (batch). Increase for higher loads. |
-| `--attention-backend` | `flashinfer` | A fast attention backend for Blackwell (sm_120). |
-| `--kv-cache-dtype` | `fp8_e4m3` | fp8 KV-cache — halves memory usage for context, increases parallelism (speed profile; in the quality profile, this flag is removed in favor of bf16 precision). |
-| `--enable-prefix-caching` | (enabled) | **Key optimization** — caches the common prompt prefix across requests. See the tuning section. |
-| `--enable-chunked-prefill` | (enabled) | **Mandatory** for hybrid Qwen models (mamba/gated-delta) — otherwise vLLM crashes on the mamba-cache assertion. |
-| `--speculative-config` | `mtp, n=3` | MTP speculative decoding — speeds up generation on "easy" tokens. |
-| `--enable-auto-tool-choice` | (enabled) | **Mandatory for the Storm chat** — allows the model to decide on its own which tool to call. |
-| `--tool-call-parser` | `qwen3_coder` | Tool-call format parser for Qwen3.6. For Qwen3-Next, it would be `hermes`. Without the correct parser, tools are not recognized. |
-| `--reasoning-parser` | `qwen3` | Reasoning block parser (the model is hybrid). By default (speed profile), reasoning is disabled — see below. |
-| `--host` / `--port` | `0.0.0.0` / `8000` | Inside the container; the container exposes port `ports:` to the outside only on localhost. |
-
-::: danger Without `--enable-auto-tool-choice` + the correct `--tool-call-parser`, the chat will not work
-These are not optional "enhancements" but **mandatory** flags: the entire Storm assistant is built on tool calls. If you forget the tool parser or specify the wrong one (`hermes` instead of `qwen3_coder`), the model will write "done" without doing anything.
-:::
-
-::: tip Speed vs. Quality Profile (hybrid thinking models)
-Qwen3.6-35B-A3B can "think." Reasoning is a **request parameter** `enable_thinking`, and the launch profile only sets the default and the KV-cache type. **For the Storm chat, the speed profile (thinking off) is recommended:** the model delivers top results even without reasoning, while enabling "thinking" only multiplies token consumption (and latency) per response without speeding up decoding. The **quality** profile = remove `--kv-cache-dtype fp8_e4m3` (revert to bf16 KV) and send `enable_thinking=true`; keep it as an optional reserve for difficult tasks.
-:::
-
-::: warning Blackwell (sm_120) Specifics
-On the RTX PRO 6000 (sm_120), **do not force** the FlashInfer-MoE environment variables from B200 recipes (`VLLM_USE_FLASHINFER_MOE_*`) — the corresponding kernels are not supported there, and vLLM will select MARLIN on its own.
-For MXFP4 models (gpt-oss), flashinfer-attention is disabled; for GPTQ models (GLM), vLLM detects the quantization itself (`gptq_marlin`), and the `--quantization` flag is not needed.
+::: danger Chat does not work without a tool parser
+`--enable-auto-tool-choice` and `--tool-call-parser qwen3_coder` are mandatory flags. If they are missing or
+a different parser is specified, the model writes "done" without doing anything.
 :::
 
 ---
 
-## nginx proxy: why it is needed {#nginx-прокси-зачем-он}
+## nginx {#nginx}
 
-vLLM listens only on `127.0.0.1:8000`. It is exposed externally via **nginx on :80**. Why not directly:
-
-- **Single point** for TLS, BasicAuth, rate-limit, and logs — in case you need to restrict the endpoint.
-- The Storm backend connects to `http://<llm-host>` (port 80) — there is no need to access vLLM directly.
-
-Minimal `nginx.conf` (proxying):
+vLLM listens only on `127.0.0.1:8000`, and nginx exposes it externally on port 80. Using nginx makes it convenient to add TLS, authentication, IP restrictions, and request logging.
 
 ```nginx
 server {
     listen 80;
     location / {
         proxy_pass http://vllm:8000;
-        proxy_read_timeout 600s;   # генерация бывает долгой — не рубим по таймауту
-        proxy_buffering off;       # стриминг ответов
+        proxy_read_timeout 600s;   # длинные ответы не обрываем по таймауту
+        proxy_buffering off;       # нужен для стриминга ответов
     }
 }
 ```
 
-::: tip External access — secure it
-If the box is exposed to the internet, you must add **BasicAuth/TLS** to nginx or restrict access by IP.
-An open LLM endpoint = free generation for everyone.
+::: tip Restrict external access
+If the server is accessible from the internet, add TLS and authentication to nginx or restrict access by IP.
 :::
 
 ---
@@ -208,17 +217,18 @@ An open LLM endpoint = free generation for everyone.
 
 ```bash
 cd /opt/storm-llm
-docker compose up -d              # первый старт 80B — несколько минут (загрузка весов + CUDA-графы)
-docker logs -f storm-vllm         # ждём "Application startup complete"
+echo "HF_TOKEN=hf_..." > .env && chmod 600 .env
+docker compose up -d              # первый старт — до 30 минут: загрузка весов и CUDA-графы
+docker logs -f storm-vllm         # ждём "[pr-48375] наложен" и "Application startup complete"
 curl -sf http://127.0.0.1:8000/health && echo OK
 ```
 
-To start on server reboot — `restart: unless-stopped` is already present in compose; additionally, you can wrap it in a **systemd unit** that triggers `docker compose up`:
+`restart: unless-stopped` starts the containers after a server reboot. If an explicit system service is required:
 
 ```ini
 # /etc/systemd/system/storm-llm.service
 [Unit]
-Description=Storm LLM (vLLM + nginx) via docker compose
+Description=Stormbpmn LLM (vLLM + nginx)
 Requires=docker.service
 After=docker.service
 [Service]
@@ -237,82 +247,65 @@ systemctl enable --now storm-llm.service
 
 ---
 
-## Connecting Storm to the Endpoint {#подключение-storm-к-эндпоинту}
+## Connecting Stormbpmn {#подключение-stormbpmn}
 
-In the Storm admin panel ([AI chat configuration](../AI_CHAT.md)), specify the following:
+In the AI assistant settings ([Enabling and connecting the model](../AI_CHAT.md)), specify:
 
 | Field | Value |
 | ---- | -------- |
-| API Format | `OPENAI` (vLLM OpenAI-compatible) |
-| Base URL | `http://<llm-host>` — **without `/v1`** (Storm will append `/v1/chat/completions` automatically) |
-| Model | `qwen36-35b-a3b` (exactly `--served-model-name`) |
-| Token | Leave empty if the endpoint has no authentication; otherwise, use your key from nginx-auth |
+| API Format | `OPENAI` |
+| Base URL | `http://<llm-host>`, **without `/v1`** |
+| Model | `qwen3.8-27b` (exactly `--served-model-name`) |
+| Token | empty if the server has no authorization; otherwise, the key that nginx validates |
+| Reasoning (`bpmnAiChatThinking`) | `enabled` if response streaming is enabled; otherwise `disabled` |
 
----
-
-## Performance Tuning and Diagnostics {#тюнинг-и-диагностика-производительности}
-
-vLLM writes metrics to the log every ~10 seconds — this is the primary diagnostic tool:
-
-```
-Avg prompt throughput: 4630 tokens/s, Avg generation throughput: 45 tokens/s,
-Running: 2 reqs, Waiting: 0 reqs, GPU KV cache usage: 10.1%, Prefix cache hit rate: 44.9%
-```
-
-How to read this:
-- **Running / Waiting** — the number of requests in progress and in the queue. A stable Waiting > 0 indicates that you have hit the `max-num-seqs` or KV cache limit.
-- **generation throughput** — tokens per second per generation. It decreases as Running increases (compute is shared among requests) — this is normal batching behavior.
-- **GPU KV cache usage** — KV cache utilization. Approaching 100% leads to preemption and a sharp slowdown.
-- **Prefix cache hit rate** — the proportion of prompt tokens retrieved from the cache (see below).
-
-### Prefix caching — the main lever for chat {#prefix-caching-—-главныи-рычаг-для-чата}
-
-The chat sends the **same system prompt + tool schemas on every turn** (thousands of tokens). Without prefix caching, vLLM reprocesses them on every request — wasting GPU resources. `--enable-prefix-caching` caches this common prefix.
-
-In our case, enabling it increased the **hit rate from 0% to ~45%** (and higher for multi-turn dialogues): nearly half of the prefill is served from the cache → less load, faster responses, especially under parallel load.
-
-::: warning Hybrid models (Qwen3-Next, Mamba) — prefix caching is experimental
-For hybrid architectures, vLLM enables prefix caching in `Mamba cache 'align'` mode and marks it as **experimental**. It works stably for us, but verify it on your vLLM version and workload. If you encounter anomalies — disable the flag (`--no-enable-prefix-caching` / remove `--enable-prefix-caching`).
-:::
-
-### Context ↔ Parallelism {#контекст-↔-параллельность}
-
-`--max-model-len` and parallelism are related: the KV cache is shared among requests, and the longer the maximum request, the fewer fit simultaneously.
-
-> Real-world measurement: with `--max-model-len 131072`, the maximum concurrency for full-size requests was ~4×; with `65536`, it became **8.24×** — twice as many parallel requests with the same KV cache.
-
-Therefore: **do not set the context larger than actually needed.** For the Storm chat, 64K is more than enough, and the freed-up KV cache goes toward parallelism.
-
-### "Slow Response" — Checklist {#«медленно-отвечает»-—-чек-лист}
+Verification from the Stormbpmn server:
 
 ```bash
-# 1. GPU занят генерацией или простаивает?
-nvidia-smi --query-gpu=utilization.gpu,memory.used,temperature.gpu --format=csv,noheader
-#    100% util + 1 запрос = модель просто считает (норма для тяжёлого хода)
-#    100% util + 6-8 запросов = контеншн: per-request генерация просядет
-
-# 2. Очередь / вытеснение / hit-rate
-docker logs storm-vllm 2>&1 | grep -E "Running:|Preempt|Prefix cache hit" | tail -10
-
-# 3. Память под KV
-docker logs storm-vllm 2>&1 | grep -E "KV cache size|Maximum concurrency"
+curl -s http://<llm-host>/v1/models
 ```
-
-Typical conclusions:
-- **100% util with a single request** — this is not overload, but the computation of a heavy step (large context + long generation). It is resolved by prefix caching and slimming down prompts/context.
-- **Many Running + throughput drop** — actual GPU contention. Prefix caching helps (less duplicate prefill), and, if necessary, a second card / a lighter model for reading.
-- **Preempt in logs** — KV cache is full: reduce `--max-model-len` or `--max-num-seqs`.
 
 ---
 
-## Known nuances {#известные-нюансы}
+## Performance Diagnostics {#диагностика-производительности}
 
-- **fp8** — excellent quality/memory balance for large models; for small ones, use `awq`/`gptq`.
-- **Hybrid thinking models** (Qwen3.6) — reasoning is enabled via the request parameter `enable_thinking`,
-  not a launch flag; for the Storm chat, keep them **disabled** (speed profile). When reasoning is enabled,
-  allocate more `--max-model-len`/`maxTokens` and account for a significantly higher token consumption and
-  response latency (see [AI chat configuration](../AI_CHAT.md), the section on reasoning).
-- **Parser per model** — changing the model → change `--tool-call-parser` (Qwen3.6 → `qwen3_coder`,
-  Qwen3-Next → `hermes`, Llama → `llama3_json`, GLM → `glm45`, gpt-oss → `openai`, Mistral → `mistral`).
-- **First start is slow** — vLLM compiles CUDA graphs; `start_period: 1800s` in the healthcheck
-  accounts for this. Weights are cached in `hf-cache`, so subsequent restarts are faster.
+Every 10 seconds, vLLM writes metrics to the log:
+
+```
+Avg prompt throughput: 4630 tokens/s, Avg generation throughput: 310 tokens/s,
+Running: 9 reqs, Waiting: 0 reqs, GPU KV cache usage: 41.0%, Prefix cache hit rate: 87.5%
+```
+
+- **Running / Waiting** — requests in progress and in the queue. `Waiting` consistently greater than zero — you have hit the
+  `--max-num-seqs` or the KV cache limit.
+- **generation throughput** — generation rate, tokens per second, aggregated across all requests.
+- **GPU KV cache usage** — KV cache utilization. Around 100% — request eviction and a sharp slowdown will begin.
+- **Prefix cache hit rate** — the proportion of input retrieved from the cache. For the Stormbpmn chat, it is high because
+  each turn's request repeats the beginning of the previous one. A sharp drop indicates that the cache is disabled
+  or insufficient.
+
+### When to add capacity {#когда-добавлять-мощность}
+
+| What is observed | Action |
+|---|---|
+| `Waiting > 0` during business hours, KV cache below 80% | increase `--max-num-seqs` to 24–32 |
+| KV cache around 100%, `Preempt` in logs | decrease `--max-model-len` to 131072 or add a second card |
+| More than 200 chat users per day | add a second card with the same compose and a load balancer in front of them |
+
+Quick check:
+
+```bash
+nvidia-smi --query-gpu=utilization.gpu,memory.used,temperature.gpu --format=csv,noheader
+docker logs storm-vllm 2>&1 | grep -E "Running:|Preempt" | tail -10
+```
+
+---
+
+## Updating vLLM {#обновление-vllm}
+
+The image version is pinned (`v0.27.1`) because tool parsers, prefix cache, and MTP depend on the version. Upgrade to the new version as follows:
+
+1. Verify that the fix for [#48375](https://github.com/vllm-project/vllm/pull/48375) is included in the release.
+   If it is, remove `entrypoint`, the patch, and the script from compose.
+2. Deploy the new version to a test environment and verify the chat: process model creation, knowledge base response, and 16 concurrent requests.
+3. Only then update the image on the main server.

@@ -1,5 +1,5 @@
 ---
-title: Model Selection
+title: Selecting a process model
 order: 1
 dir:
   order: 3
@@ -9,148 +9,127 @@ dir:
 index: true
 redirectFrom:
   - /en/operation/LocalLLM.html
-source_hash: 03ae4ddb33af2d52
+source_hash: 3aa36099dbc785c6
 ---
 
 # Self-hosted LLM — Model Selection {#self-hosted-llm-—-выбор-модели}
 
-The Storm AI chat orchestrates internal tools (create a diagram, create roles and documents, link them to a process, add descriptions, answer product questions via the knowledge base). By default, the engine is an external model via an OpenAI-compatible API. This model can be replaced with a **local LLM on your own GPU** — this is cheaper to operate, and data does not leave the perimeter. Voice input can be deployed next to the model on the same card.
+The Stormbpmn AI chat operates through tools: it creates and edits diagrams, creates roles and documents, links them to the process, and answers product-related questions via the knowledge base. By default, the engine is an external model with an OpenAI-compatible API. It can be replaced with a **custom model on your own GPU**: data does not leave the perimeter, and the cost does not depend on the number of requests.
 
-We ran **10 models** through the actual Storm chat with real MCP tools on real user requests and selected the one that best handles the agent scenario in production. Below is the recommendation and justification.
+This page covers which model we recommend, on what hardware, at what speed, and how many tokens a single user consumes. All figures were measured on our Stormbpmn cloud, where this same configuration serves the AI chat for all users.
 
 ::: tip A two-part section
-**This page** — which model to choose and why (benchmark, candidates, speed). How to deploy the selected model in production — in the adjacent article **[Deployment on vLLM](./deploy-vllm.md)** (docker-compose, flag breakdown, performance tuning).
+**This page** — what to choose and what it takes. How to deploy the model — in the article **[Deployment on vLLM](./deploy-vllm.md)**: ready-made docker-compose, flag breakdown, diagnostics.
 :::
 
-::: tip Changing the model is two settings, without code changes
-The engine is switched by the `bpmnAiCompletionBaseUrl` and `bpmnAiCompletionModel` parameters in the application settings. The format is **OpenAI-compatible**, so both cloud APIs and self-hosted servers (vLLM/SGLang) are suitable. No application code changes are required.
+::: tip Changing the model — two settings, no code changes
+The engine is switched via the `bpmnAiCompletionBaseUrl` and `bpmnAiCompletionModel` parameters in the application settings. The format is OpenAI-compatible, so both cloud APIs and a self-hosted server on vLLM are suitable.
 :::
 
 [[toc]]
 
-## In Brief {#коротко}
+## Recommendation {#рекомендация}
 
-On simple tasks, almost all models perform equally well — which is misleading. In this round (10 models, including the new **Qwen 3.6**), **all of them managed to build a diagram** — there were no more empty schemas or hallucinated successes. The differences emerged along two more nuanced axes:
+| | What to deploy |
+|---|---|
+| **Model** | **Qwen3.8-27B** |
+| **Weight build** | `unsloth/Qwen3.8-27B-NVFP4` (NVFP4 quantization, approx. 22 GB of VRAM) |
+| **GPU** | 1× NVIDIA RTX PRO 6000 Blackwell, 96 GB |
+| **Engine** | vLLM `v0.27.1` with a fix for MTP and prefix caching (see [Deployment on vLLM](./deploy-vllm.md)) |
+| **Context** | 262,144 tokens (full model window) |
+| **Concurrency** | up to 16 simultaneous requests |
+| **Generation acceleration** | MTP speculative decoding, 3 tokens ahead |
+| **Reasoning** | in Stormbpmn — `enabled` (`bpmnAiChatThinking`), disabled by default on the server |
+| **Quality** | 93% on our AI chat evaluation suite (tool selection, process construction, knowledge base responses) |
 
-1. **Grounding via the knowledge base** — for product-related questions like “how to do X,” some models invoke a search over your knowledge base and answer based on facts, while others fabricate answers from memory. Half of the candidates (including the previous choice, Qwen3-Next-80B) **do not invoke the knowledge base at all** — for a product, this is a direct risk of hallucinations.
-2. **Scale** — for a large process consisting of 30–40 elements in a single pass, most models assembled 34–38 nodes, but some models build it “coarsely” (one model produced only 4 nodes).
+Why this model: it reliably handles long chains of tool calls, retrieves answers from the knowledge base rather than hallucinating, and constructs large processes in a single pass. At the same time, the weights occupy less than a quarter of the GPU, leaving the remaining VRAM for the KV cache: full context window and 16 concurrent requests.
 
-One model passed both filters the cleanest — and it is **no longer the same model as it was a year ago**.
+### If the GPU is not Blackwell {#если-gpu-не-blackwell}
 
-| Priority | Model | Knowledge Base | Scale | Verdict |
-|---|---|:---:|:---:|---|
-| 🥇 Primary choice | **Qwen3.6-35B-A3B** | 91% | 38 nodes | Best balance: grounds answers via the knowledge base, assembles large processes, and selects tools cleanly (100% battery). MoE with 3B active parameters — **faster than the previous choice** (measured 245 vs 154 tok/s), leaving VRAM headroom for voice input. |
-| ⚡ Strong alternatives | **gpt-oss-120B** / **Llama-3.3-70B** | 91% / 100% | 36 / 36 | Both ground the knowledge base and build large processes. Llama offers mature tool-calling; gpt-oss offers high decode speed. Heavier on VRAM. |
-| ↩️ Previous choice | Qwen3-Next-80B-A3B | **0%** | 34 nodes | Builds reliably and quickly (measured 154 tok/s), but **does not invoke the knowledge base** — for product-related questions, it answers from memory. This is the gap that the new recommendation closes. |
-| ⚠️ With caveats | Qwen3-30B-2507 / Qwen3-32B | 25% / 16% | **4** / 21 | 30B-2507 is fast but cannot handle large processes (builds ~4 nodes). 32B is slow (dense) and weaker in tool selection. |
+NVFP4 quantization works only on NVIDIA Blackwell cards (RTX PRO 6000, RTX 50xx, B200). For Hopper (H100, H200) and Ada (L40S, RTX 6000 Ada), use the FP8 build: `Qwen/Qwen3.8-27B-FP8`, approximately 28 GB for weights. The other flags remain the same. We have not measured the speed on these cards; refer to your own benchmark.
 
-## Candidates (all fit within 96 GB) {#кандидаты-все-влезают-в-96-гб}
-
-The budget is a single NVIDIA RTX PRO 6000 card (96 GB). All models fit within this budget with one form of quantization or another. For each model, the **tool-call parser** in vLLM is specified — without the correct parser, the chat does not perform actions (see [Deployment on vLLM](./deploy-vllm.md)).
-
-| Model | Type / Active | Quantization for 96 GB | Tool Parser | Note |
-|---|---|---|---|---|
-| **Qwen3.6-35B-A3B** | MoE / 3B | fp8 ~35 GB | `qwen3_coder` | 🥇 Primary choice; hybrid-thinking |
-| Qwen3.6-27B | Dense / 27B | fp8 ~27 GB | `qwen3_coder` | Hybrid-thinking |
-| Qwen3-Next-80B-A3B | MoE / 3B | fp8 ~80 GB | `hermes` | Previous choice; broad knowledge |
-| Qwen3-Coder-30B-A3B | MoE / 3B | fp8 ~30 GB | `qwen3_coder` | Agentic-coding, very lightweight |
-| Qwen3-30B-A3B-2507 | MoE / 3B | fp8 ~30 GB | `hermes` | Fast, but builds large processes in detail |
-| Qwen3-32B | Dense / 32B | fp8 ~32 GB | `hermes` | Hybrid-thinking, heavy |
-| Mistral-Small-3.2-24B | Dense / 24B | bf16 / fp8 ~24 GB | `mistral` | Lightweight; knowledge base — 0% |
-| gpt-oss-120B | MoE / 5B | MXFP4 ~61 GB | `openai` | Reasoning (always thinks) |
-| GLM-4.5-Air | MoE / 12B | GPTQ-Int4 ~55 GB | `glm45` | Reasoning; agentic profile |
-| Llama-3.3-70B | Dense / 70B | fp8 ~70 GB | `llama3_json` | Mature tool-calling; chat-template required |
-
-## How We Tested {#как-мы-тестировали}
-
-Requests were sent to the **real** Storm backend (built from source) and its actual MCP tools — without emulation. The results were verified **not by the model's output, but by the facts in the database**: what was actually created, who the roles are assigned to, and what is described and linked. Prompts were taken from **live user requests** (what people actually ask the chat). Each "model × scenario" pair was run **twice** to account for the probabilistic nature of LLMs, and the final diagrams were rendered using the same library that draws them in Storm.
-
-Scenario types:
-
-- **Tool selection** — standard read requests plus off-topic queries: is the correct tool chosen, and does the model avoid rambling.
-- **Simple creation scenario** — a single prompt assembles a diagram, tasks, roles with assignments, a document with linkage, and descriptions (~15 calls, requiring `id` to be passed between them).
-- **Large process** — "Consumer Loan Issuance" (20–30 elements) and a full cycle of **30–40 elements** in one pass: gateways, branches, a rework loop, roles, documents, and descriptions.
-- **Multi-turn conversation** — the process is assembled over several consecutive messages, as in a real chat: does the model lose context, and does it accurately summarize the assembled content at the end.
-- **Knowledge base** — product questions like "how to do X": does the model invoke a search in the knowledge base or make things up.
-- **Reading/analysis** — "describe the diagram," "what to improve" on an existing schema.
-
-## What the run showed {#что-показал-прогон}
-
-**Parity is better than before, both in simple scenarios and at scale.** All 10 process models build non-empty diagrams, and the majority (not only MoE Qwen, as was the case before — Llama, Mistral, and gpt-oss as well) built the large process with 34–38 nodes. Notable failures at scale — **Qwen3-30B-2507** (builds the large process "coarsely," ~4 nodes instead of 30–40).
-
-**The decisive difference was the discipline of querying the knowledge base.** On product-related questions, half of the models do not invoke the knowledge base search and answer from memory — this is a direct risk of hallucinating about the product:
-
-- Ground answers in facts from the knowledge base: **Llama-3.3-70B and GLM-4.5-Air (100%)**, **Qwen3.6-35B-A3B and gpt-oss-120B (91%)**.
-- **Do not invoke the knowledge base at all (0%):** Qwen3-Next-80B (previous choice), Mistral-Small, Qwen3-Coder-30B.
-
-::: warning Main conclusion of the round
-The previous choice (Qwen3-Next-80B) builds reliably and quickly, but on "how to do X" questions **does not query the knowledge base** — it answers from memory. The new choice **Qwen3.6-35B-A3B** closes exactly this gap (91% grounding) without losing in building and **winning in speed**.
-:::
+On a card with 48 GB of VRAM, reduce `--max-model-len` to 131,072 and `--max-num-seqs` to 8: this is sufficient for the Stormbpmn chat window. We have not verified this configuration; it will accommodate fewer concurrent requests than in the benchmarks below.
 
 ## Speed on a single card {#скорость-на-однои-карте}
 
-Locally, decode speed is limited by memory: `tok/s ≈ ПСП / (активные_параметры × байт)`. MoE models have few active parameters, making them **several times faster** than dense models at comparable quality. Figures marked "measured" were obtained via direct testing on our hardware (RTX PRO 6000, fp8, speed profile); the rest are estimates.
+Benchmark on RTX PRO 6000 Blackwell with the configuration from [Deployment on vLLM](./deploy-vllm.md), responses of 512 tokens:
 
-| Model | Active | decode tok/s | Source |
-|---|---|---|---|
-| **Qwen3.6-35B-A3B** | MoE 3B | **~245** | measured |
-| Qwen3-Next-80B | MoE 3B | **~154** | measured |
-| gpt-oss-120B | MoE 5B | ~67 | estimate |
-| GLM-4.5-Air | MoE 12B | ~54 | estimate |
-| Qwen3-30B-2507 | MoE 3B | ~41 | estimate |
-| Qwen3-Coder-30B | MoE 3B | ~23 | estimate |
-| Llama-3.3-70B | dense 70B | ~14 | estimate |
-| Mistral-Small-24B | dense 24B | ~10 | estimate |
-| Qwen3-32B | dense 32B | slow | estimate |
+| Concurrent requests | Generation, total tokens/s | Per request, tokens/s |
+|:---:|:---:|:---:|
+| 1 | 110 | 110 |
+| 4 | 298 | ~75 |
+| 8 | 742 | ~93 |
+| 16 | 1 252 | ~78 |
 
-::: tip Speed is not a bottleneck for selection
-The winner is deployed on our own GPU, where MoE models with 3B active parameters are fast: **Qwen3.6-35B-A3B measured faster than the previous choice** (245 vs. 154 tok/s) and has fewer total parameters → more VRAM headroom. With 2–3 simultaneous chats, the card is not saturated for any model — continuous batching provides an aggregate throughput higher than single-threaded. Exact figures for your hardware are obtained via a 5-minute run `vllm bench`.
-:::
+A response of 512 tokens arrives in 4–6 seconds. The total speed grows almost linearly up to 16 requests: a single card handles peak load without queuing.
 
-## Profile: speed vs quality (for hybrid models) {#профиль-speed-vs-quality-для-гибридных-моделеи}
+## How many tokens does one user consume {#сколько-токенов-тратит-один-пользователь}
 
-Qwen3.6-35B-A3B is a **hybrid thinking model**: the reasoning mode is enabled via a request parameter `enable_thinking` (on the box — via the launch profile). We measured both modes with a direct probe:
+Stormbpmn cloud AI chat data for 12.10–01.11.2026: 1,963 users, approximately 9,900 chat turns, all users without plan filters. A "turn" is a single user message and the entire response to it, including tool calls.
 
-| Mode | decode | what happens | meaning |
-|---|---|:---:|---|
-| **thinking OFF** (speed) | ~232 tok/s | full coherent response | what is needed for chat |
-| **thinking ON** (quality) | ~259 tok/s | the entire token budget is spent on reasoning before the response | thinks with many tokens → higher latency to response |
+| | Input, median | Input, 90th percentile | Output, median | Output, 90th percentile |
+|---|---:|---:|---:|---:|
+| **Single turn** | 150k | 560k | 4.7k | 25k |
+| **User per day of chat usage** | 370k | 2.5M | 15k | 79k |
+| **User over 3 weeks** | 400k | 3.9M | 16k | 107k |
 
-::: tip Conclusion on the profile — deploy in speed (thinking off)
-Decoding is equally fast in both modes (faster than the previous choice in any case). The cost of "quality" is **not slow decoding, but token volume**: with reasoning, the model spends a large budget on reasoning before the response, multiplying the latency. Meanwhile, 35B-A3B **already without reasoning** delivers a top result (knowledge base 91%, large process 38 nodes, tool selection 100%). Reasoning is not needed for Storm chat — it is an optional reserve for truly difficult reasoning tasks.
-:::
+How to interpret these figures:
 
-## What to consider for self-hosting {#что-учесть-при-self-host}
+- **Input is tens of times larger than output** because a turn consists of an average of 7 requests to the model: the model calls a tool, receives the result, and continues. Each request carries the system prompt, tool descriptions, and dialogue history anew. The actual context size of a single request is approximately 43k tokens (median). The repeating part is retrieved from the vLLM prefix cache and places almost no load on the GPU. With cloud providers that support prompt caching, it is billed at a reduced rate.
+- **Output** includes the model's reasoning: in the cloud, these are included, and approximately 90% of turns are processed with them.
+- **Users do not work with the chat every day**: on average, 1.4 days over 3 weeks. Mean values are 3–4 times higher than medians: a small number of active users build large processes and consume the majority of tokens.
 
-Several self-host server settings that should be verified before production:
+For budget planning with an external provider, calculate based on a **day of chat usage**: on average, 1.35M input tokens and 34k output tokens per user.
 
-- **Configure the tool-call parser** for the selected model (`--tool-call-parser`; for Qwen3.6 — `qwen3_coder`) — otherwise, tool calls are sent as text, and the chat stops performing actions.
-- **Hybrid architectures** (Qwen3-Next, Qwen3.6 — mamba/gated-delta) require `--enable-chunked-prefill`, otherwise vLLM fails on the mamba cache assertion.
-- **Context**: the new default selection runs on a smaller window (32K) than the previous one (64K). For large diagrams + knowledge bases, increase `--max-model-len` to 65536 — 35B-A3B is smaller than 80B in total, and the KV cache for 64K fits in 96 GB with room to spare.
-- **System prompt** does not need to be changed — it already requires explicit tool invocation and grounding through the knowledge base.
-- **Gateway in front of the model** (corporate proxy, API-gateway) must allow streaming responses. If it returns `400` to `"stream": true`, disable the "Response streaming" toggle — see [AI Assistant Configuration](../AI_CHAT.md#стриминг-ответа). vLLM itself supports streaming; the issue is almost always in the intermediary layer.
+## How many users a single GPU card handles {#сколько-пользователеи-тянет-одна-карта}
+
+A single RTX PRO 6000 with this configuration serves the entire AI chat for the Stormbpmn cloud. Load data based on chat metrics from 12.10 to 01.11.2026 and vLLM logs for the week prior to 04.11.2026:
+
+| Metric | Value |
+|---|---|
+| Chat users on a weekday | 150 (median), up to 190 |
+| Chat users per week | 700–850 |
+| Peak hour | 32 users, 73 turns |
+| Concurrent requests at peak | 16, exactly `--max-num-seqs` |
+| Average generation on weekdays | 230–330 tokens/s, out of 1,250 available |
+| KV-cache utilization at peak | up to 82% |
+
+Benchmark: **one card — up to 200 active chat users per day**. The bottleneck is not generation speed, but the number of concurrent requests and the KV-cache. If `Waiting` in the vLLM logs grows steadily or the KV-cache approaches 100%, add a second card with the same compose and a load balancer in front of them.
+
+## What we do not recommend {#что-не-рекомендуем}
+
+| Option | Why not |
+|---|---|
+| MTP with 4-token lookahead | on vLLM `v0.27.1` it crashes with `CUDA illegal memory access` at 16 concurrent requests |
+| SGLang with DFlash speculative decoding on a single GPU | faster for 1–4 requests (up to +40%), but 36% slower than vLLM at 16 requests |
+| DeepSeek V4 Flash | does not fit on a single 96 GB GPU, and in our tests performs at the level of Qwen3.8-27B |
+| vLLM `latest` instead of a pinned version | a new version may change the behavior of tool parsers and the cache. Update deliberately, after running on a test stand |
+
+## What to consider before running {#что-учесть-до-запуска}
+
+- **Tool call parser** is required: `--enable-auto-tool-choice --tool-call-parser qwen3_coder`. Without it, the process model reports "done" without doing anything.
+- **Reasoning**: In Stormbpmn, set `bpmnAiChatThinking = enabled` and enable response streaming so that the user can see the model's thought process. If streaming is not available, set `disabled`. For more details, see [Reasoning (thinking)](../AI_CHAT.md#размышления-thinking).
+- The **gateway in front of the model** (corporate proxy, API gateway) must allow streaming responses. If it returns `400` for `"stream": true`, disable the "Response streaming" toggle — see [AI Assistant Configuration](../AI_CHAT.md#стриминг-ответа).
+- No changes to the **system prompt** are needed.
 
 ## How to switch the process model {#как-переключить-модель}
 
-Parameters are set in the application settings (AI section) and are applied **without a restart**:
+Parameters are set in the application settings (AI section) and applied **without a restart**:
 
-| Parameter | What it sets | Value for the new selection |
+| Parameter | What it sets | Value |
 |---|---|---|
-| `bpmnAiCompletionBaseUrl` | Base URL of the OpenAI-compatible endpoint (**without** `/v1` — Storm will append it automatically) | `http://<llm-host>` |
-| `bpmnAiCompletionModel` | Model name on this endpoint (exactly `--served-model-name`) | `qwen36-35b-a3b` |
+| `bpmnAiCompletionBaseUrl` | Address of the OpenAI-compatible server, **without** `/v1` (Stormbpmn will append it automatically) | `http://<llm-host>` |
+| `bpmnAiCompletionModel` | Model name on the server, exactly `--served-model-name` | `qwen3.8-27b` |
 | `bpmnAiCompletionTemperature` | Temperature | `0.2` |
+| `bpmnAiChatThinking` | Reasoning | `enabled` (with streaming) |
 
-::: tip Deployment Plan
-Deploy **Qwen3.6-35B-A3B** (vLLM, fp8, speed profile / thinking off) on a 96 GB card — VRAM is sufficient with room to spare, and voice input fits alongside it. It is best to roll out **via an A/B flag for a subset of users** (share → chat metrics for 1–2 weeks → further), rather than a hard switch: this allows you to see if hallucinations about the product have disappeared (database grounding 0% → 91%) and whether quality is maintained on large diagrams.
-:::
-
-::: warning Run Conditions
-The comparison was performed using the actual Storm backend and real MCP tools, on self-hosted vLLM (RTX PRO 6000, 96 GB), speed profile (for hybrid models, reasoning is disabled — in quality mode, their quality is even higher). Verification is done **based on the actual database state**, not on the model's response text; 2 repetitions to counter non-determinism; diagrams are rendered with the same library used in Storm. Speed is a reference, secondary criterion (quality is the priority).
+::: tip How to migrate from another model
+If you are already running a different model, deploy the new one alongside it and switch a subset of users or a test environment to it. After 1–2 weeks, compare the response quality ratings in the chat and the response time, then switch everyone over.
 :::
 
 ## Related documentation {#связанная-документация}
 
-- **[Deployment on vLLM](./deploy-vllm.md)** — how to deploy the selected process model on vLLM (compose, flag breakdown, performance tuning)
-- **[Enabling and connecting the model](../AI_CHAT.md)** — connecting the process model to Storm and configuring chat behavior
+- **[Deployment on vLLM](./deploy-vllm.md)** — docker-compose, flag breakdown, performance diagnostics
+- **[Enabling and connecting the model](../AI_CHAT.md)** — connecting the model to Stormbpmn and configuring chat behavior
 - **[AI chat knowledge base (RAG)](../KnowledgeBase.md)** — how the chat responds based on your reference documents
 - **[System configuration](/en/configure/README.md)** — application settings and ENV variables
