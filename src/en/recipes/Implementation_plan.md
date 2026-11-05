@@ -82,8 +82,8 @@ Without assigning these roles, the implementation project is doomed to stall. Th
 | Obtaining SSL certificates | Customer |
 | Reserving DNS names | Customer |
 | Determining the type and quantity of licenses | Storm assists |
-| Providing the license key | Storm Team |
-| Providing access to Docker images (registry token) | Storm Team |
+| Registering in the [Enterprise portal](/en/install/portal.md) | Customer |
+| Image access and license keys — in the portal under the license agreement | Storm Team |
 | Providing documentation | Storm Team |
 
 ### Phase 1: Infrastructure and Installation {#фаза-1-инфраструктура-и-установка}
@@ -94,7 +94,7 @@ Without assigning these roles, the implementation project is doomed to stall. Th
 | Transferring the image to the corporate Registry | Customer |
 | Deploying all components (PostgreSQL with pgvector/pg_trgm extensions, etc. — see [requirements](/en/install/README.md), MinIO, Redis, Nginx, etc.) | Customer (per documentation) |
 | Starting StormBPMN, initial configuration | Customer (per documentation) |
-| License activation (full activation code — Storm Team — v2 key) | Storm + Customer |
+| License activation (full activation code → [Enterprise portal](/en/install/portal.md#лицензионныи-ключ) → v2 key) | Customer |
 | Assistance with installation issues | Storm provides help |
 
 ### Phase 2: Security {#фаза-2-безопасность}
