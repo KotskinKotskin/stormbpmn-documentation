@@ -34,7 +34,9 @@ an automatic fallback to `LICENSE_KEY`.
    (the page has been available since 6.6.2310, the `GET /api/v1/license-signature` endpoint — since 6.6.2229), so it
    can be retrieved before the update — see
    ["Where to get the activation code on an existing installation"](/en/operation/License.md#где-взять-код-активации-на-существующеи-инсталляции).
-3. Provide the full code to the manager and receive a separate `LICENSE_KEY_V2` for this installation.
+3. Paste the full code into the [Enterprise portal](/en/install/portal.md#лицензионныи-ключ) ("License keys"
+   section) and receive a separate `LICENSE_KEY_V2` for this installation. You don't need to send the
+   code to your manager.
    Then update the installation to a version with v2 support, keeping the working `LICENSE_KEY`.
 4. Add `LICENSE_KEY_V2`, without removing `LICENSE_KEY` until verification and the end of the agreed-upon
    rollback window.
