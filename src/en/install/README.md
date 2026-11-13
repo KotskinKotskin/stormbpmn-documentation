@@ -5,37 +5,35 @@ dir:
   order: 2
   link: true
 index: true
-source_hash: 1a67ca34ad4eb3c5
+source_hash: cf3b65e5f7e31651
 ---
 
 [[toc]]
 
 # Installation {#установка}
 
-> 📦 **Deploying StormBPMN from scratch?** This is the place for you. Follow the steps in order: first **“Quick Start”**, then **“Production Installation”** — skipping stages is not allowed.
+> 📦 **Deploying StormBPMN from scratch?** This is the place for you. Follow the steps in order: first **"Quick Start"**, then **"Production Installation"** — skipping stages is not allowed.
 
-Stormbpmn is provided as a Docker container from a private registry, which includes both the frontend and backend. Installation involves correctly specifying environment variables, deploying adjacent containers (if necessary), and configuring the system in the administrative interface.
+Stormbpmn is provided as a Docker container from a private registry, which includes both the frontend and backend. Installation involves correctly specifying environment variables, deploying adjacent containers (if necessary), and configuring the administrative interface.
 
 ::: warning First — registration in the Enterprise portal
-The container is located in a closed registry `registry.stormbpmn.com`. Login credentials and the license key are issued only through the [portal.enterprise.stormbpmn.com](https://portal.enterprise.stormbpmn.com) portal. If you are not yet registered, register before starting the installation — see [“Enterprise Portal: Access to Images and Keys”](./portal.md).
+The container is located in a closed registry `registry.stormbpmn.com`. Login credentials and the license key are issued only through the [portal.enterprise.stormbpmn.com](https://portal.enterprise.stormbpmn.com) portal. If you are not yet registered, register before starting the installation — see ["Enterprise Portal: Access to Images and Keys"](./portal.md).
 The current container version is listed in the Changelog section of this documentation.
 :::
 
-
 ::: tip 2 installation stages
-The menu on the left outlines two stages: “Quick Start” and “Production-ready”. They must be performed sequentially; skipping is not allowed.
+The menu on the left outlines two stages: "Quick Start" and "Production-ready". They must be performed sequentially; skipping is not allowed.
 :::
 
 ::: tip Kubernetes
-An official Helm chart is available for Kubernetes, and its version matches the StormBPMN version: [“Installation in Kubernetes (Helm)”](./kubernetes.md).
+An official Helm chart is available for Kubernetes, and its version matches the StormBPMN version: ["Installation in Kubernetes (Helm)"](./kubernetes.md).
 :::
-
 
 ::: warning Using corporate services
 **Recommendation:** If your organization has centralized infrastructure services, use them:
 
 -   **DBaaS** (Database as a Service) instead of deploying PostgreSQL independently
--   **S3aaS** or a corporate file storage instead of MinIO
+-   **S3aaS** or a corporate S3 storage instead of your own SeaweedFS
 -   **Managed SMTP** instead of your own mail server
 -   **Corporate SSO/SAML** instead of Keycloak
 -   **Centralized monitoring** (Prometheus/Grafana) instead of local
@@ -43,23 +41,23 @@ An official Helm chart is available for Kubernetes, and its version matches the 
 This will simplify deployment, ensure better support, and ensure compliance with corporate security standards.
 :::
 
-## System requirements {#системные-требования}
+## System Requirements {#системные-требования}
 
-### General Minimum Requirements for the Entire System {#общие-минимальные-требования-для-всеи-системы}
+### General minimum requirements for the entire system {#общие-минимальные-требования-для-всеи-системы}
 
-| Component         | CPU         | RAM       | Disk       | Note                     |
-| ----------------- | ----------- | --------- | ---------- | ------------------------ |
-| **General Resources** | **12 vCPU** | **24 GB** | **300 GB** | Minimum for the full system |
-| **Recommended**   | **16 vCPU** | **32 GB** | **500 GB** | For stable operation     |
-| **Production**    | **24 vCPU** | **32 GB** | **500 GB** | For high load            |
+| Component         | CPU         | RAM       | Disk       | Note                         |
+| ----------------- | ----------- | --------- | ---------- | ---------------------------- |
+| **General resources** | **12 vCPU** | **24 GB** | **300 GB** | Minimum for the full system  |
+| **Recommended**   | **16 vCPU** | **32 GB** | **500 GB** | For stable operation         |
+| **Production**    | **24 vCPU** | **32 GB** | **500 GB** | For high load                |
 
 The values above are for the full system with all services, including monitoring and Keycloak. If
-PostgreSQL, S3, SSO, and email are corporate, resources are required only for the application — see
-["Deployment Configurations"](#конфигурации-развертывания).
+PostgreSQL, S3, SSO, and email are corporate, resources are only needed for the application — see
+[«Deployment configurations»](#конфигурации-развертывания).
 
-### User Count Reference {#ориентир-по-числу-пользователеи}
+### User Count Guidelines {#ориентир-по-числу-пользователеи}
 
-The load profile is interactive work in the browser: opening and saving process models, search, and viewing the registry. The load is determined by the number of people working simultaneously, not the number of user accounts. The values below are a reference for the application and database without the simulations module; define target metrics during acceptance testing on your infrastructure.
+The load profile is interactive work in a browser: opening and saving process models, searching, and viewing the registry. The load is determined by the number of people working simultaneously, not the number of user accounts. The values below are guidelines for the application and database without the simulations module; define target metrics during acceptance testing on your infrastructure.
 
 | Users | StormBPMN Application | PostgreSQL | PostgreSQL Disk |
 | --- | --- | --- | --- |
@@ -67,9 +65,9 @@ The load profile is interactive work in the browser: opening and saving process 
 | **50–300** | 1–2 instances of 4 vCPU, 8 GB | 4 vCPU, 8 GB | SSD, 100–200 GB |
 | **more than 300** | 2 or more instances of 4–8 vCPU, 8–16 GB, Redis | 4–8 vCPU, 16 GB | SSD, from 200 GB |
 
--   **Disks.** PostgreSQL requires an SSD: the database handles short transactions when opening and saving process models, and disk latency is directly visible to users. The reference is from 1,000 IOPS and latency up to 5 ms; this is provided by any server SSD or cloud provider SSD disk. The database size grows primarily due to the history of process model versions.
--   **Files.** Attachments, images, and exports are stored in S3. The storage volume depends on how many files are attached to processes; 50–100 GB is sufficient to start.
--   **Simulations module** adds 4 vCPU and 16 GB regardless of the number of users.
+-   **Disks.** PostgreSQL requires an SSD: the database handles short transactions when opening and saving process models, and disk latency is directly visible to users. The guideline is at least 1,000 IOPS and latency up to 5 ms; this is provided by any server SSD or cloud provider SSD disk. The database size grows primarily due to the history of process model versions.
+-   **Files.** Attachments, images, and exports are stored in S3. Storage volume depends on the number of files attached to processes; 50–100 GB is sufficient to start.
+-   The **Simulations module** adds 4 vCPU and 16 GB regardless of the number of users.
 
 ### Container Requirements {#требования-по-контеинерам}
 
@@ -85,7 +83,7 @@ The load profile is interactive work in the browser: opening and saving process 
 
 | Container | CPU    | RAM  | Disk   | Ports      | Description                                 |
 | --------- | ------ | ---- | ------ | ---------- | ---------------------------------------- |
-| **MinIO** | 1 vCPU | 2 GB | 100 GB | 9000, 9001 | S3-compatible storage (API + Console) |
+| **SeaweedFS** | 1 vCPU | 2 GB | 100 GB | 8333 | S3-compatible storage, [how to start](/en/install/production/components.md#рекомендуемое-решение-seaweedfs) |
 
 #### Authorization and Security {#авторизация-и-безопасность}
 
@@ -127,7 +125,7 @@ Redis is **required** when deploying multiple instances of StormBPMN (multi-inst
 
 ### PostgreSQL Requirements: Extensions and Encoding {#требования-к-postgresql-расширения-и-кодировка}
 
-**PostgreSQL 14 or later** is required for the main and audit databases; for new installations, we recommend **16–17**. On PostgreSQL 13 and earlier, the application stops before migrations are executed.
+**PostgreSQL 14 or later** is required for the main and audit databases; for new installations, we recommend **16–17**. On PostgreSQL 13 or earlier, the application stops before migrations are executed.
 
 StormBPMN uses several PostgreSQL extensions. Before installation, ensure they are **available in your database build** and that the database is created with **UTF8** encoding.
 
@@ -140,7 +138,7 @@ StormBPMN uses several PostgreSQL extensions. Before installation, ensure they a
 | **uuid-ossp** | UUID generation | Mandatory |
 | **hstore** | Key-value storage for the vector search engine | Mandatory |
 
-**What is created automatically and what must be done manually:**
+**What is created automatically vs. manually:**
 
 - Extensions `vector`, `uuid-ossp`, `hstore`, and `pgcrypto` are created by migrations on the first run (`CREATE EXTENSION IF NOT EXISTS …`) — **provided** that the corresponding packages are installed in the PostgreSQL build and the database user has the privilege to create extensions (superuser or a role with the necessary privileges).
 - The **`pg_trgm`** extension is **not created automatically** by the application. If it is missing, the autocomplete index migrations are **silently skipped**, and user search by partial name/email will not work. Create it in advance.
@@ -150,7 +148,7 @@ The standard image `postgres:17` includes contrib modules (`pg_trgm`, `pgcrypto`
 :::
 
 ::: tip The pgvector image is available from our registry
-If external registries (Docker Hub) are blocked, you do not need to pull `pgvector/pgvector:pg17` from outside — we mirror the official image to our private registry and **sign it with the same Cosign signature** as the main StormBPMN image. It is available using the **same** login from the [Enterprise portal](./portal.md#доступ-к-образам):
+If external registries (Docker Hub) are blocked, you do not need to pull `pgvector/pgvector:pg17` from an external source — we mirror the official image to our private registry and **sign it with the same Cosign signature** as the main StormBPMN image. It is available using the **same** login from the [Enterprise portal](./portal.md#доступ-к-образам):
 
 ```bash
 docker pull registry.stormbpmn.com/stormbpmn-enterprise/pgvector:pg17
@@ -184,7 +182,7 @@ StormBPMN + PostgreSQL + Nginx
 
 ```yaml
 # Основные + авторизация + хранилище
-StormBPMN + PostgreSQL + Nginx + MinIO + Keycloak + SMTP
+StormBPMN + PostgreSQL + Nginx + SeaweedFS + Keycloak + SMTP
 Итого: 10.5 vCPU, 18.5 GB RAM, 240 GB диск
 ```
 
@@ -226,10 +224,10 @@ Any OS where Docker runs, for example (not limited to):
 -   **ALT Linux**: 10+, Simply Linux
 -   **RED OS**: 7.3+, 8
 -   **ROSA Linux**: 12+
--   Any other Russian OS with Docker or Podman support
+-   Any other Russian OS with support for Docker or Podman
 
-::: tip Containerization Import Substitution
-To meet the requirements of the registry of domestic software, **Podman** can be used instead of Docker — an OCI-compatible alternative included in the registry of Russian software. See the [Docker Alternatives](#альтернативы-docker-импортозамещение) section for details.
+::: tip Containerization import substitution
+To meet the requirements of the registry of domestic software, **Podman** can be used instead of Docker — an OCI-compatible alternative included in the registry of Russian software. For details, see the [Docker Alternatives](#альтернативы-docker-импортозамещение) section.
 :::
 
 ### Disk Recommendations {#рекомендации-по-дискам}
@@ -237,7 +235,7 @@ To meet the requirements of the registry of domestic software, **Podman** can be
 | Data Type     | Recommended Disk Type | Note                                |
 | -------------- | ----------------------- | ----------------------------------------- |
 | **PostgreSQL** | SSD                     | Critical for performance           |
-| **MinIO/S3**   | SSD or HDD             | Depends on file operation intensity |
+| **S3**         | SSD or HDD             | Depends on file access intensity |
 | **Logs**       | HDD                     |                                           |
 | **Applications** | HDD                     |                                           |
 
@@ -255,7 +253,7 @@ To meet the requirements of the registry of domestic software, **Podman** can be
 -   **To users**: < 100ms
 -   **To external APIs**: < 500ms
 
-## Network Requirements {#сетевые-требования-1}
+## Network requirements {#сетевые-требования-1}
 
 ### Required ports {#обязательные-порты}
 
@@ -264,36 +262,36 @@ To meet the requirements of the registry of domestic software, **Podman** can be
 | **StormBPMN**  | 8080, 8081, 8082 | HTTP/HTTPS | Main web application       |
 | **PostgreSQL** | 5432             | TCP        | Database                   |
 | **Nginx**      | 80, 443          | HTTP/HTTPS | Load balancer, SSL termination |
-| **MinIO**      | 9000, 9001       | HTTP/HTTPS | S3 API + web console          |
+| **SeaweedFS**  | 8333             | HTTP/HTTPS | S3 API                        |
 
-### Additional ports (optional) {#дополнительные-порты-опционально}
+### Additional Ports (Optional) {#дополнительные-порты-опционально}
 
-| Service        | Port         | Protocol   | Purpose                                   |
-| -------------- | ------------ | ---------- | ----------------------------------------- |
-| **Keycloak**   | 8180         | HTTP/HTTPS | Authorization system                      |
-| **SMTP**       | 25, 587, 465 | SMTP/SMTPS | Mail server                               |
-| **Redis**      | 6379         | TCP        | Collaborative editing (multi-instance)    |
-| **Prometheus** | 9090         | HTTP       | Metrics collection                        |
-| **Grafana**    | 3000         | HTTP       | Metrics visualization                     |
-| **ListMonk**   | 9000         | HTTP       | Mailing system                            |
-| **PlantUML**   | 8090         | HTTP       | Diagram generation                        |
-| **Gotenberg**  | 3001         | HTTP       | PDF conversion                            |
+| Service        | Port         | Protocol   | Purpose                                |
+| -------------- | ------------ | ---------- | -------------------------------------- |
+| **Keycloak**   | 8180         | HTTP/HTTPS | Authorization system                   |
+| **SMTP**       | 25, 587, 465 | SMTP/SMTPS | Mail server                            |
+| **Redis**      | 6379         | TCP        | Collaborative editing (multi-instance) |
+| **Prometheus** | 9090         | HTTP       | Metrics collection                     |
+| **Grafana**    | 3000         | HTTP       | Metrics visualization                  |
+| **ListMonk**   | 9000         | HTTP       | Mailing system                         |
+| **PlantUML**   | 8090         | HTTP       | Diagram generation                     |
+| **Gotenberg**  | 3001         | HTTP       | PDF conversion                         |
 
-### External Connections {#внешние-соединения}
+### External connections {#внешние-соединения}
 
 -   **SMTP server**: port 587/465 (for notifications)
 -   **LDAP/AD**: port 389/636 (for authentication)
 
-### Offline operation (closed environment) {#работа-без-интернета-закрытыи-контур}
+### Offline Operation (Closed Environment) {#работа-без-интернета-закрытыи-контур}
 
-The application does not require the internet: it does not make requests to external networks, and the license is verified locally, without a licensing server (see [“How licenses work”](/en/operation/License.md)).
+The application does not require the internet: it does not make any calls to external networks, and the license is verified locally, without a licensing server (see [“How Licenses Work”](/en/operation/License.md)).
 Internet access is only required if you enable one of the following features:
 
-| Feature | External dependency | How to operate without internet |
+| Feature | External Dependency | How to Operate Without Internet |
 | --- | --- | --- |
-| Image loading during installation and updates | Registry `registry.stormbpmn.com` | Download images on a machine with internet access and transfer them to the internal registry — see [Quick start](/en/install/quickstart/QUICKSTART_MANUAL.md) and [Kubernetes → Closed environment](./kubernetes.md#закрытыи-контур) |
+| Image loading during installation and updates | Registry `registry.stormbpmn.com` | Download images on a machine with internet access and transfer them to the internal registry — see [Quick Start](/en/install/quickstart/QUICKSTART_MANUAL.md) and [Kubernetes → Closed Environment](./kubernetes.md#закрытыи-контур) |
 | PDF export | Public `demo.gotenberg.dev`, if `GOTENBERG_URL` is not specified | Deploy your own Gotenberg instance and specify its address |
-| AI module | External LLM provider | Connect a model deployed within the closed environment — see [AI module](/en/ai/) |
+| AI module | External LLM provider | Connect a model deployed within the closed environment — see [AI Module](/en/ai/) |
 | Captcha on the login form | Yandex SmartCaptcha | Disabled by default; do not enable it in a closed environment — see [Configuration](/en/configure/README.md) |
 
 ## DNS Names and Certificates {#dns-имена-и-сертификаты}
@@ -302,12 +300,12 @@ Internet access is only required if you enable one of the following features:
 
 #### Required Records: {#обязательные-записи}
 
--   **stormbpmn.company.com** - main application domain. Must point to 8081
+-   **stormbpmn.company.com** - the main application domain. Must point to 8081
 -   **stormbpmn-api.company.com** - API endpoints (optional). Must point to 8082
 
 ## Docker Alternatives (Import Substitution) {#альтернативы-docker-импортозамещение}
 
-StormBPMN is provided as **OCI-compatible container images**, which allows the use of alternative containerization tools instead of Docker.
+Stormbpmn is provided as **OCI-compatible container images**, which allows the use of alternative containerization tools instead of Docker.
 
 ### Podman (recommended for import substitution) {#podman-рекомендуется-для-импортозамещения}
 

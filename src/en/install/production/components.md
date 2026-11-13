@@ -1,175 +1,114 @@
 ---
 title: External Services
 order: 2
-source_hash: b41881098872cbb0
+source_hash: 7fd02b170e068abe
 ---
 
 [[toc]]
 
 # External services {#внешние-сервисы}
 
-Deployment of services that StormBPMN depends on: object storage, Redis, PlantUML, document conversion, and email. The basic checklist and load balancer are covered in the [Production installation overview](./README.md).
+Deployment of services that StormBPMN depends on: object storage, Redis, PlantUML, document conversion, and email. The basic checklist and load balancer are covered in the [Production deployment overview](./README.md).
 
-## S3 storage for files {#s3-хранилище-для-фаилов}
+## S3 Storage for Files {#s3-хранилище-для-фаилов}
 
 ### What is stored in S3: {#что-хранится-в-s3}
 
--   **Business process images** - diagrams and charts
--   **User avatars** - profile pictures
+-   **Business process images** - schemas and diagrams
+-   **User avatars** - profile images
 -   **Document templates** - for report generation
 -   **Attachments** - files attached to processes
 
-::: tip What to choose if you don't have a corporate S3
-StormBPMN works with any S3-compatible storage. Two simple options for self-host:
-
-- **MinIO** — a familiar option (see below). Note: in recent releases, the MinIO community console has been reduced to a simple object browser — bucket/policy management via the web interface has been removed.
-- **[SeaweedFS](#альтернатива-seaweedfs-простое-s3-со-встроенным-ui)** — a lightweight S3 storage in a single container with a **built-in web interface** (Filer). Recommended if you need a simple UI and minimal setup effort.
+::: tip What to choose if there is no corporate S3
+StormBPMN works with any S3-compatible storage that supports path-style addressing.
+For self-host, we recommend **[SeaweedFS](#рекомендуемое-решение-seaweedfs)**: a single container,
+Apache 2.0 license, keys and buckets are configured via environment variables. The
+[quick start script](/en/install/quickstart/QUICKSTART_SCRIPT.md) installs it as well.
 :::
 
-### Recommended Solution: MinIO {#рекомендуемое-решение-minio}
-
-:::info
-If you used the [script](/en/install/quickstart/QUICKSTART_SCRIPT.md) for a quick start,
-MinIO is already successfully deployed and connected to the system.
+::: warning MinIO no longer distributes images
+Since autumn 2025, MinIO has stopped publishing community images: `quay.io/minio/minio` and `minio/minio` from
+Docker Hub cannot be downloaded, and the client `mc` from `dl.min.io` is also unavailable. An already running MinIO
+will continue to work with StormBPMN; it is not necessary to change it. For new installations, use SeaweedFS
+or corporate S3.
 :::
 
-#### Installing MinIO {#установка-minio}
+### Recommended Solution: SeaweedFS {#рекомендуемое-решение-seaweedfs}
 
-```bash
-# Запуск MinIO в Docker
-docker run -d \
-  -p 9000:9000 \
-  -p 9001:9001 \
-  --name minio \
-  -v /mnt/data:/data \
-  -e "MINIO_ROOT_USER=stormbpmn-s3-user" \
-  -e "MINIO_ROOT_PASSWORD=stormbpmn-s3-password" \
-  quay.io/minio/minio server /data --console-address ":9001"
-```
-
-#### Creating the Default Bucket {#создание-дефолтного-бакета}
-
-```bash
-curl -fLO https://dl.min.io/client/mc/release/linux-amd64/mc
-chmod +x mc
-mv mc /usr/local/bin/
-mc alias set minio http://localhost:9000 "stormbpmn-s3-user" "stormbpmn-s3-password"
-mc mb minio/storm-uploads
-```
-
-#### Configuring Environment Variables {#настроика-переменных-окружения}
-
-| Variable                 | Description                               | Example Value           |
-|----------------------------|----------------------------------------|---------------------------|
-| **S3_ENDPOINT**            | Storage URL                          | `http://192.168.0.4:9000` |
-| **S3_ACCESS_KEY**          | Access Key                           | `stormbpmn-s3-user`       |
-| **S3_SECRET_KEY**          | Secret Key                         | `stormbpmn-s3-password`   |
-| **S3_BUCKET_UPLOADS**      | Default bucket                     | `storm-uploads`           |
-| **S3_BUCKET_USERS**        | Bucket for users                | `storm-users`             |
-| **S3_BUCKET_IMPORTS**      | Bucket for imports                     | `storm-imports`           |
-| **S3_SINGLE_USERS_BUCKET** | Single bucket mode for users | `true`                    |
-| **S3_EXTERNAL_ENDPOINT**   | Address at which the **browser** opens file links (optional) | `https://s3.company.com`  |
-
-::: tip S3_EXTERNAL_ENDPOINT
-The Storm server accesses the storage via `S3_ENDPOINT` (usually an internal address), while users are issued temporary (presigned) links to files that are opened by their browser. If the internal address is not accessible from user computers, specify the external address of the same storage in `S3_EXTERNAL_ENDPOINT`. If the variable is not set, links are constructed using `S3_ENDPOINT`. The functionality of this address from the browser is verified by the [System Check](/en/operation/system-check.md#проверка-фаилового-хранилища-из-браузера). After changing `.env`, restart the container.
-:::
-
-When using another S3 storage compatible with AWS SDK v2, you may also need to:
-- Set the variable `S3_REGION` corresponding to your storage configuration
-- Set the variable `S3_VIRTUAL_HOST=true` for vHosted addressing type (default is `false` for Path-Style)
-
-:::info Single User Bucket
-- For a fresh installation, we recommend using `S3_SINGLE_USERS_BUCKET=true`.
-- If you already have Storm installed and connected to an S3 storage where each user has their own bucket (of the form `user123`),
-you can migrate them to a single bucket (for example, `storm-users`), specify it in the variable `S3_BUCKET_USERS`
-and switch the operating mode to `S3_SINGLE_USERS_BUCKET=true`. In this case, the path to user files will
-look like `s3://storm-users/user123/...`
-:::
-
-#### Verifying Functionality {#проверка-работоспособности}
-
-After configuration, when saving diagrams, their thumbnails should be displayed in the card view.
-
-::: tip MinIO Documentation
-Complete installation guide: [MinIO Documentation](https://min.io/docs/minio/linux/index.html)
-:::
-
-### Alternative: SeaweedFS (simple S3 with built-in UI) {#альтернатива-seaweedfs-простое-s3-со-встроенным-ui}
-
-[SeaweedFS](https://github.com/seaweedfs/seaweedfs) is a lightweight S3-compatible storage solution. It runs as a **single container**, features a built-in web interface (Filer), and supports path-style addressing used by StormBPMN. It is a good choice if corporate S3 is unavailable and MinIO is not suitable.
-
-#### Step 1. Access credentials {#шаг-1-учетные-данные-доступа}
-
-S3 in SeaweedFS is open by default without a password — you must set access keys via configuration. Create the file `s3-config.json`:
-
-```json
-{
-  "identities": [
-    {
-      "name": "stormbpmn",
-      "credentials": [
-        { "accessKey": "stormbpmn-s3-user", "secretKey": "stormbpmn-s3-password" }
-      ],
-      "actions": ["Admin", "Read", "Write", "List", "Tagging"]
-    }
-  ]
-}
-```
-
-#### Step 2. Container startup {#шаг-2-запуск-контеинера}
+#### Startup {#запуск}
 
 ```bash
 docker run -d \
   --name seaweedfs \
   --restart unless-stopped \
   -p 8333:8333 \
-  -p 8888:8888 \
-  -v /mnt/seaweedfs:/data \
-  -v "$(pwd)/s3-config.json:/etc/seaweedfs/s3-config.json:ro" \
-  chrislusf/seaweedfs server \
-    -dir=/data \
-    -s3 \
-    -s3.port=8333 \
-    -s3.config=/etc/seaweedfs/s3-config.json
+  -v seaweedfs_data:/data \
+  -e AWS_ACCESS_KEY_ID=stormbpmn \
+  -e AWS_SECRET_ACCESS_KEY=<случайная строка от 32 символов> \
+  -e S3_BUCKET=storm-uploads,storm-users,storm-imports \
+  chrislusf/seaweedfs:4.52
 ```
 
-The `server` command starts the master, volume, filer, and S3 gateway in a single process.
+The default image starts `weed mini -dir=/data`: all SeaweedFS components and the S3 API run in a single process on port **8333**. On the first start, the container creates a user with keys from `AWS_ACCESS_KEY_ID`/`AWS_SECRET_ACCESS_KEY` and buckets from `S3_BUCKET`; on subsequent starts, it does not recreate anything.
 
-| Port     | Purpose                                  |
-| -------- | ------------------------------------------- |
-| **8333** | S3 API (specified in `S3_ENDPOINT`)      |
-| **8888** | Filer — web interface for viewing files  |
+::: warning Set the keys explicitly
+Without `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`, S3 in SeaweedFS works **without authentication**: anyone with network access to port 8333 can read and delete files.
+:::
 
-#### Step 3. Bucket creation {#шаг-3-создание-бакета}
+Expose only port `8333` externally. The other ports `weed mini` (master, filer, and admin web interfaces) have no authentication, so do not expose them to users.
 
-```bash
-docker exec -i seaweedfs weed shell <<< "s3.bucket.create -name storm-uploads"
-```
+Pin the image tag (`chrislusf/seaweedfs:4.52`, not `latest`): this ensures the storage is updated only when you change the tag.
 
-Or using any S3 client with the same keys (e.g., AWS CLI):
+#### StormBPMN Environment Variables {#переменные-окружения-stormbpmn}
 
 ```bash
-aws --endpoint-url http://localhost:8333 s3 mb s3://storm-uploads
-```
-
-#### Step 4. StormBPMN environment variables {#шаг-4-переменные-окружения-stormbpmn}
-
-```bash
-S3_ENDPOINT=http://<хост-seaweedfs>:8333
-S3_ACCESS_KEY=stormbpmn-s3-user
-S3_SECRET_KEY=stormbpmn-s3-password
+S3_ENDPOINT=http://seaweedfs:8333            # адрес, по которому в S3 ходит сервер Storm
+S3_EXTERNAL_ENDPOINT=http://10.0.0.15:8333   # адрес, по которому файлы открывает браузер
+S3_ACCESS_KEY=stormbpmn
+S3_SECRET_KEY=<тот же секрет, что в AWS_SECRET_ACCESS_KEY>
 S3_BUCKET_UPLOADS=storm-uploads
+S3_BUCKET_USERS=storm-users
+S3_BUCKET_IMPORTS=storm-imports
 S3_SINGLE_USERS_BUCKET=true
-# Адресация path-style включена по умолчанию (S3_VIRTUAL_HOST=false) — менять не нужно.
 ```
 
-#### Step 5. Verification {#шаг-5-проверка}
+#### Verification {#проверка}
 
-- Open the Filer web interface: `http://<хост-seaweedfs>:8888` — buckets and files are visible there.
-- Save a diagram in StormBPMN — its thumbnail should appear in the card view, and the corresponding object should appear in the bucket `storm-uploads` (in Filer).
+Open **Administration → System Check**: the "File Storage (S3)" card should be green, and the browser check should show no warnings. For details, see
+["System Check"](/en/operation/system-check.md#проверка-фаилового-хранилища-из-браузера).
 
-::: tip SeaweedFS Documentation
-S3 API and its configuration: [SeaweedFS — Amazon S3 API](https://github.com/seaweedfs/seaweedfs/wiki/Amazon-S3-API).
+SeaweedFS documentation: [Quick Start with weed mini](https://github.com/seaweedfs/seaweedfs/wiki/Quick-Start-with-weed-mini),
+[Amazon S3 API](https://github.com/seaweedfs/seaweedfs/wiki/Amazon-S3-API).
+
+### S3 Environment Variables {#переменные-окружения-s3}
+
+| Variable                 | Description                               | Example Value           |
+|----------------------------|----------------------------------------|---------------------------|
+| **S3_ENDPOINT**            | Storage URL                          | `http://192.168.0.4:8333` |
+| **S3_ACCESS_KEY**          | Access key                           | `stormbpmn`               |
+| **S3_SECRET_KEY**          | Secret key                         | `<секрет>`                |
+| **S3_BUCKET_UPLOADS**      | Default bucket                     | `storm-uploads`           |
+| **S3_BUCKET_USERS**        | Bucket for users                | `storm-users`             |
+| **S3_BUCKET_IMPORTS**      | Bucket for imports                     | `storm-imports`           |
+| **S3_SINGLE_USERS_BUCKET** | Single bucket mode for users | `true`                    |
+| **S3_EXTERNAL_ENDPOINT**   | Address at which the **browser** opens file links (optional) | `https://s3.company.com`  |
+
+Create the `S3_BUCKET_UPLOADS` bucket in advance: the application does not create it when uploading files. The application creates user and import buckets on the first write if the key has permission to create buckets.
+
+::: tip S3_EXTERNAL_ENDPOINT
+The Storm server accesses the storage via `S3_ENDPOINT` (usually an internal address), while users are issued temporary (presigned) links to files that their browser opens. If the internal address is not accessible from user computers, specify the external address of the same storage in `S3_EXTERNAL_ENDPOINT`. If the variable is not set, links are constructed using `S3_ENDPOINT`. The [System Check](/en/operation/system-check.md#проверка-фаилового-хранилища-из-браузера) verifies the operation of this address from the browser. After changing `.env`, restart the container.
+:::
+
+When using a different S3 storage compatible with AWS SDK v2, you may also need to:
+- Set the `S3_REGION` variable to match your storage configuration
+- Set the `S3_VIRTUAL_HOST=true` variable for vHosted addressing type (default is `false` for Path-Style)
+
+:::info Single User Bucket
+- For a fresh installation, we recommend using `S3_SINGLE_USERS_BUCKET=true`.
+- If you already have Storm installed and connected to an S3 storage where each user has their own bucket (of the form `user123`),
+you can migrate them to a single bucket (for example, `storm-users`), specify it in the `S3_BUCKET_USERS` variable,
+and switch the operating mode to `S3_SINGLE_USERS_BUCKET=true`. In this case, the path to user files will
+look like `s3://storm-users/user123/...`
 :::
 
 ---
@@ -181,10 +120,10 @@ S3 API and its configuration: [SeaweedFS — Amazon S3 API](https://github.com/s
 Redis is used for the **real-time collaborative diagram editing** feature. It provides:
 
 -   **Pub/Sub** - message delivery between application instances (cursors, XML changes, presence)
--   **Session storage** - information about current participants in collaborative editing
+-   **Session storage** - information about current collaborative editing participants
 
 ::: tip When is Redis required?
--   **Single StormBPMN instance** — Redis is **not required**. Data is stored in application memory (InMemory mode)
+-   **Single StormBPMN instance** — Redis is **not required**. Data is stored in the application memory (InMemory mode)
 -   **Multiple instances** (multi-instance / HA) — Redis is **mandatory** for synchronization between nodes
 :::
 
@@ -208,9 +147,9 @@ docker run -d \
   redis-server --requirepass your-secure-password
 ```
 
-### Configuring environment variables {#настроика-переменных-окружения-1}
+### Configuring Environment Variables {#настроика-переменных-окружения}
 
-| Variable            | Description                | Example value    | Required                |
+| Variable            | Description                | Example Value    | Required                |
 | --------------------- | ----------------------- | ------------------ | -------------------------- |
 | **REDIS_ENABLED**     | Enabling Redis         | `true`             | For multi-instance         |
 | **REDIS_HOST**        | Redis host              | `192.168.0.7`      | When REDIS_ENABLED=true     |
@@ -219,13 +158,13 @@ docker run -d \
 | **REDIS_DATABASE**    | Redis database number | `0`                | Optional (default 0)  |
 | **REDIS_TIMEOUT**     | Connection timeout     | `1000ms`           | Optional                |
 
-### Functionality Check {#проверка-работоспособности-1}
+### Functionality Check {#проверка-работоспособности}
 
 After configuration, open one diagram in two browser tabs — you should see the avatars of other participants on the canvas and real-time synchronization of changes.
 
-### Configuring the Load Balancer for WebSocket {#настроика-балансировщика-для-websocket}
+### Load Balancer Configuration for WebSocket {#настроика-балансировщика-для-websocket}
 
-Collaborative editing uses **WebSocket** (STOMP over SockJS) via the path `/ws`. Ensure that the load balancer proxies WebSocket connections. A configuration example is provided in the [section above](README.md#конфигурация-nginx).
+Collaborative editing uses **WebSocket** (STOMP over SockJS) via the path `/ws`. Ensure that the load balancer proxies WebSocket connections. A configuration example is provided in [the section above](README.md#конфигурация-nginx).
 
 ::: warning Sticky Sessions
 When using multiple nodes behind the load balancer, WebSocket connections must support **sticky sessions** (node affinity) — otherwise, the SockJS fallback may not work correctly.
@@ -240,7 +179,7 @@ When using multiple nodes behind the load balancer, WebSocket connections must s
 Provides UML diagram generation in the application interface.
 
 :::info
-If you used the [script](/en/install/quickstart/QUICKSTART_SCRIPT.md) for a quick start,
+If you used the [script](/en/install/quickstart/QUICKSTART_SCRIPT.md) for quick start,
 PlantUML is already successfully deployed and connected to the system.
 :::
 
@@ -256,7 +195,7 @@ docker run -d \
 
 ### Configuration {#настроика}
 
-| Variable          | Description             | Example Value            |
+| Variable          | Description             | Example value            |
 | ------------------- | -------------------- | -------------------------- |
 | **PLANTUML_SERVER** | PlantUML server URL | `http://192.168.0.5:8090/` |
 
@@ -304,7 +243,7 @@ The signature is verified in the same way as for the main image (see [Changelog 
 | **GOTENBERG_WAIT_FOR_EXPRESSION** | Optional. JavaScript expression that Gotenberg waits for on the page before printing to PDF. Do not change: the default value is suitable for Storm pages | `window.overlayReady != undefined && window.overlayReady` |
 
 ::: warning The default value is a public demo service
-If `GOTENBERG_URL` is not set, `https://demo.gotenberg.dev` is used — a **public demo service on the internet**. Process models and user documents exported to PDF would be sent to a third-party service, and it is generally inaccessible from a closed network. In production, deploy a **dedicated Gotenberg container** (see above) and ensure that `GOTENBERG_URL` is set. [System Check](/en/operation/system-check.md) treats the demo address as an error.
+If `GOTENBERG_URL` is not set, `https://demo.gotenberg.dev` is used — a **public demo service on the internet**. User diagrams and documents would be sent to a third-party service when exported to PDF, and it is generally inaccessible from a closed network. In production, deploy a **dedicated Gotenberg container** (see above) and make sure to set `GOTENBERG_URL`. [System Check](/en/operation/system-check.md) treats the demo address as an error.
 :::
 
 #### Additional configuration for complex network setups {#дополнительная-настроика-для-сложных-сетевых-конфигурации}
@@ -323,21 +262,21 @@ Gotenberg opens Storm pages itself, so this address must be accessible from the 
 
 ## Configuring Email Notifications {#настроика-почтовых-уведомлении}
 
-### Choosing an Email Provider {#выбор-проваидера-почты}
+### Selecting an Email Provider {#выбор-проваидера-почты}
 
 | Option          | When to Use                                                         | Configuration Complexity |
 | ---------------- | -------------------------------------------------------------------------- | ------------------- |
-| **ListMonk**     | You need to customize email templates and text, and maintain a sending log        | ⭐⭐                |
+| **ListMonk**     | You need to customize email layouts and texts, and maintain a sending log        | ⭐⭐                |
 | **Simple SMTP** | Stormbpmn's ready-made emails are sufficient, and sending is done via a corporate SMTP      | ⭐                  |
 
-::: tip Templated Emails in Both Options
+::: tip Formatted emails in both options
 In builds after October 7, 2026, all notifications (comments, approvals, invitations, access requests,
-simulations, password recovery, etc.) are sent as templated emails: a card with a logo, header, button,
-and a plain-text version of the email. For SMTP, the template is built into the application and requires no external resources — the logo
-is embedded directly in the email. For ListMonk, the same templates can be set up with a single click — see below.
+simulations, password recovery, etc.) are sent formatted: a card with a logo, header, button,
+and a text version of the email. For SMTP, the layout is built into the application and requires no external resources — the logo
+is embedded in the email itself. For ListMonk, the same templates are set up with a single click — see below.
 :::
 
-You must specify this value in the administrative panel to ensure that correct URLs are generated in emails. This setting is required for any provider:
+You must specify this value in the administrative panel so that correct URLs are generated in emails. This setting is required for any provider:
 
 | Parameter    | Description                         | Example                          |
 | ----------- | -------------------------------- | ------------------------------- |
@@ -358,7 +297,7 @@ docker compose up -d
 #### Configuring ListMonk {#настроика-listmonk}
 
 1. **Open the admin panel**: `http://localhost:9000`
-2. **Create a super user** and log in
+2. **Create a super-user** and log in to the system
 3. **Configure general settings** (Settings → General):
 
     - Specify the default email address for sending
@@ -391,33 +330,34 @@ LISTMONK_PASSWORD=api-token-here  # API токен
 
 #### Email templates {#шаблоны-писем}
 
-##### Quick path: "Configure basic templates in Listmonk" button {#быстрыи-путь-кнопка-«настроить-базовые-шаблоны-в-listmonk»}
+##### Quick path: the "Configure basic templates in Listmonk" button {#быстрыи-путь-кнопка-«настроить-базовые-шаблоны-в-listmonk»}
 
-In builds after October 7, 2026, you do not need to create templates manually. Open **Application Settings → "📧 Email" tab** in the admin panel and click **"Configure basic templates in Listmonk"**. Stormbpmn:
+In builds after October 7, 2026, you do not need to create templates manually. Open the admin panel
+**Application Settings → "📧 Email" tab** and click **"Configure basic templates in Listmonk"**. Stormbpmn:
 
 1. creates a transactional template in ListMonk for each notification type — with names like
    `Storm BPMN · NEW_COMMENT`, using the same layout as plain SMTP emails;
-2. writes the ID of each template to the corresponding setting (`commentEmailTemplateId`, etc. — see the table below).
+2. records the ID of each template in the corresponding setting (`commentEmailTemplateId`, etc. — see the table below).
 
-You can edit the templates directly in ListMonk afterwards: change texts, colors, logos — Stormbpmn still
-sends emails by the IDs from the settings.
+You can then edit the templates directly in ListMonk: change texts, colors, logos — Stormbpmn will still
+send emails using the IDs from the settings.
 
-Re-clicking is safe:
+Pressing the button again is safe:
 
-- a template that already exists in ListMonk with that name is **not recreated or overwritten** — your
-  edits are preserved;
-- a setting that already contains the ID of a **different** template (you linked the trigger to your own) is **not changed** —
-  such settings are listed in the warning after clicking;
+- a template that already exists in ListMonk under that name is **not recreated or overwritten** — your
+  edits to it are preserved;
+- a setting that already contains the ID of a **different** template (you linked the event to your own) is **not changed** —
+  such settings are listed in a warning after the click;
 - empty settings (and the placeholder `0`) are filled in.
 
-::: warning Permissions and application address
-The ListMonk user from `LISTMONK_USERNAME` needs template permissions (Super Admin, as in the step above).
+::: warning Application permissions and address
+The ListMonk user from `LISTMONK_USERNAME` needs permissions for templates (Super Admin, as in the step above).
 The logo in ListMonk emails is loaded from the address `<baseUrl>/email/storm-logo.png` — ensure that `baseUrl`
 is specified and accessible to recipients.
 :::
 
-If ListMonk refuses (invalid login, unavailable), the button displays the reason and a list of already configured
-triggers — re-clicking will complete the rest.
+If ListMonk refuses (incorrect login, unavailable), the button displays the reason and a list of already configured
+events — pressing it again will complete the rest.
 
 ##### Manual configuration {#ручная-настроика}
 
@@ -436,11 +376,11 @@ Listmonk uses Go template syntax: variables are accessed via `{{ .Tx.Data.имя
 | **Password recovery**               | `restorePasswordTemplateId`          | `{{ .Tx.Data.restoreCode }}`                                                                                                |
 | **Approval completed**              | `approvalCompletedTemplateId`        | `{{ .Tx.Data.diagram_name }}`, `{{ .Tx.Data.diagram_url }}`                                                                 |
 | **User activation**              | `userActivationTemplateId`           | `{{ .Tx.Data.activation_token }}`                                                                                           |
-| **Diagram invitation**             | `secureUpdateTemlateId`              | `{{ .Tx.Data.invite_author }}`, `{{ .Tx.Data.diagram_name }}`, `{{ .Tx.Data.diagram_url }}`                                 |
+| **Invitation to diagram**             | `secureUpdateTemlateId`              | `{{ .Tx.Data.invite_author }}`, `{{ .Tx.Data.diagram_name }}`, `{{ .Tx.Data.diagram_url }}`                                 |
 | **Invitation + registration**           | `inviteDiagramAndRegisterTemplateId` | `{{ .Tx.Data.invite_author }}`, `{{ .Tx.Data.diagram_name }}`, `{{ .Tx.Data.diagram_url }}`, `{{ .Tx.Data.register_url }}`   |
-| **Team invitation**               | `teamInviteTemplateId`               | `{{ .Tx.Data.invite_author }}`, `{{ .Tx.Data.team_name }}`                                                                  |
-| **Team invitation + registration** | `teamInviteAndRegisterTemplateId`    | `{{ .Tx.Data.invite_author }}`, `{{ .Tx.Data.team_name }}`, `{{ .Tx.Data.register_url }}`                                   |
-| **Diagram access request**          | `accessRequestTemplateId`            | `{{ .Tx.Data.requester_name }}`, `{{ .Tx.Data.diagram_name }}`, `{{ .Tx.Data.diagram_url }}`, `{{ .Tx.Data.request_message }}` |
+| **Invitation to team**               | `teamInviteTemplateId`               | `{{ .Tx.Data.invite_author }}`, `{{ .Tx.Data.team_name }}`                                                                  |
+| **Invitation to team + registration** | `teamInviteAndRegisterTemplateId`    | `{{ .Tx.Data.invite_author }}`, `{{ .Tx.Data.team_name }}`, `{{ .Tx.Data.register_url }}`                                   |
+| **Access request to diagram**          | `accessRequestTemplateId`            | `{{ .Tx.Data.requester_name }}`, `{{ .Tx.Data.diagram_name }}`, `{{ .Tx.Data.diagram_url }}`, `{{ .Tx.Data.request_message }}` |
 | **Warm-up emails (Storm Master)**     | `retentionEmailTemplateId`           | `{{ .Tx.Data.subject }}`, `{{ .Tx.Data.body }}` — the body is already ready HTML, output via `{{ with .Tx.Data.body }}{{ Safe . }}{{ end }}`. See ["Warm-ups"](/en/ai/retention.md) |
 
 ::: tip Typo in the key
@@ -466,7 +406,7 @@ The key `secureUpdateTemlateId` is specified **with a typo intentionally** — t
 | **SMTP_PROTOCOL**  | SMTP/STARTTLS/SMTPS. STARTTLS - default              | `STARTTLS`              |
 | **SMTP_USE_AUTH**  | `false` — do not use authentication, even if `SMTP_USERNAME` is specified. Without `SMTP_USERNAME`, authentication is not used for any value | `false`                 |
 
-With simple SMTP, emails are already formatted (card, button, text version), and the logo is embedded in the email — nothing is loaded from the closed environment. You can verify sending using the **"Send test email"** button on the "📧 Email" tab of the admin panel: in case of an error, it displays the actual reason for the SMTP rejection.
+Emails sent via simple SMTP are already formatted (card, button, text version), and the logo is embedded in the email — nothing is loaded from the closed environment. You can verify sending using the **"Send test email"** button on the "📧 Email" tab of the admin panel: in case of an error, it displays the actual reason for the SMTP rejection.
 
 #### Environment Variables {#переменные-окружения-1}
 
