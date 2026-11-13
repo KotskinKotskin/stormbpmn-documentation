@@ -20,55 +20,88 @@ order: 2
 -   **Вложения** - файлы, прикрепленные к процессам
 
 ::: tip Что выбрать, если нет корпоративного S3
-StormBPMN работает с любым S3-совместимым хранилищем. Два простых варианта для self-host:
-
-- **MinIO** — привычный вариант (см. ниже). Учтите: в свежих релизах community-консоль MinIO урезали до простого браузера объектов — управление бакетами/политиками из веб-интерфейса убрали.
-- **[SeaweedFS](#альтернатива-seaweedfs-простое-s3-со-встроенным-ui)** — лёгкое S3-хранилище одним контейнером со **встроенным веб-интерфейсом** (Filer). Рекомендуем, если нужен простой UI и минимум возни.
+StormBPMN работает с любым S3-совместимым хранилищем, которое поддерживает адресацию path-style.
+Для self-host рекомендуем **[SeaweedFS](#рекомендуемое-решение-seaweedfs)**: один контейнер,
+лицензия Apache 2.0, ключи и бакеты задаются переменными окружения. Его же ставит
+[скрипт быстрого старта](/install/quickstart/QUICKSTART_SCRIPT.md).
 :::
 
-### Рекомендуемое решение: MinIO
-
-:::info
-Если вы пользовались [скриптом](/install/quickstart/QUICKSTART_SCRIPT.md) для быстрого старта,
-то MinIO уже успешно развернут и подключен к системе.
+::: warning MinIO больше не распространяет образы
+С осени 2025 года MinIO не публикует community-образы: `quay.io/minio/minio` и `minio/minio` с
+Docker Hub не скачиваются, а клиент `mc` с `dl.min.io` тоже недоступен. Уже работающий MinIO
+продолжит работать со StormBPMN, менять его не обязательно. Для новых установок берите SeaweedFS
+или корпоративное S3.
 :::
 
-#### Установка MinIO
+### Рекомендуемое решение: SeaweedFS
+
+#### Запуск
 
 ```bash
-# Запуск MinIO в Docker
 docker run -d \
-  -p 9000:9000 \
-  -p 9001:9001 \
-  --name minio \
-  -v /mnt/data:/data \
-  -e "MINIO_ROOT_USER=stormbpmn-s3-user" \
-  -e "MINIO_ROOT_PASSWORD=stormbpmn-s3-password" \
-  quay.io/minio/minio server /data --console-address ":9001"
+  --name seaweedfs \
+  --restart unless-stopped \
+  -p 8333:8333 \
+  -v seaweedfs_data:/data \
+  -e AWS_ACCESS_KEY_ID=stormbpmn \
+  -e AWS_SECRET_ACCESS_KEY=<случайная строка от 32 символов> \
+  -e S3_BUCKET=storm-uploads,storm-users,storm-imports \
+  chrislusf/seaweedfs:4.52
 ```
 
-#### Создание дефолтного бакета
+Образ по умолчанию запускает `weed mini -dir=/data`: в одном процессе поднимаются все части
+SeaweedFS и S3 API на порту **8333**. При первом старте контейнер создаёт пользователя с ключами
+из `AWS_ACCESS_KEY_ID`/`AWS_SECRET_ACCESS_KEY` и бакеты из `S3_BUCKET`; при повторных стартах
+ничего не пересоздаёт.
+
+::: warning Задайте ключи обязательно
+Без `AWS_ACCESS_KEY_ID` и `AWS_SECRET_ACCESS_KEY` S3 в SeaweedFS работает **без авторизации**:
+читать и удалять файлы сможет любой, у кого есть сетевой доступ к порту 8333.
+:::
+
+Наружу публикуйте только порт `8333`. Остальные порты `weed mini` (веб-интерфейсы master, filer и
+admin) без авторизации, поэтому не открывайте их пользователям.
+
+Тег образа фиксируйте (`chrislusf/seaweedfs:4.52`, а не `latest`): так обновление хранилища
+происходит, когда вы сами меняете тег.
+
+#### Переменные окружения StormBPMN
 
 ```bash
-curl -fLO https://dl.min.io/client/mc/release/linux-amd64/mc
-chmod +x mc
-mv mc /usr/local/bin/
-mc alias set minio http://localhost:9000 "stormbpmn-s3-user" "stormbpmn-s3-password"
-mc mb minio/storm-uploads
+S3_ENDPOINT=http://seaweedfs:8333            # адрес, по которому в S3 ходит сервер Storm
+S3_EXTERNAL_ENDPOINT=http://10.0.0.15:8333   # адрес, по которому файлы открывает браузер
+S3_ACCESS_KEY=stormbpmn
+S3_SECRET_KEY=<тот же секрет, что в AWS_SECRET_ACCESS_KEY>
+S3_BUCKET_UPLOADS=storm-uploads
+S3_BUCKET_USERS=storm-users
+S3_BUCKET_IMPORTS=storm-imports
+S3_SINGLE_USERS_BUCKET=true
 ```
 
-#### Настройка переменных окружения
+#### Проверка
+
+Откройте **Администрирование → Проверка системы**: карточка «Файловое хранилище (S3)» должна быть
+зелёной, а проверка из браузера — без предупреждения. Подробнее —
+[«Проверка системы»](/operation/system-check.md#проверка-фаилового-хранилища-из-браузера).
+
+Документация SeaweedFS: [Quick Start with weed mini](https://github.com/seaweedfs/seaweedfs/wiki/Quick-Start-with-weed-mini),
+[Amazon S3 API](https://github.com/seaweedfs/seaweedfs/wiki/Amazon-S3-API).
+
+### Переменные окружения S3
 
 | Переменная                 | Описание                               | Пример значения           |
 |----------------------------|----------------------------------------|---------------------------|
-| **S3_ENDPOINT**            | URL хранилища                          | `http://192.168.0.4:9000` |
-| **S3_ACCESS_KEY**          | Ключ доступа                           | `stormbpmn-s3-user`       |
-| **S3_SECRET_KEY**          | Секретный ключ                         | `stormbpmn-s3-password`   |
+| **S3_ENDPOINT**            | URL хранилища                          | `http://192.168.0.4:8333` |
+| **S3_ACCESS_KEY**          | Ключ доступа                           | `stormbpmn`               |
+| **S3_SECRET_KEY**          | Секретный ключ                         | `<секрет>`                |
 | **S3_BUCKET_UPLOADS**      | Бакет по умолчанию                     | `storm-uploads`           |
 | **S3_BUCKET_USERS**        | Бакет для пользователей                | `storm-users`             |
 | **S3_BUCKET_IMPORTS**      | Бакет для импортов                     | `storm-imports`           |
 | **S3_SINGLE_USERS_BUCKET** | Режим единого бакета для пользователей | `true`                    |
 | **S3_EXTERNAL_ENDPOINT**   | Адрес, по которому **браузер** открывает ссылки на файлы (необязательно) | `https://s3.company.com`  |
+
+Бакет `S3_BUCKET_UPLOADS` создайте заранее: при загрузке файлов приложение его не создаёт. Бакеты пользователей
+и импортов приложение создаёт при первой записи, если у ключа есть право на создание бакетов.
 
 ::: tip S3_EXTERNAL_ENDPOINT
 Сервер Storm ходит в хранилище по `S3_ENDPOINT` (обычно внутренний адрес), а пользователям выдаются временные (presigned) ссылки на файлы, которые открывает их браузер. Если внутренний адрес недоступен с компьютеров пользователей, задайте в `S3_EXTERNAL_ENDPOINT` внешний адрес того же хранилища. Если переменная не задана, ссылки строятся по `S3_ENDPOINT`. Работу этого адреса из браузера проверяет [«Проверка системы»](/operation/system-check.md#проверка-фаилового-хранилища-из-браузера). После изменения `.env` перезапустите контейнер.
@@ -84,92 +117,6 @@ mc mb minio/storm-uploads
 вы можете смигрировать их в единый бакет (например, `storm-users`), указать его в переменной `S3_BUCKET_USERS`
 и переключить режим работы на `S3_SINGLE_USERS_BUCKET=true`. В таком случае путь до пользовательских файлов будет
 выглядеть как `s3://storm-users/user123/...`
-:::
-
-#### Проверка работоспособности
-
-После настройки при сохранении диаграмм должны отображаться их миниатюры в карточном представлении.
-
-::: tip Документация MinIO
-Полное руководство по установке: [MinIO Documentation](https://min.io/docs/minio/linux/index.html)
-:::
-
-### Альтернатива: SeaweedFS (простое S3 со встроенным UI)
-
-[SeaweedFS](https://github.com/seaweedfs/seaweedfs) — лёгкое S3-совместимое хранилище. Запускается **одним контейнером**, имеет встроенный веб-интерфейс (Filer) и совместимо с адресацией path-style, которую использует StormBPMN. Хороший выбор, если корпоративного S3 нет, а MinIO не устраивает.
-
-#### Шаг 1. Учётные данные доступа
-
-S3 в SeaweedFS по умолчанию открыт без пароля — обязательно задайте ключи доступа через конфиг. Создайте файл `s3-config.json`:
-
-```json
-{
-  "identities": [
-    {
-      "name": "stormbpmn",
-      "credentials": [
-        { "accessKey": "stormbpmn-s3-user", "secretKey": "stormbpmn-s3-password" }
-      ],
-      "actions": ["Admin", "Read", "Write", "List", "Tagging"]
-    }
-  ]
-}
-```
-
-#### Шаг 2. Запуск контейнера
-
-```bash
-docker run -d \
-  --name seaweedfs \
-  --restart unless-stopped \
-  -p 8333:8333 \
-  -p 8888:8888 \
-  -v /mnt/seaweedfs:/data \
-  -v "$(pwd)/s3-config.json:/etc/seaweedfs/s3-config.json:ro" \
-  chrislusf/seaweedfs server \
-    -dir=/data \
-    -s3 \
-    -s3.port=8333 \
-    -s3.config=/etc/seaweedfs/s3-config.json
-```
-
-Команда `server` поднимает master, volume, filer и S3-шлюз в одном процессе.
-
-| Порт     | Назначение                                  |
-| -------- | ------------------------------------------- |
-| **8333** | S3 API (его указываем в `S3_ENDPOINT`)      |
-| **8888** | Filer — веб-интерфейс для просмотра файлов  |
-
-#### Шаг 3. Создание бакета
-
-```bash
-docker exec -i seaweedfs weed shell <<< "s3.bucket.create -name storm-uploads"
-```
-
-Либо любым S3-клиентом с теми же ключами (например, AWS CLI):
-
-```bash
-aws --endpoint-url http://localhost:8333 s3 mb s3://storm-uploads
-```
-
-#### Шаг 4. Переменные окружения StormBPMN
-
-```bash
-S3_ENDPOINT=http://<хост-seaweedfs>:8333
-S3_ACCESS_KEY=stormbpmn-s3-user
-S3_SECRET_KEY=stormbpmn-s3-password
-S3_BUCKET_UPLOADS=storm-uploads
-S3_SINGLE_USERS_BUCKET=true
-# Адресация path-style включена по умолчанию (S3_VIRTUAL_HOST=false) — менять не нужно.
-```
-
-#### Шаг 5. Проверка
-
-- Откройте веб-интерфейс Filer: `http://<хост-seaweedfs>:8888` — там видны бакеты и файлы.
-- В StormBPMN сохраните диаграмму — в карточном представлении должна появиться её миниатюра, а в бакете `storm-uploads` (в Filer) — соответствующий объект.
-
-::: tip Документация SeaweedFS
-S3 API и его настройка: [SeaweedFS — Amazon S3 API](https://github.com/seaweedfs/seaweedfs/wiki/Amazon-S3-API).
 :::
 
 ---
