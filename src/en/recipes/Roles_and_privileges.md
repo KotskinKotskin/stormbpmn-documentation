@@ -1,5 +1,5 @@
 ---
-source_hash: f96c719b97ad4a50
+source_hash: d42923a1e73e8d5b
 ---
 # Team Member Roles and Permissions {#роли-и-права-участников-команды}
 
