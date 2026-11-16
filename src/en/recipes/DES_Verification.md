@@ -1,5 +1,5 @@
 ---
-source_hash: b7c4324300c3c868
+source_hash: ddc62464cb633f16
 ---
 # DES Engine Verification: Independent Check Based on Queueing Theory {#верификация-des-движка-независимая-проверка-по-теории-массового-обслуживания}
 
