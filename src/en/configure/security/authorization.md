@@ -28,12 +28,16 @@ In the current Enterprise interface, OAuth2 settings have moved out of the gener
 | **OAuthIsEnabled**    | Enable OAuth2                        | `true`                                                                             |
 | **OAuthClientId**     | Client ID in the provider                 | `stormbpmn-client`                                                                 |
 | **OAuthClientSecret** | Client secret                          | `your-client-secret`                                                               |
-| **OAuthAuthorizeUri** | Authorization URL                         | `https://keycloak.company.com/auth/realms/master/protocol/openid-connect/auth`     |
-| **OAuthUserInfoUri**  | User information URL | `https://keycloak.company.com/auth/realms/master/protocol/openid-connect/userinfo` |
-| **OAuthTokenUri**     | Token URL                    | `https://keycloak.company.com/auth/realms/master/protocol/openid-connect/token`    |
+| **OAuthAuthorizeUri** | Authorization URL                         | `https://keycloak.company.com/realms/company/protocol/openid-connect/auth`     |
+| **OAuthUserInfoUri**  | User information URL | `https://keycloak.company.com/realms/company/protocol/openid-connect/userinfo` |
+| **OAuthTokenUri**     | Token URL                    | `https://keycloak.company.com/realms/company/protocol/openid-connect/token`    |
 | **OAuthButtonLabel**  | Login button text                   | `"Войти через корпоративный аккаунт"`                                              |
 | **OAuthRedirectUri**  | Return URL after authorization          | `https://stormbpmn.company.com/app/signin`                                         |
 | **OAuthFlowMode**     | Flow mode: `PKCE` or `implicit_flow` | `PKCE`                                                                            |
+
+::: tip Keycloak 26 endpoint examples
+By default, Keycloak 26 exposes OIDC endpoints under `/realms/<realm>/protocol/openid-connect/...` — **without** the old `/auth` prefix. Create a dedicated realm for application users (the example uses `company`), not the administrative `master` realm. If your Keycloak server has a custom base path, use the actual endpoints from the realm's `/.well-known/openid-configuration` document. See [official Keycloak OIDC endpoints](https://www.keycloak.org/securing-apps/oidc-layers).
+:::
 
 #### Flow mode: PKCE or implicit {#режим-потока-pkce-или-implicit}
 
@@ -239,7 +243,7 @@ If the integration does not work, check:
 Additional validation of rights in the OAuth2 token:
 
 | Parameter            | Description           | Example Value   |
-| ------------------- | ------------------- | ------------------ | ----------------- |
+| ------------------- | ------------------- | ------------------ |
 | **OAuthCheckClaim** | Enable validation  | `true`            |
 | **OAuthClaimName**  | Claim name     | `groups`          |
 | **OAuthClaimValue** | Required value | `stormbpmn-users` |
