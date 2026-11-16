@@ -213,7 +213,7 @@ Clear the fields, click **“Delete”** next to the logos, select the **“As i
 
 ## Configuration Keys {#ключи-настроек}
 
-For administrators who manage the installation through application settings. All these settings are public: the login page reads them before authentication, so visibility is enabled automatically and does not need to be changed manually.
+For administrators who manage the installation through application settings. Login-page appearance and display options are readable before authentication, and their visibility is set automatically. **OAuth2 secrets, including `OAuthClientSecret`, are not public.**
 
 | Key | Purpose |
 | --- | --- |
@@ -222,9 +222,9 @@ For administrators who manage the installation through application settings. All
 | `brandLogo`, `brandLogoDark` | Logo for light and dark themes. Set only by uploading a file |
 | `brandPrimaryColor` | Brand color `#RRGGBB` |
 | `brandColorOverridesTeams` | A single color for all teams (`true` or `false`) |
-| `supportMode`, `supportLinkLabel`, `supportLinkUrl` | "Technical Support" link: mode ⟦ mode `storm`, `link` or `hidden`, label, and address |
+| `supportMode`, `supportLinkLabel`, `supportLinkUrl` | "Technical Support" link: mode `storm`, `link`, or `hidden`, plus label and address |
 | `kbMode`, `kbLinkLabel`, `kbLinkUrl` | "Knowledge Base" link: same as above |
 | `licensePageHtml` | Custom text above the login form |
 | `showBasicLogin`, `showCustomLoginButtonName`, `CustomLoginButtonName`, `OAuthIsEnabled`, `OAuthButtonLabel`, `showRegistraton` | Login methods and registration |
 
-If these keys are edited through the general settings list, it is best not to modify the logo values: the file is uploaded via the button on the "Branding and Login Page" tab.
+In the current Enterprise UI, OAuth2 connection parameters and login methods are configured on the **Branding and Login Page** tab, not in the general Application Settings list. Upload logo files through that tab rather than editing their values as text.
