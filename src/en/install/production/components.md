@@ -38,16 +38,19 @@ or corporate S3.
 #### Startup {#запуск}
 
 ```bash
+export STORM_S3_SECRET="$(openssl rand -hex 32)"
 docker run -d \
   --name seaweedfs \
   --restart unless-stopped \
   -p 8333:8333 \
   -v seaweedfs_data:/data \
   -e AWS_ACCESS_KEY_ID=stormbpmn \
-  -e AWS_SECRET_ACCESS_KEY=<случайная строка от 32 символов> \
+  -e AWS_SECRET_ACCESS_KEY="$STORM_S3_SECRET" \
   -e S3_BUCKET=storm-uploads,storm-users,storm-imports \
   chrislusf/seaweedfs:4.52
 ```
+
+Store the generated secret in your secret manager: use **the very same value** for the application's `S3_SECRET_KEY`. `STORM_S3_SECRET` exists only in your current shell session, so do not lose it.
 
 The default image starts `weed mini -dir=/data`: all SeaweedFS components and the S3 API run in a single process on port **8333**. On the first start, the container creates a user with keys from `AWS_ACCESS_KEY_ID`/`AWS_SECRET_ACCESS_KEY` and buckets from `S3_BUCKET`; on subsequent starts, it does not recreate anything.
 
@@ -62,10 +65,10 @@ Pin the image tag (`chrislusf/seaweedfs:4.52`, not `latest`): this ensures the s
 #### StormBPMN Environment Variables {#переменные-окружения-stormbpmn}
 
 ```bash
-S3_ENDPOINT=http://seaweedfs:8333            # адрес, по которому в S3 ходит сервер Storm
-S3_EXTERNAL_ENDPOINT=http://10.0.0.15:8333   # адрес, по которому файлы открывает браузер
+S3_ENDPOINT=http://seaweedfs:8333            # address used by the Storm server to access S3
+S3_EXTERNAL_ENDPOINT=http://10.0.0.15:8333   # address used by browsers to open files
 S3_ACCESS_KEY=stormbpmn
-S3_SECRET_KEY=<тот же секрет, что в AWS_SECRET_ACCESS_KEY>
+S3_SECRET_KEY=PASTE_SAME_SECRET_HERE
 S3_BUCKET_UPLOADS=storm-uploads
 S3_BUCKET_USERS=storm-users
 S3_BUCKET_IMPORTS=storm-imports
@@ -82,7 +85,7 @@ SeaweedFS documentation: [Quick Start with weed mini](https://github.com/seaweed
 
 ### AWS SDK checksum compatibility with S3-compatible storage (cloud.ru OBS)
 
-Newer AWS SDK versions may **automatically add CRC32 checksums** to object-upload requests (such as `PutObject`). Some S3-compatible gateways handle these requests differently from Amazon S3. If the initial **System Check → File Storage (S3)** fails with cloud.ru OBS or another compatible service, inspect the response and logs for checksum errors. This is a **possible compatibility issue**, not a confirmed diagnosis for every OBS deployment.
+Starting with **AWS SDK for Java 2.x 2.30.0**, the SDK **automatically adds CRC32 checksums** to object-upload requests (such as `PutObject`). Some S3-compatible gateways handle these requests differently from Amazon S3. If the initial **System Check → File Storage (S3)** fails with cloud.ru OBS or another compatible service, inspect the response and logs for checksum errors. This is a **possible compatibility issue**, not a confirmed diagnosis for every OBS deployment.
 
 For an **AWS SDK that supports these standard environment variables**, try limiting optional checksum calculation/validation to required operations:
 
@@ -91,7 +94,17 @@ AWS_REQUEST_CHECKSUM_CALCULATION=WHEN_REQUIRED
 AWS_RESPONSE_CHECKSUM_VALIDATION=WHEN_REQUIRED
 ```
 
-Required integrity checks remain enabled. **Note:** these variables only affect SDKs that recognize them. Setting them in the StormBPMN container does **not** guarantee that its built-in S3 client will change behavior; unsupported clients may require an application-level fix.
+For Helm installations, add these values to the root `extraEnv` list in your `values.yaml` (preserve any existing entries):
+
+```yaml
+extraEnv:
+  - name: AWS_REQUEST_CHECKSUM_CALCULATION
+    value: WHEN_REQUIRED
+  - name: AWS_RESPONSE_CHECKSUM_VALIDATION
+    value: WHEN_REQUIRED
+```
+
+See the [AWS SDK for Java documentation](https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/s3-checksums.html). Required integrity checks remain enabled. **Note:** these variables only affect SDKs that recognize them. Setting them in the StormBPMN container does **not** guarantee that its built-in S3 client will change behavior; unsupported clients may require an application-level fix.
 
 After changing the configuration, repeat the test-object write/read/delete check and verify file access **from the browser**. If it still fails, inspect `S3_ENDPOINT`, region, path-style/virtual-host-style addressing, bucket permissions, and `400`, `InvalidRequest`, `SignatureDoesNotMatch`, or checksum errors. See [System Check](/en/operation/system-check.md).
 
