@@ -1,5 +1,5 @@
 ---
-source_hash: bda7e13e09e701a9
+source_hash: d453f85f457386b8
 ---
 # Access Rights Separation for Diagrams {#разделение-прав-доступа-к-диаграммам}
 
@@ -69,7 +69,11 @@ If a team member is denied read access to "Folders", they will not see the folde
 
 ### Recipe No. 2 — Multiple different teams, each doing its own work, all constantly monitoring each other's work {#рецепт-no2-—-много-разных-команд-каждая-делает-свое-все-постоянно-смотрят-чужое}
 
-**Solution:** Create several different teams and configure **allDiagramsAnonAccess** in `true`.
+**For a private installation:** create separate teams and grant read access to the appropriate folders using **Share**. Permissions on a parent folder are inherited by its children (see section 5 above). If everyone needs one common folder structure, consider a single team (recipe No. 4).
+
+::: danger Do not enable anonymous access just for cross-team viewing
+`allDiagramsAnonAccess=true` is **not** a setting for authenticated employees only. With `STORM_DISABLE_ANON_SHARING=false`, it can also let **unauthenticated** visitors read diagrams exposed by the server-wide rule. Keep `allDiagramsAnonAccess=false` in a private installation and grant access explicitly.
+:::
 
 ### Recipe No. 3 — One superuser wants to see all diagrams of all teams, while teams do not want to show anything to anyone {#рецепт-no3-—-один-суперпользователь-хочет-видеть-все-схемы-всех-команд-а-команды-не-хотят-ничего-никому-показывать}
 
@@ -82,4 +86,4 @@ If a team member is denied read access to "Folders", they will not see the folde
 ## Related documentation {#связанная-документация}
 
 -   **[Team member roles and permissions](./Roles_and_privileges.md)** — member permissions, permission groups, and the full list of privileges
--   **[Information security](../configure/SECURE.md)** — public access settings and corporate parameters
+-   **[Information security](../configure/security/README.md)** — public access settings and corporate parameters

@@ -183,7 +183,7 @@ storm:
 | `OAuthIsEnabled` | Включить OAuth2 |
 | `OAuthClientId` | Client ID в IdP |
 | `OAuthClientSecret` | Client Secret |
-| `OAuthAuthorizeUri` | URL авторизации (например, `https://keycloak.bank/auth/realms/master/protocol/openid-connect/auth`) |
+| `OAuthAuthorizeUri` | URL авторизации (например, `https://keycloak.bank/realms/company/protocol/openid-connect/auth`) |
 | `OAuthUserInfoUri` | URL получения user info |
 | `OAuthTokenUri` | URL получения токена |
 | `OAuthRedirectUri` | URL возврата (`https://stormbpmn.bank.local/app/signin`) |
@@ -236,12 +236,12 @@ helm get values storm -n stormbpmn > old-values.yaml
 | `image.repository: cr.yandex/...` | `image.registry: registry.stormbpmn.com` + `image.repository: stormbpmn-enterprise/stormbpmn_fullstack_enterprise` |
 | `image.tag: latest` | `image.tag: ""` (=appVersion из Chart.yaml) или конкретный тег |
 
-### 3. Сгенерируйте JWTSECRET ≥32 символов
+### 3. Сгенерируйте JWTSECRET ≥64 символов
 
-Если ваш старый `JWTSECRET` короче 32 символов — приложение (Spring Boot 3 / Java 21, 6.6.3748+) не стартанёт:
+Если ваш старый `JWTSECRET` короче 64 символов — приложение (Spring Boot 3 / Java 21, 6.6.3748+) не стартанёт:
 
 ```bash
-openssl rand -hex 32
+openssl rand -hex 32  # 64 шестнадцатеричных символа
 ```
 
 ### 4. Перенесите OAuth2 настройки

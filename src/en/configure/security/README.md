@@ -9,7 +9,7 @@ dir:
 index: true
 redirectFrom:
   - /en/configure/SECURE.html
-source_hash: 07b5eae22f77c849
+source_hash: d848dbe0a033702c
 ---
 
 [[toc]]
@@ -80,10 +80,10 @@ password expiration, prohibition of repeating recent passwords — **[Password P
 
 | Parameter                      | Description                     | Recommendation for production           |
 | ----------------------------- | ---------------------------- | ------------------------------------- |
-| **showRegistration**          | Show the registration form   | ❌ Disable                          |
+| **showRegistraton**          | Show the registration form   | ❌ Disable                          |
 | **showBasicLogin**            | Show login/password fields   | ❌ When using OAuth2           |
 | **showCustomLoginButtonName** | Custom login button text | As required                         |
-| **customLoginButtonName**     | Login button text        | `"Войти через корпоративный аккаунт"` |
+| **CustomLoginButtonName**     | Login button text        | `"Войти через корпоративный аккаунт"` |
 
 ### Public Access {#публичныи-доступ}
 
@@ -130,65 +130,48 @@ javax.net.ssl.SSLHandshakeException: PKIX path building failed
 
 ### Solution {#решение}
 
-You need to mount your own `truststore.jks`, replacing the standard Java truststore.
+**Do not replace Java's default `cacerts` with a newly created truststore containing only your private CA.** That removes trusted public CAs and can break HTTPS to S3, your IdP, or other services. Copy the **existing** `cacerts` from the same StormBPMN image version and import your private CA into that copy instead.
 
-### Step 1. Creating truststore.jks {#шаг-1-создание-truststore-jks}
-
-If you have a certificate file (for example, `minio-ca.crt`), run:
+### Step 1. Verify the path in the running container {#шаг-1-создание-truststore-jks}
 
 ```bash
+docker exec stormbpmn sh -c 'echo "$JAVA_HOME"; ls -l "$JAVA_HOME/lib/security/cacerts"'
+```
+
+`stormbpmn` is an example container name; use yours. The path `/opt/java/openjdk/lib/security/cacerts` below is **only an example**. Confirm it for your specific image and Java version.
+
+### Step 2. Copy the default truststore and import your CA {#шаг-2-путь-к-truststore-в-контеинере}
+
+```bash
+# -L copies the referenced file even if cacerts is a symbolic link.
+docker cp -L stormbpmn:/opt/java/openjdk/lib/security/cacerts ./storm-cacerts
 keytool -importcert \
   -file minio-ca.crt \
   -alias my-root-ca \
-  -keystore truststore.jks \
+  -keystore ./storm-cacerts \
   -storepass changeit \
   -noprompt
 ```
 
-::: tip Truststore password
-The password `changeit` is standard for a Java truststore. You can use a different one, but it must match in the command and at startup.
-:::
+`changeit` is the usual password for Java's default `cacerts`. Use the actual password if your image uses a different one. Keep private keys or other sensitive truststore contents out of source control.
 
-### Step 2. Truststore path in the container {#шаг-2-путь-к-truststore-в-контеинере}
+### Step 3. Mount the extended truststore {#шаг-3-запуск-с-заменои-truststore}
 
-The StormBPMN container uses the image `eclipse-temurin:11-jre-alpine`. The path to the standard truststore:
-
-```
-/opt/java/openjdk/lib/security/cacerts
-```
-
-::: warning Path verification
-If mounting does not work, check the current path using the command:
-
-```bash
-docker run --rm eclipse-temurin:11-jre-alpine find /opt -name "cacerts" 2>/dev/null
-```
-
-:::
-
-### Step 3. Run with truststore replacement {#шаг-3-запуск-с-заменои-truststore}
-
-In `docker-compose.yml`:
+In `docker-compose.yml` (verify the destination path against your container):
 
 ```yaml
 services:
-    stormbpmn:
-        image: _ваш_образ_
-        volumes:
-            - ./truststore.jks:/opt/java/openjdk/lib/security/cacerts:ro
+  stormbpmn:
+    image: your-stormbpmn-image
+    volumes:
+      - ./storm-cacerts:/opt/java/openjdk/lib/security/cacerts:ro
 ```
 
-Or in the command line:
-
-```bash
-docker run \
-  -v $(pwd)/truststore.jks:/opt/java/openjdk/lib/security/cacerts:ro \
-  _ваш_образ_
-```
+Recreate the container after editing its volumes. After upgrading the application image or Java, re-check and refresh the copied `cacerts` so that public CA updates are not lost.
 
 ### Result {#результат}
 
-Java in the container will use your truststore and trust the specified certificates. No changes to environment variables are required.
+Java keeps trusting the original public CAs and additionally trusts the imported corporate CA. After restarting, verify both your internal S3 connection and any other HTTPS integrations.
 
 ---
 
@@ -198,7 +181,7 @@ Java in the container will use your truststore and trust the specified certifica
 
 -   [ ] **CORS configured** - specific domains are specified instead of `*`
 -   [ ] **OAuth2 configured** - corporate authentication is active
--   [ ] **Registration disabled** - `showRegistration = false`
+-   [ ] **Registration disabled** - `showRegistraton = false`
 -   [ ] **Anonymous access prohibited** - all `*AnonAccess = false` parameters
 -   [ ] **ENV hidden** - `STORM_DISABLE_ENV_IN_UI = true`
 -   [ ] **Password policy** - [lockout after failed attempts](./password-policy.md) is enabled if built-in login is used

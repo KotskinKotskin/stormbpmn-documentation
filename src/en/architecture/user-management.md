@@ -1,7 +1,7 @@
 ---
 title: User Management
 order: 3
-source_hash: 4496dcfe3cb92436
+source_hash: 4db759ff6c0d120d
 ---
 
 [[toc]]
@@ -68,7 +68,7 @@ Three methods are supported; the first two are typically used in corporate deplo
 
 1. **Self-service login via the corporate directory.** The profile is created upon the first successful login based on attributes from the provider (email is required; full name is included if the provider supplies it). No separate request is needed: the right to log in is determined by the employee being present in the directory and having access to the application granted on the IdP side.
 2. **Team invitation.** The team administrator specifies email addresses. Individuals not yet in the system receive an invitation email; the account is created when the person logs in.
-3. **Built-in registration.** A self-service registration form; disabled in production deployments via the `showRegistration` parameter.
+3. **Built-in registration.** A self-service registration form; disabled in production deployments via the `showRegistraton` parameter.
 
 ::: tip Limiting the user base
 Access to the application is restricted on the IdP side by assigning the application to specific directory groups. Additionally, the team administrator controls who joins workspaces and with what permissions.
@@ -119,7 +119,7 @@ The log is directed to one of the following channels: output to the container co
 ## Information Security Checklist {#чек-лист-для-службы-информационнои-безопасности}
 
 - [ ] Built-in authentication is disabled (`STORM_DISABLE_SIMPLE_AUTH`); access is only via IdP.
-- [ ] Self-registration form is disabled (`showRegistration`).
+- [ ] Self-registration form is disabled (`showRegistraton`).
 - [ ] Access to the application in the IdP is granted to specific directory groups, not to all employees.
 - [ ] A decision has been made on whether [session binding to SSO](/en/configure/security/sso-session-binding.md) is required, and the session lifetime has been configured.
 - [ ] Team administrators and the procedure for requesting access rights have been defined.

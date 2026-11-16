@@ -79,10 +79,10 @@ StormBPMN Enterprise обеспечивает высокий уровень ин
 
 | Параметр                      | Описание                     | Рекомендация для production           |
 | ----------------------------- | ---------------------------- | ------------------------------------- |
-| **showRegistration**          | Показать форму регистрации   | ❌ Отключить                          |
+| **showRegistraton**          | Показать форму регистрации   | ❌ Отключить                          |
 | **showBasicLogin**            | Показать поля логин/пароль   | ❌ При использовании OAuth2           |
 | **showCustomLoginButtonName** | Кастомный текст кнопки входа | По требованию                         |
-| **customLoginButtonName**     | Текст на кнопке входа        | `"Войти через корпоративный аккаунт"` |
+| **CustomLoginButtonName**     | Текст на кнопке входа        | `"Войти через корпоративный аккаунт"` |
 
 ### Публичный доступ
 
@@ -130,65 +130,48 @@ javax.net.ssl.SSLHandshakeException: PKIX path building failed
 
 ### Решение
 
-Необходимо смонтировать свой `truststore.jks`, заменив стандартный truststore Java.
+**Не создавайте новый пустой truststore только с корпоративным сертификатом.** При замене стандартного `cacerts` таким файлом Java перестанет доверять остальным корневым CA: это может нарушить HTTPS к S3, IdP и другим внешним сервисам. Сначала скопируйте **штатный** `cacerts` из той же версии образа StormBPMN, затем импортируйте корпоративный CA в копию.
 
-### Шаг 1. Создание truststore.jks
-
-Если у вас есть файл сертификата (например, `minio-ca.crt`), выполните:
+### Шаг 1. Проверьте путь в запущенном контейнере
 
 ```bash
+docker exec stormbpmn sh -c 'echo "$JAVA_HOME"; ls -l "$JAVA_HOME/lib/security/cacerts"'
+```
+
+Здесь и далее `stormbpmn` — имя контейнера в примере; замените его на своё. Путь `/opt/java/openjdk/lib/security/cacerts` ниже — **пример**, а не гарантия для всех сборок и версий Java. Используйте путь, проверенный в вашем образе.
+
+### Шаг 2. Скопируйте стандартный truststore и добавьте CA
+
+```bash
+# -L позволяет скопировать сам файл, даже если cacerts является символической ссылкой.
+docker cp -L stormbpmn:/opt/java/openjdk/lib/security/cacerts ./storm-cacerts
 keytool -importcert \
   -file minio-ca.crt \
   -alias my-root-ca \
-  -keystore truststore.jks \
+  -keystore ./storm-cacerts \
   -storepass changeit \
   -noprompt
 ```
 
-::: tip Пароль truststore
-Пароль `changeit` — стандартный для Java truststore. Можно использовать другой, но он должен совпадать в команде и при запуске.
-:::
+Пароль `changeit` — обычный пароль стандартного Java `cacerts`; если в вашем образе он изменён, используйте фактический пароль. Не публикуйте файл truststore, если в нём есть закрытые ключи или другие чувствительные данные.
 
-### Шаг 2. Путь к truststore в контейнере
+### Шаг 3. Подключите дополненный truststore
 
-Контейнер StormBPMN использует образ `eclipse-temurin:11-jre-alpine`. Путь к стандартному truststore:
-
-```
-/opt/java/openjdk/lib/security/cacerts
-```
-
-::: warning Проверка пути
-Если монтирование не работает, проверьте актуальный путь командой:
-
-```bash
-docker run --rm eclipse-temurin:11-jre-alpine find /opt -name "cacerts" 2>/dev/null
-```
-
-:::
-
-### Шаг 3. Запуск с заменой truststore
-
-В `docker-compose.yml`:
+В `docker-compose.yml` (путь назначения должен соответствовать **вашему** контейнеру):
 
 ```yaml
 services:
-    stormbpmn:
-        image: _ваш_образ_
-        volumes:
-            - ./truststore.jks:/opt/java/openjdk/lib/security/cacerts:ro
+  stormbpmn:
+    image: your-stormbpmn-image
+    volumes:
+      - ./storm-cacerts:/opt/java/openjdk/lib/security/cacerts:ro
 ```
 
-Или в командной строке:
-
-```bash
-docker run \
-  -v $(pwd)/truststore.jks:/opt/java/openjdk/lib/security/cacerts:ro \
-  _ваш_образ_
-```
+После изменения пересоздайте контейнер. При обновлении образа/Java сверяйте расположение и содержимое `cacerts`, чтобы не использовать устаревшую копию системных сертификатов.
 
 ### Результат
 
-Java в контейнере будет использовать ваш truststore и доверять указанным сертификатам. Никаких изменений в переменных окружения не требуется.
+Java продолжит доверять штатным публичным CA и дополнительно будет доверять импортированному корпоративному сертификату. Проверьте доступность и корпоративного S3, и остальных HTTPS-сервисов после перезапуска.
 
 ---
 
@@ -198,7 +181,7 @@ Java в контейнере будет использовать ваш truststo
 
 -   [ ] **CORS настроен** - указаны конкретные домены вместо `*`
 -   [ ] **OAuth2 настроен** - корпоративная авторизация активна
--   [ ] **Регистрация отключена** - `showRegistration = false`
+-   [ ] **Регистрация отключена** - `showRegistraton = false`
 -   [ ] **Анонимный доступ запрещен** - все параметры `*AnonAccess = false`
 -   [ ] **ENV скрыты** - `STORM_DISABLE_ENV_IN_UI = true`
 -   [ ] **Политика паролей** - [блокировка после неудачных попыток](./password-policy.md) включена, если используется встроенный вход

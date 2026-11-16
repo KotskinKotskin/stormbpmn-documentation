@@ -1,4 +1,3 @@
-# Для жёсткой проверки уберите continue-on-error у шага проверки.
 name: Check documentation translations
 on:
   pull_request:
@@ -16,7 +15,6 @@ jobs:
         with:
           node-version: 20
       - name: Check changed sources
-        continue-on-error: true
         env:
           BASE_REF: ${{ github.base_ref }}
         run: node scripts/translate.mjs --check --format github --changed-since "origin/$BASE_REF"

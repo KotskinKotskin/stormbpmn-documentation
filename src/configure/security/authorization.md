@@ -27,12 +27,16 @@ order: 2
 | **OAuthIsEnabled**    | Включение OAuth2                        | `true`                                                                             |
 | **OAuthClientId**     | ID клиента в провайдере                 | `stormbpmn-client`                                                                 |
 | **OAuthClientSecret** | Секрет клиента                          | `your-client-secret`                                                               |
-| **OAuthAuthorizeUri** | URL авторизации                         | `https://keycloak.company.com/auth/realms/master/protocol/openid-connect/auth`     |
-| **OAuthUserInfoUri**  | URL получения информации о пользователе | `https://keycloak.company.com/auth/realms/master/protocol/openid-connect/userinfo` |
-| **OAuthTokenUri**     | URL получения токена                    | `https://keycloak.company.com/auth/realms/master/protocol/openid-connect/token`    |
+| **OAuthAuthorizeUri** | URL авторизации                         | `https://keycloak.company.com/realms/company/protocol/openid-connect/auth`     |
+| **OAuthUserInfoUri**  | URL получения информации о пользователе | `https://keycloak.company.com/realms/company/protocol/openid-connect/userinfo` |
+| **OAuthTokenUri**     | URL получения токена                    | `https://keycloak.company.com/realms/company/protocol/openid-connect/token`    |
 | **OAuthButtonLabel**  | Текст на кнопке входа                   | `"Войти через корпоративный аккаунт"`                                              |
 | **OAuthRedirectUri**  | URL возврата после авторизации          | `https://stormbpmn.company.com/app/signin`                                         |
 | **OAuthFlowMode**     | Режим потока: `PKCE` или `implicit_flow` | `PKCE`                                                                            |
+
+::: tip Примеры URL для Keycloak 26
+В стандартной установке Keycloak 26 адреса OIDC имеют вид `/realms/<realm>/protocol/openid-connect/...` — **без** старого префикса `/auth`. Используйте отдельный realm для сотрудников (в примере `company`), а не административный `master`. Если у Keycloak настроен собственный базовый путь, проверьте точные URL в `https://keycloak.company.com/realms/company/.well-known/openid-configuration` вашего realm. См. [официальные OIDC endpoints Keycloak](https://www.keycloak.org/securing-apps/oidc-layers).
+:::
 
 #### Режим потока: PKCE или implicit
 

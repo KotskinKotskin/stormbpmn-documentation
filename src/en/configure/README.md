@@ -6,7 +6,7 @@ dir:
   collapsible: true
 index: true
 order: 3
-source_hash: 759b2db255d2ebb6
+source_hash: 7ab154fe68a7c0f7
 ---
 
 [[toc]]
@@ -151,7 +151,7 @@ The letter "i" is historically missing from the key (not `showRegistration`). Fi
 
 #### Branding and Login Page {#брендинг-и-страница-входа}
 
-It is more convenient to configure the company name and logo, greeting, brand color, support links, and login methods on a separate tab **"Branding and Login Page"** (Administration). All these settings are public: they are read by the login page before authentication. Details and a list of keys (`brandCompanyName`, `brandWelcomeTitle`, `brandLogo`, `brandLogoDark`, `brandPrimaryColor`, `brandColorOverridesTeams`, `supportMode`, `kbMode`, and others): ["Branding and Login Page"](/en/configure/branding.md).
+It is more convenient to configure the company name and logo, greeting, brand color, support links, and login methods on a separate tab **"Branding and Login Page"** (Administration). Login-page appearance and login-method display settings can be read before authentication; OAuth2 secrets (such as `OAuthClientSecret`) are not public. Details and a list of keys (`brandCompanyName`, `brandWelcomeTitle`, `brandLogo`, `brandLogoDark`, `brandPrimaryColor`, `brandColorOverridesTeams`, `supportMode`, `kbMode`, and others): ["Branding and Login Page"](/en/configure/branding.md).
 
 ::: tip "License Issuance via Requests" Scenario (STP)
 If licenses are issued via approved requests, disable **autoEnableEnterpriseLicense** and enable **createPendingEnterpriseUsers**:

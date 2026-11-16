@@ -1,5 +1,5 @@
 ---
-source_hash: f96c719b97ad4a50
+source_hash: d42923a1e73e8d5b
 ---
 # Team Member Roles and Permissions {#роли-и-права-участников-команды}
 
@@ -188,5 +188,5 @@ The check is applied to the action itself, not just in the interface: it cannot 
 ## Related documentation {#связанная-документация}
 
 -   **[Access rights separation for diagrams](./Access_to_diagrams.md)** — what affects opening a specific process model
--   **[Information security](../configure/SECURE.md)** — public access settings and corporate parameters
+-   **[Information security](../configure/security/README.md)** — public access settings and corporate parameters
 -   **[Configuration](../configure/README.md)** — complete reference of settings
