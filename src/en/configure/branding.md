@@ -1,7 +1,7 @@
 ---
 title: Branding and Login Page
 order: 2
-source_hash: 6a0c26d15dbff439
+source_hash: a2e9f94938f809f6
 ---
 
 [[toc]]
