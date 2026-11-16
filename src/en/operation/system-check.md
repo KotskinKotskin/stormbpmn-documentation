@@ -66,6 +66,10 @@ There is an exception to this rule: **if a module is included in the license, co
 
 The storm-media service (voice input) is not designated as a separate module in the license and is checked only when an address is specified.
 
+### Initial S3 self-check fails with cloud.ru OBS
+
+Newer AWS SDK versions may automatically send CRC32 checksums on object uploads. Some S3-compatible gateways may not accept these requests. Check storage responses/logs for checksum, `400`, `InvalidRequest`, or `SignatureDoesNotMatch` errors. For an SDK that recognizes these environment variables, you can try `AWS_REQUEST_CHECKSUM_CALCULATION=WHEN_REQUIRED` and `AWS_RESPONSE_CHECKSUM_VALIDATION=WHEN_REQUIRED`. This is not a universal fix: it does not affect SDKs that ignore those variables. See [S3 setup](/en/install/production/components.md) for details and other checks.
+
 ### Verifying File Storage from the Browser {#проверка-фаилового-хранилища-из-браузера}
 
 The Stormbpmn server can operate with S3 via an internal address `S3_ENDPOINT`, while the user's browser opens files through links that you expose externally. If the external address is unavailable, the server functions correctly, but users cannot open attachments and images.

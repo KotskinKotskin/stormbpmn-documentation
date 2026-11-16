@@ -80,6 +80,21 @@ Open **Administration → System Check**: the "File Storage (S3)" card should be
 SeaweedFS documentation: [Quick Start with weed mini](https://github.com/seaweedfs/seaweedfs/wiki/Quick-Start-with-weed-mini),
 [Amazon S3 API](https://github.com/seaweedfs/seaweedfs/wiki/Amazon-S3-API).
 
+### AWS SDK checksum compatibility with S3-compatible storage (cloud.ru OBS)
+
+Newer AWS SDK versions may **automatically add CRC32 checksums** to object-upload requests (such as `PutObject`). Some S3-compatible gateways handle these requests differently from Amazon S3. If the initial **System Check → File Storage (S3)** fails with cloud.ru OBS or another compatible service, inspect the response and logs for checksum errors. This is a **possible compatibility issue**, not a confirmed diagnosis for every OBS deployment.
+
+For an **AWS SDK that supports these standard environment variables**, try limiting optional checksum calculation/validation to required operations:
+
+```bash
+AWS_REQUEST_CHECKSUM_CALCULATION=WHEN_REQUIRED
+AWS_RESPONSE_CHECKSUM_VALIDATION=WHEN_REQUIRED
+```
+
+Required integrity checks remain enabled. **Note:** these variables only affect SDKs that recognize them. Setting them in the StormBPMN container does **not** guarantee that its built-in S3 client will change behavior; unsupported clients may require an application-level fix.
+
+After changing the configuration, repeat the test-object write/read/delete check and verify file access **from the browser**. If it still fails, inspect `S3_ENDPOINT`, region, path-style/virtual-host-style addressing, bucket permissions, and `400`, `InvalidRequest`, `SignatureDoesNotMatch`, or checksum errors. See [System Check](/en/operation/system-check.md).
+
 ### S3 Environment Variables {#переменные-окружения-s3}
 
 | Variable                 | Description                               | Example Value           |
