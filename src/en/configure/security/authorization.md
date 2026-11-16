@@ -16,6 +16,13 @@ source_hash: ef5e1727641a5819
 
 Corporate authentication via external providers (Keycloak, Azure AD, etc.)
 
+::: tip Where to find OAuth2 settings in Enterprise
+Open **Administration** (`/app/admin`) → **Branding and Login Page** → **Login and Registration** → **OAuth 2.0 connection parameters**. Configure `OAuthClientId`, `OAuthClientSecret`, provider endpoints, and the other parameters below, then click **Save**.
+
+In the current Enterprise interface, OAuth2 settings have moved out of the general **Application Settings** list. Searching for `OAuthClientId` in the old section may return no results. See [Branding and Login Page](/en/configure/branding.md).
+:::
+
+
 | Parameter              | Description                                | Example value                                                                    |
 | --------------------- | --------------------------------------- | ---------------------------------------------------------------------------------- |
 | **OAuthIsEnabled**    | Enable OAuth2                        | `true`                                                                             |
@@ -183,7 +190,7 @@ You will need the saved values:
 
 ##### Configuration in the Admin Panel {#настроика-в-административнои-панели}
 
-1. Go to the admin panel: `/app/admin` → **Security** tab
+1. Open `/app/admin` → **Branding and Login Page** → **Login and Registration** → expand **OAuth 2.0 connection parameters**.
 
 2. Specify the following parameters:
 
