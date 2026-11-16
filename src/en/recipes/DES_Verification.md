@@ -77,10 +77,10 @@ The most basic model. Arrivals follow a Poisson process (exponential inter-arriv
 
 | Metric | Formula | Meaning |
 |---------|---------|-------|
-| L = ρ/(1−ρ) | Average number of requests in the system |
-| Lq = ρ²/(1−ρ) | Average number of requests in the queue |
-| W = 1/(μ−λ) | Average time in the system |
-| Wq = ρ/(μ(1−ρ)) | Average waiting time in the queue |
+| L | ρ/(1−ρ) | Average number of requests in the system |
+| Lq | ρ²/(1−ρ) | Average number of requests in the queue |
+| W | 1/(μ−λ) | Average time in the system |
+| Wq | ρ/(μ(1−ρ)) | Average waiting time in the queue |
 
 **Little's Law:** L = λ × W (relates all metrics)
 
