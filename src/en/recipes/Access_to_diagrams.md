@@ -1,5 +1,5 @@
 ---
-source_hash: bda7e13e09e701a9
+source_hash: d453f85f457386b8
 ---
 # Access Rights Separation for Diagrams {#разделение-прав-доступа-к-диаграммам}
 
