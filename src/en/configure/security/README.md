@@ -9,7 +9,7 @@ dir:
 index: true
 redirectFrom:
   - /en/configure/SECURE.html
-source_hash: 07b5eae22f77c849
+source_hash: d848dbe0a033702c
 ---
 
 [[toc]]
