@@ -38,7 +38,8 @@ StormBPMN Enterprise {{ .Chart.AppVersion }} развёрнут (чарт {{ .Ch
    d) Создайте первого администратора в мастере настройки.
    Подробно: https://enterprise.stormbpmn.com/operation/License.html
 
-4. SSO (Keycloak, Azure AD, ADFS) настраивается в админ-панели /app/admin.
+4. SSO (Keycloak, Azure AD, ADFS): /app/admin → «Брендинг и страница входа»
+   → «Вход и регистрация» → «Параметры подключения OAuth 2.0».
 
 Проверка: helm test {{ .Release.Name }} --namespace {{ .Release.Namespace }}
 {{- if .Values.metrics.enabled }}
