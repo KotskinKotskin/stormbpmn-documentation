@@ -123,6 +123,7 @@ Configuration and audit channels: [Audit Logging](/en/configure/security/audit-l
 | **enableAnonSearchPage**        | Search for anonymous users          | As required by the business                    |
 | **autoEnableEnterpriseLicense** | Automatic license issuance             | Enable for simplification                   |
 | **autoJoinTeamId**              | Automatic addition to a team        | Specify the ID of the main team              |
+| **autoJoinTeamRights**          | New user's license in the default team (`READ` / `VIEW`) | `VIEW` — viewer license for all new users |
 | **disableTeamPopUp**            | Disable the prompt to create a team      | Enable for centralized management      |
 | **disableTeamCreation**         | Prohibit team creation                  | Enable for strict control            |
 

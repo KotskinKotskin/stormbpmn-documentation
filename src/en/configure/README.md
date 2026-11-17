@@ -121,6 +121,7 @@ Team administrator privileges are required.
 | **enableCommonRoles**   | Common roles for all teams                                    | ✅ Enable for standardization                  |
 | **enableCommonUsers**   | Common org structure                               | ✅ Enable for centralized management |
 | **autoJoinTeamId**      | Team ID for automatically adding new users | Specify the main team ID                 |
+| **autoJoinTeamRights**  | License of new users in the default team: `READ` — editor, `VIEW` — viewer. Works only together with `autoJoinTeamId` | `VIEW` if editors are granted by the administrator |
 | **disableTeamPopUp**    | Disable the prompt to create a team                         | ✅ Enable for centralized management |
 | **disableTeamCreation** | Prohibit team creation                                     | ✅ Enable for strict control            |
 
