@@ -222,6 +222,22 @@ To simplify the process, the option **"Automatic license issuance to anyone who 
 In this case, the user immediately gains access to the system after registration.
 :::
 
+### New users' license: editor or viewer {#лицензия-новых-пользователеи-редактор-или-просмотрщик}
+
+A new user (SSO, LDAP login or registration) joins the default team set by **autoJoinTeamId** (group "Business Logic → Onboarding and Teams"). By default they get a role with an **editor license** there.
+
+To give new users a **viewer license** by default, set **autoJoinTeamRights** ("License of new users in the default team") to `VIEW`:
+
+| Value             | What a new user gets                                                  |
+| ----------------- | --------------------------------------------------------------------- |
+| `READ` (default)  | A role in the default team with an editor license                     |
+| `VIEW`            | The reader role (VIEW) and a viewer license; no editor license is consumed |
+
+-   The setting works **only together with `autoJoinTeamId`**. Without a default team, new users are licensed as before.
+-   A team administrator makes a user an editor by changing their role. This needs a free editor license, otherwise the role change fails with "No free licenses".
+-   A user invited to a team with another role gets the role from the invitation.
+-   When viewer licenses are exhausted, a new user's login fails with "No free licenses for viewer registration". With `createPendingEnterpriseUsers`, the account is created inactive, and its activation checks for a free viewer license.
+
 ### "Pending Activation" Accounts {#учетные-записи-«ожидает-активации»}
 
 To make Step 1 work when auto-issuance is disabled, enable the **createPendingEnterpriseUsers** setting ("Create an inactive account if license auto-issuance is disabled", group "Business Logic"). Then, any login or registration attempt (SSO, LDAP, registration form) creates an **inactive** account:
