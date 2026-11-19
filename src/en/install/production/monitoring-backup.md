@@ -1,21 +1,21 @@
 ---
 title: 'Monitoring, hardening, backup'
 order: 3
-source_hash: 2260e726510a877d
+source_hash: d22c8607dbde9cc7
 ---
 
 [[toc]]
 
-# Monitoring, hardening, and backup {#мониторинг-хардендинг-и-резервное-копирование}
+# Monitoring, Hardening, and Backup {#мониторинг-хардендинг-и-резервное-копирование}
 
-Operational post-configuration of a production installation. Application and external service installation is covered in the [overview](./README.md) and [External services](./components.md).
+Operational post-configuration for a production installation. Application and external service installation is covered in the [overview](./README.md) and [External Services](./components.md).
 
 ## Monitoring and Metrics {#мониторинг-и-метрики}
 
 StormBPMN provides metrics in Prometheus format for monitoring system status.
 
 ::: tip Monitoring is an optional component
-Prometheus and Grafana are listed as a recommended solution but are **not mandatory**. You can use any monitoring system compatible with the Prometheus metrics format or your existing corporate monitoring infrastructure.
+Prometheus and Grafana are listed as the recommended solution but **are not mandatory**. You can use any monitoring system compatible with the Prometheus metrics format or your existing corporate monitoring infrastructure.
 :::
 
 ### Option 1: Prometheus + Grafana (recommended) {#вариант-1-prometheus-grafana-рекомендуемыи}
@@ -45,21 +45,21 @@ StormBPMN is compatible with any system that supports collecting metrics in Prom
 
 | System | Description | Note |
 |---------|----------|------------|
-| **Glaber** | Zabbix fork with Prometheus support | Suitable for import substitution |
+| **Glaber** | A Zabbix fork with Prometheus support | Suitable for import substitution |
 | **Zabbix** | With a Prometheus exporter | Corporate standard |
 | **VictoriaMetrics** | High-performance Prometheus alternative | For high loads |
 | **InfluxDB + Telegraf** | Time-series database with a collection agent | Universal solution |
 
 #### Configuration for Glaber / Zabbix {#настроика-для-glaber-zabbix}
 
-StormBPMN exports metrics at endpoint `/actuator/prometheus`. To connect:
+StormBPMN exports metrics at the endpoint `/actuator/prometheus`. To connect:
 
 1. Configure a scrape task for the URL: `http://stormbpmn-host:8082/actuator/prometheus`
-2. Collection interval: 15–30 seconds recommended
+2. Collection interval: 15-30 seconds is recommended
 3. Metrics include: JVM, HTTP requests, application business metrics
 
 ::: tip Corporate Monitoring
-If the organization already has a centralized monitoring system (Zabbix, Glaber, Nagios, etc.), it is recommended to integrate with it rather than deploying a separate Prometheus instance.
+If the organization already has a centralized monitoring system (Zabbix, Glaber, Nagios, etc.), it is recommended to integrate with it rather than deploying a separate Prometheus.
 :::
 
 ::: tip Detailed Instructions
@@ -70,19 +70,19 @@ A ready-made Grafana dashboard, alert thresholds, and health checks: [Administra
 
 ---
 
-## Security and Hardening {#безопасность-и-хардендинг}
+## Security and hardening {#безопасность-и-хардендинг}
 
 ### Mandatory security measures {#обязательные-меры-безопасности}
 
-1. **SSL/TLS** - all communication only over HTTPS
+1. **SSL/TLS** - all communication must use HTTPS only
 2. **Strong passwords** - for all service accounts
-3. **Network isolation** - database in a private network
+3. **Network isolation** - database located in a private network
 4. **Regular updates** - for the OS and containers
 
 
 ### Audit Logging {#аудит-логирование}
 
-StormBPMN allows you to maintain a log of all user actions, with delivery to the console, to an external SIEM via Syslog, or to a dedicated TimescaleDB database.
+StormBPMN allows you to maintain a log of all user actions, delivering it to the console, to an external SIEM via Syslog, or to a dedicated TimescaleDB database.
 
 ::: tip Detailed instructions
 Configuration and audit channels: [Audit Logging](/en/configure/security/audit-logging.md)
@@ -121,25 +121,27 @@ Configuration and audit channels: [Audit Logging](/en/configure/security/audit-l
 | **enableCommonUsers**           | Common org structure                         | Enable for centralized management |
 | **allDiagramsAnonAccess**       | Anonymous access to all diagrams        | Disable for security               |
 | **enableAnonSearchPage**        | Search for anonymous users          | As required by the business                    |
-| **autoEnableEnterpriseLicense** | Automatic license issuance             | Enable for simplification                   |
+| **autoEnableEnterpriseLicense** | Automatic issuance of licenses             | Enable for simplification                   |
 | **autoJoinTeamId**              | Automatic addition to a team        | Specify the ID of the main team              |
-| **autoJoinTeamRights**          | New user's license in the default team (`READ` / `VIEW`) | `VIEW` — viewer license for all new users |
+| **autoJoinTeamRights**          | Default license for new team members (`READ` / `VIEW`) | `VIEW` — view-only license for all new members |
 | **disableTeamPopUp**            | Disable the prompt to create a team      | Enable for centralized management      |
 | **disableTeamCreation**         | Prohibit team creation                  | Enable for strict control            |
 
 ### AI features {#ai-функции}
 
-AI features are invoked as a REST API in OpenAI format, so a compatible endpoint and token must be specified.
+AI features are invoked as a REST API in OpenAI format, so you must specify a compatible endpoint and token.
 
 **How to enable:**
 
 -   In the administrative interface `/app/admin`, go to **System Settings → Business Logic → AI features**.
--   Activate the **"Enable BPMN autocomplete"** toggle.
--   Specify the **base URL** of the AI service (compatible with the OpenAI API).
--   Set the **token** for requests to this API.
+-   Specify the **base URL** of the AI service (compatible with the OpenAI API), without `/v1`.
+-   Ensure that the **«Language Model Enablement»** toggle is turned on (`bpmnAiCompletion`). If it has never been saved, it is enabled automatically along with the base URL. In earlier versions, it is labeled **«BPMN autocomplete enabled»** and does not turn on automatically — enable it manually. This is the main switch for the model, not just for autocomplete: without it, the editor's AI features do not work, and the "System Check" reports that the model is not configured.
+-   Set the **token** for API requests and the **model**.
+
+Step-by-step instructions with examples for Ollama and vLLM are in ["Connecting a model"](/en/ai/AI_CHAT.md).
 
 :::: warning License requirement
-Autocomplete works only when the AI module is activated in the licenses.
+AI features work only when the AI module is activated in the license.
 ::::
 
 ### Interface and Menu Configuration {#настроика-интерфеиса-и-меню}
