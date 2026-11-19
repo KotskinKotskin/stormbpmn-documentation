@@ -1,7 +1,7 @@
 ---
 title: 'Monitoring, hardening, backup'
 order: 3
-source_hash: d22c8607dbde9cc7
+source_hash: 9b37bfa2339bb461
 ---
 
 [[toc]]
@@ -135,7 +135,7 @@ AI features are invoked as a REST API in OpenAI format, so you must specify a co
 
 -   In the administrative interface `/app/admin`, go to **System Settings → Business Logic → AI features**.
 -   Specify the **base URL** of the AI service (compatible with the OpenAI API), without `/v1`.
--   Ensure that the **«Language Model Enablement»** toggle is turned on (`bpmnAiCompletion`). If it has never been saved, it is enabled automatically along with the base URL. In earlier versions, it is labeled **«BPMN autocomplete enabled»** and does not turn on automatically — enable it manually. This is the main switch for the model, not just for autocomplete: without it, the editor's AI features do not work, and the "System Check" reports that the model is not configured.
+-   For the magic button, diagram generation and analysis, turn on the **«Editor AI features enablement»** toggle (`bpmnAiCompletion`). The model is verified without it: with the toggle off, "System Check" warns that the editor AI features are off. In earlier versions the toggle is labeled **«BPMN autocomplete enabled»**, and while it is off, "System Check" reports that the model is not configured — turn it on manually.
 -   Set the **token** for API requests and the **model**.
 
 Step-by-step instructions with examples for Ollama and vLLM are in ["Connecting a model"](/en/ai/AI_CHAT.md).

@@ -3,7 +3,7 @@ title: Enabling and Connecting a Process Model
 order: 1
 redirectFrom:
   - /en/configure/AI_CHAT.html
-source_hash: 0eacb9fb79a6956f
+source_hash: 02bfbe1342f19acc
 ---
 
 [[toc]]
@@ -30,7 +30,7 @@ Like all StormBPMN configuration (see [System Configuration](/en/configure/READM
 **Level 1 — License:** AI module (`enableAiFeatures`). You do not need to enable AI separately on the server:
 it is present in every installation, and access to it is granted by the license.
 
-**Level 2 — Admin Panel (fine-tuning):** toggles for **"Language Model Enablement"** and
+**Level 2 — Admin Panel (fine-tuning):** toggles for **"Editor AI features enablement"** and
 **"Enable AI Chat"**, model, token, temperature, prompts, and quality threshold. Changes are applied **on the fly**,
 without a restart.
 :::
@@ -39,10 +39,10 @@ without a restart.
 1. The license includes the **AI module** (`enableAiFeatures`).
 2. **API Format**, **Base URL** (without `/v1`), **Token** (leave empty for a gateway without authentication), and
    **Model** are filled in (see [Primary Model](#основная-модель)).
-3. The **"Language Model Enablement"** toggle (`bpmnAiCompletion`) is turned on. If it has never been saved, it
-   turns on automatically as soon as the Base URL is set. In earlier versions, it is labeled **"BPMN autocomplete enabled"**
-   and does not turn on automatically — enable it manually: without it, the editor's AI features will not work, and
-   "System Check" will not verify the model.
+3. For the magic button, diagram generation and analysis, turn on the **"Editor AI features enablement"** toggle (`bpmnAiCompletion`).
+   It does not turn on the model: "System Check" verifies the model in either toggle position, and the chat has its
+   own toggle. In earlier versions the toggle is labeled **"BPMN autocomplete enabled"**; while it is off, "System Check" does not
+   verify the model and reports that it is not configured.
 4. From the Stormbpmn container, the model's OpenAI-compatible API responds:
    `curl -s <Базовый URL>/v1/models` (if using a token, add `-H "Authorization: Bearer <токен>"`)
    returns JSON with a list of models, and yours is included in it. A `Ollama is running` response to the root address
@@ -80,15 +80,15 @@ the fastest way to hide or show the chat without changing the license.
 
 All other settings are located in the **admin panel**, in the **«🤖 AI Assistant»** section. Key blocks for chat:
 
-1. **Language Model Enablement** (`bpmnAiCompletion`) — the main switch for the model (see below);
+1. **Editor AI features enablement** (`bpmnAiCompletion`) — the magic button, diagram generation and analysis (see below);
 2. **AI Chat enablement** — the toggle for displaying the chat button (see [Step 1](#шаг-1-включение-чата));
 3. **Primary model** — the model for reading and standard responses;
 4. **Separate model for edits (write)** — *optional*: you can route turns that modify data to a more reliable/powerful model;
 5. **Edit quality threshold** — automatic diagram refinement for the linter;
 6. **System prompts** — instructions for the assistant (base + separate for edits).
 
-::: warning The «Language Model Enablement» toggle is the main switch for the model.
-It enables the model entirely: without it, the editor’s AI features (magic button, diagram generation, and analysis) do not work, and [«System Check»](/en/operation/system-check.md) does not verify the model. The toggle is enabled by default as soon as the Base URL is set; it is disabled only if it has been explicitly turned off and saved. In earlier versions, it is labeled **«BPMN autocomplete enabled»**, does not enable itself, and can easily be overlooked as a setting for a single feature — in those versions, enable it along with the model configuration.
+::: warning The «Editor AI features enablement» toggle controls editor features, not the model
+It turns on the editor's AI features: the magic button, diagram generation, analysis and description. It is off by default. The model is defined by the fields below (address, token, name), and [«System Check»](/en/operation/system-check.md) verifies it in either toggle position; when the toggle is off, the check adds the warning "editor AI features are off". The chat does not depend on this toggle. In earlier versions the toggle is labeled **«BPMN autocomplete enabled»**, and while it is off, «System Check» does not verify the model — in those versions, turn it on together with the model configuration.
 :::
 
 In the same section below, there are prompts for the editor’s AI features (autocomplete, process analysis) — these are not related to chat.
@@ -120,7 +120,7 @@ In the admin panel, each field has a key — use it to find the setting in searc
 
 | Field                  | Configuration Key              |
 | --------------------- | --------------------------- |
-| Language Model Enablement | `bpmnAiCompletion`      |
+| Editor AI features enablement | `bpmnAiCompletion`  |
 | API Format            | `bpmnAiChatFormat`          |
 | Base URL           | `bpmnAiCompletionBaseUrl`   |
 | Token                 | `bpmnAiCompletionToken`     |
@@ -134,9 +134,9 @@ For individual model write operations, keys start with `bpmnAiWrite`: `bpmnAiWri
 :::
 
 ::: info Connection Check
-The [«System Check»](/en/operation/system-check.md) section automatically verifies these settings, and the «Check Model (paid request)» button sends a short request to the model and shows whether it responds. If the AI module is included in your license but the model is not configured, the check is considered an error and prevents completing the initial setup. The check message specifies what is missing (address not set or the «Language Model Enablement» toggle is off), and the «Open Setting» button leads to that setting.
+The [«System Check»](/en/operation/system-check.md) section automatically verifies these settings, and the «Check Model (paid request)» button sends a short request to the model and shows whether it responds. If the AI module is included in your license but the model address is not set, the check is considered an error and prevents completing the initial setup; the message names the missing setting, and the «Open Setting» button leads to it. A switched-off «Editor AI features enablement» toggle is not an error: the model is still verified, and the check warns that the editor AI features are off.
 
-The automatic check requests the list of models from the gateway (`/v1/models`) — free, without generation, using the same connection as the chat. It warns if the gateway does not respond, rejects the token, does not respond as an OpenAI-compatible API, or does not recognize the specified model; in the latter case, it shows which models the gateway has. Warnings do not prevent completing the setup: some gateways do not provide a model list.
+The automatic check requests the list of models from the gateway (`/v1/models`) — free, without generation, using the same connection as the chat. It warns if the gateway does not respond, does not respond as an OpenAI-compatible API (for example, `Ollama is running` or an HTML page instead of a list), does not provide the model list (`401`, `403`, `404` — then the «Check Model» button shows whether the model answers), or does not recognize the specified model; in the latter case, it shows which models the gateway has. Warnings do not prevent completing the setup: some gateways do not provide a model list.
 :::
 
 ### API Format: `OPENAI` or `ANTHROPIC` {#формат-api-openai-или-anthropic}
@@ -388,8 +388,8 @@ Therefore: **save your version of the prompt separately** (for example, in your 
 
 ## Diagnostics (FAQ) {#диагностика-faq}
 
-::: details "System Check": Model is not configured, even though the address, token, and model are filled in
-Enable the **"Language Model Enablement"** toggle (`bpmnAiCompletion`): since the check reports this, it was disabled and saved. In earlier versions (labeled **"BPMN autocomplete enabled"**), it is disabled until manually enabled. Without it, the check does not validate the model, and the editor's AI features do not work. Changes are applied immediately; no restart is required.
+::: details "System Check": "editor AI features are off" or "model is not configured", even though the address, token, and model are filled in
+The model is verified without the toggle: the warning means the **"Editor AI features enablement"** toggle (`bpmnAiCompletion`) is off, so the magic button, diagram generation and analysis do not work in the editor. Turn it on if you need these features; the change applies immediately, no restart is required. In earlier versions (labeled **"BPMN autocomplete enabled"**), with the toggle off the check reports "model is not configured" and does not verify the model — turn the toggle on manually.
 :::
 
 ::: details Ollama: Server responds, but model check fails

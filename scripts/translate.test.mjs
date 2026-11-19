@@ -68,6 +68,8 @@ test('source_hash only counts inside frontmatter and changes on source edits', (
   assert.equal(isStale('changed', `---\nsource_hash: ${hash}\n---\ntext`), true);
   assert.equal(isStale('source', `source_hash: ${hash}`), true);
   assert.equal(isStale('source', undefined), true);
+  // Windows-копия с core.autocrlf=true и LF в CI дают один хеш
+  assert.equal(sourceHash('# A\r\ntext\r\n'), sourceHash('# A\ntext\n'));
 });
 
 test('CLI fake translation, check, filtering, force and orphan deletion in temp directory', async () => {
