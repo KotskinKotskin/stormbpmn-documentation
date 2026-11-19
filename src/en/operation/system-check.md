@@ -1,6 +1,6 @@
 ---
 title: System Check
-source_hash: c97b4fba53bd90ed
+source_hash: 705a2874dfd5fb19
 ---
 
 [[toc]]
@@ -50,7 +50,7 @@ Each check includes a brief explanation of the cause, a hint on what to fix, a "
 | **PlantUML Diagrams** | Sends a test diagram to the server and waits for a response with an image in SVG format | A placeholder address remains instead of `PLANTUML_SERVER`; server is unavailable; server returned an error or returned non-SVG |
 | **Simulations (DES)** | Requests the service's limits from the DES service | `DES_BASE_URL` is not set if the module is present in the license; the DES container is not running or is unavailable from the Stormbpmn container |
 | **Voice Input (storm-media)** | Verifies that the speech recognition service responds | Address `stormMediaBaseUrl` is set, but token `stormMediaToken` is empty; service is unavailable from the Stormbpmn container (the address is specified as the service root, without `/v1`) |
-| **AI Model (LLM)** | Checks the language model settings and requests the list of models from the gateway (`/v1/models`) — free of charge, **without generation**; a live request to the model is available via a separate button | Error: model address is not specified or the “Language Model Enablement” toggle is off (`bpmnAiCompletion`, in earlier versions — “BPMN autocomplete enabled”) if the AI module is present in the license; the address is not a URL. The message specifies what is missing, and “Open Settings” leads to this setting. A warning that does not block the configuration: the gateway did not provide the list of models (no response, rejected the token, responded not as an OpenAI-compatible API) or does not know the specified model — in this case, the gateway's models are listed in the message. Configuration is in [“Model Connection”](/en/ai/AI_CHAT.md) |
+| **AI Model (LLM)** | Checks the language model settings and requests the list of models from the gateway (`/v1/models`) — free of charge, **without generation**; a live request to the model is available via a separate button | Error: the model address (`bpmnAiCompletionBaseUrl`) is not specified while the AI module is in the license; the address is not a URL. The message specifies what is missing, and “Open Settings” leads to this setting. Warnings that do not block the configuration: the “Editor AI features enablement” toggle (`bpmnAiCompletion`) is off — the model is still verified, but the magic button, diagram generation and analysis do not work in the editor; the gateway did not provide the list of models (no response, responded not as an OpenAI-compatible API, closed the list with `401`/`403`/`404`) or does not know the specified model — in this case, the gateway's models are listed in the message. In earlier versions (toggle “BPMN autocomplete enabled”), a switched-off toggle produced the error “model is not configured”. Configuration is in [“Model Connection”](/en/ai/AI_CHAT.md) |
 
 ### Required and Optional Services {#обязательные-и-необязательные-сервисы}
 
@@ -62,7 +62,7 @@ The DES, storm-media, and language model services are optional, so by default:
 There is an exception to this rule: **if a module is included in the license, connection is mandatory**. You have a license for this module, so unfilled settings are considered an error rather than "Not Configured":
 
 -   **Discrete Event Simulation (DES).** Mandatory if the module is issued with a signed key `LICENSE_KEY_V2`. Older keys `LICENSE_KEY` (v1) do not have a module indicator, so DES connection is not required for them.
--   **AI Module.** Mandatory if AI features are included in the active license: the address, token, and model must be specified, and the "Language Model Enablement" toggle (`bpmnAiCompletion`) must be enabled (if it has never been saved, it is automatically enabled along with the address).
+-   **AI Module.** Mandatory if AI features are included in the active license: the model address must be specified. The "Editor AI features enablement" toggle (`bpmnAiCompletion`) does not affect this: the model is verified in either toggle position, and a switched-off toggle only produces a warning.
 
 The storm-media service (voice input) is not separated as a distinct module in the license and is checked only when an address is specified.
 
@@ -80,7 +80,7 @@ What to do: check the variable `S3_EXTERNAL_ENDPOINT` — this is the address th
 
 ### Language Model Check: Paid Request {#проверка-языковои-модели-платныи-запрос}
 
-The automatic model check only verifies the settings: address, token, and model name. It may display a warning:
+The automatic model check generates nothing: it verifies the address, token and model name and requests the model list from the gateway (`/v1/models`) free of charge. It may display a warning:
 
 -   the address is specified with `/v1` (specify the gateway root; the application appends the API version automatically);
 -   the token is not set `bpmnAiCompletionToken` (only a gateway without authorization will work).

@@ -138,7 +138,8 @@ export function addHeadingIds(ruChunk, enChunk) {
   return lines.join('\n');
 }
 
-export const sourceHash = (content) => createHash('sha256').update(content).digest('hex').slice(0, 16);
+// Хеш по LF: на Windows с core.autocrlf=true рабочая копия в CRLF, а CI читает LF — иначе перевод «устаревал» сразу после коммита
+export const sourceHash = (content) => createHash('sha256').update(content.replace(/\r\n/g, '\n')).digest('hex').slice(0, 16);
 export function isStale(srcContent, enContent) {
   const frontmatter = /^---\r?\n([\s\S]*?)\r?\n---(?:\r?\n|$)/.exec(enContent ?? '');
   return frontmatter?.[1].match(/^source_hash:\s*['"]?([a-f\d]{16})['"]?\s*$/m)?.[1] !== sourceHash(srcContent);
