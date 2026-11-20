@@ -147,6 +147,10 @@ The portal will issue `LICENSE_KEY_V2`, issued specifically for this code. Then 
 
 Retrieve the code when the database and configuration are final. If the code has changed, obtain a new key in the portal — see ["Diagnostics and Recovery"](#диагностика-и-восстановление).
 
+::: warning Telemetry file integrity
+Since version 6.6.2310, the telemetry file is signed with HMAC-SHA256. The portal verifies this signature when issuing a license key. If the file has been modified or if the application version does not support the signature, the key will not be issued. Ensure that the telemetry file is not manually edited and that the application is updated to the latest version before requesting a key.
+:::
+
 ### v2 Format and Module Access {#формат-v2-и-доступ-к-модулям}
 
 V2 is a PS256 JWS signed key bound to the activation code. The backend verifies the signature using the public key; the private signing key remains with the issuing service and is not installed in the application. Legacy v1 is deprecated because the historical mechanism includes the private key in the distributed application.

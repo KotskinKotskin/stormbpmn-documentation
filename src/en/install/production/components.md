@@ -284,6 +284,17 @@ If load balancers or complex SSL configurations are used, you may need to specif
 
 Gotenberg opens Storm pages itself, so this address must be accessible from the Gotenberg container. If [“System Check”](/en/operation/system-check.md) reports that Gotenberg could not open the application page, specify the internal Storm address here.
 
+::: warning Gotenberg is required for server-side diagram snapshots
+Starting with this version, server-side generation of diagram snapshots (for process cards, reports, and document templates) **requires Gotenberg**.
+
+If Gotenberg is not installed or `GOTENBERG_URL` is not set, the application cannot render diagrams server-side. Users will see the following messages in the interface:
+
+- **«Gotenberg не установлен, обратитесь к администратору»** — if the conversion service is unavailable.
+- **«Не задан адрес приложения, обратитесь к администратору»** — if the application's base URL is not configured for the conversion service to access.
+
+Ensure that `GOTENBERG_URL` points to a running Gotenberg instance and that the application's external address is reachable from the Gotenberg container.
+:::
+
 ---
 
 ---
