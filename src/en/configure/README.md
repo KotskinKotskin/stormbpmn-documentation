@@ -45,7 +45,7 @@ Environment variables are configured **before starting the container** and defin
 | **S3_SINGLE_USERS_BUCKET** | Single bucket mode for users           | `true`                                     | Files        |
 | **S3_EXTERNAL_ENDPOINT**   | S3 address for links opened by the browser (if different from `S3_ENDPOINT`) | `https://s3.company.com` | Files (optional) |
 | **PLANTUML_SERVER**        | PlantUML server URL                             | `http://192.168.0.5:8090/`                 | Optional  |
-| **GOTENBERG_URL**          | Gotenberg service URL. If not specified, the public demo service `https://demo.gotenberg.dev` is used — specify your own in production | `http://192.168.0.5:3001` | PDF |
+| **GOTENBERG_URL**          | Gotenberg service URL. Without it, PDF export does not work and diagram images are rendered in a simplified form | `http://192.168.0.5:3001` | PDF |
 | **GOTENBERG_WAIT_FOR_EXPRESSION** | Expression that Gotenberg waits for on the page before printing to PDF (do not change) | `window.overlayReady != undefined && window.overlayReady` | PDF (optional) |
 | **EMAIL_PROVIDER**         | Email provider type                         | `listmonk` or `smtp`                      | ✅            |
 | **LISTMONK_BASE_URL**      | ListMonk API URL                                 | `http://localhost:9000/api`                | ✅            |

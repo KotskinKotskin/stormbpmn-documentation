@@ -408,8 +408,8 @@ storm:
   integrations:
     # -- PLANTUML_SERVER. Пусто → отключено.
     plantumlServer: ""
-    # -- GOTENBERG_URL. ⚠️ Пусто → PDF печатается через ПУБЛИЧНЫЙ демо-сервис
-    #    https://demo.gotenberg.dev. В проде обязательно укажите свой Gotenberg.
+    # -- GOTENBERG_URL. ⚠️ Пусто → не работает выгрузка в PDF, изображения схем
+    #    формируются в упрощённом виде. Обязательно укажите свой Gotenberg.
     gotenbergUrl: ""
 
   # ---- AI-модуль (нужна лицензия с AI) -------------------------------------

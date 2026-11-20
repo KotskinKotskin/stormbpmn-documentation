@@ -25,6 +25,6 @@ tests:
 
 storm:
   integrations:
-    # Без своего Gotenberg PDF ушли бы на публичный demo.gotenberg.dev,
-    # а из закрытого контура он недоступен.
+    # Без своего Gotenberg не работает выгрузка в PDF,
+    # а изображения схем формируются в упрощённом виде.
     gotenbergUrl: "http://gotenberg.bank.local:3001"

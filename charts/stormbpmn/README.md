@@ -45,7 +45,7 @@ helm install storm stormbpmn/stormbpmn -n stormbpmn -f my-values.yaml
 | `storm.jwt.secret` | `""` | `JWTSECRET`, ≥ 64 символов |
 | `storm.s3.*` | — | `S3_*`, включая `S3_EXTERNAL_ENDPOINT` |
 | `storm.email.*` | `smtp` | `EMAIL_PROVIDER`, `SMTP_*` / `LISTMONK_*` |
-| `storm.integrations.*` | `""` | `PLANTUML_SERVER`, `GOTENBERG_URL` (пустой = публичный demo.gotenberg.dev) |
+| `storm.integrations.*` | `""` | `PLANTUML_SERVER`, `GOTENBERG_URL` (пустой = нет выгрузки в PDF, изображения схем упрощённые) |
 | `storm.ai.*` | `false` | `STORM_RETENTION_ENABLED` |
 | `storm.security.*` | — | `STORM_ALLOWED_ORIGINS`, `STORM_DISABLE_*`, `SESSION_EXPIRATION` (секунды, ≤ 7776000) |
 | `storm.audit.*` | выкл. | `AUDIT_*`, `SYSLOG_*`, `AUDIT_DB_*` (каналы console / syslog / database) |

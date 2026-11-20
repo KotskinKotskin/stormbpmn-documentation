@@ -51,8 +51,8 @@ StormBPMN Enterprise {{ .Chart.AppVersion }} развёрнут (чарт {{ .Ch
 {{- end }}
 {{- if not .Values.storm.integrations.gotenbergUrl }}
 
-⚠️  storm.integrations.gotenbergUrl пуст: PDF будут печататься через ПУБЛИЧНЫЙ сервис
-   https://demo.gotenberg.dev — документы уйдут за периметр. Разверните свой Gotenberg.
+⚠️  storm.integrations.gotenbergUrl пуст: не работает выгрузка в PDF, изображения схем
+   формируются в упрощённом виде. Разверните свой Gotenberg.
 {{- end }}
 {{- if not .Values.existingSecret }}
 {{- if lt (len .Values.storm.jwt.secret) 64 }}
