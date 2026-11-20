@@ -5,7 +5,7 @@ dir:
   link: true
 index: true
 order: 1
-source_hash: 6cc9bee0c7c0d995
+source_hash: 9077788c1cacc482
 ---
 
 # 1. Architecture Diagram {#_1-схема-архитектуры}

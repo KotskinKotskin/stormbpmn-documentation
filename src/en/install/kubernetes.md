@@ -1,7 +1,7 @@
 ---
 title: Installation in Kubernetes (Helm)
 order: 3
-source_hash: b14727624f630b38
+source_hash: 6e23996c96dc82ed
 ---
 
 [[toc]]
