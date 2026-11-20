@@ -47,11 +47,7 @@ To obtain the API key, follow these steps:
 
 ### Default Limits {#лимиты-по-умолчанию}
 
-| Parameter               | Value          | Description                                      |
-| ---------------------- | ----------------- | --------------------------------------------- |
-| **Request rate**  | 5 requests/minute | Check the `X-Rate-Limit-Remaining` header |
-| **Request size**     | 10 MB             | Maximum size of a single request            |
-| **Diagrams per request** | 20           | For diagram loading methods                 |
+The fixed rate limit of 5 requests per minute has been removed. API usage is now governed by the team's subscription plan. Monitor the `X-Rate-Limit-Remaining` header to track the remaining quota for the current plan.
 
 ### Limit Exceeded {#превышение-лимитов}
 
@@ -87,6 +83,9 @@ If the limit is exceeded more than 3 times within 24 hours, the account will be 
 ::: warning Changing architecture element types
 Built-in architecture element types (except **Document** and **System**) are now classified as **Custom types**. This affects the format of API requests and data import rules.
 :::
+
+- **[Registry and custom fields](./registry.md)** — bulk operations for process registry fields, custom field values, and field-to-card bindings.
+- **[Graph maps](./graph.md)** — versioning of relationship maps, including snapshots, history, and rollback.
 
 ---
 

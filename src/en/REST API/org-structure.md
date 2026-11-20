@@ -76,6 +76,8 @@ Lists are paginated: `page` is the page number starting from 0, `size` is the pa
 
 Create methods accept an array, so each entity can be loaded in one request. The response contains `created` and `errors`: an error in one item does not cancel the others.
 
+The `GET /public-api/v1/org-item-edges` and `GET /public-api/v1/org-item-person-edges` endpoints now support optional filters. If no filter parameters are provided, the endpoints return all records for the current team, which is useful for exporting the entire structure.
+
 ---
 
 ### Entity Attribute Composition {#атрибутивныи-состав-сущностеи}
@@ -235,6 +237,10 @@ Create methods accept an array, so each entity can be loaded in one request. The
     ]
 }
 ```
+
+::: tip Response Changes
+The `parentItems` field has been removed from the OrgItem response. Use the `childItems` field or the `parentId` query parameter to navigate the hierarchy.
+:::
 
 #### Updating an OrgItem {#обновление-orgitem}
 
