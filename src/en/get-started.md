@@ -5,7 +5,7 @@ dir:
   link: true
 index: true
 order: 1
-source_hash: 6cc9bee0c7c0d995
+source_hash: 9077788c1cacc482
 ---
 
 # 1. Architecture Diagram {#_1-схема-архитектуры}
@@ -48,7 +48,7 @@ If all system capabilities are utilized, the component architecture will look as
 | ------------- | --------------------------------------------------- |
 | **ListMonk**  | Used for complex email generation and distribution |
 | **PlantUML**  | UML diagram generation                              |
-| **Gotenberg** | Conversion of images and HTML to PDF                |
+| **Gotenberg** | Diagram images and PDF export                       |
 
 ---
 

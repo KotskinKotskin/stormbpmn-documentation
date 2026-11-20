@@ -45,7 +45,7 @@ StormBPMN использует **двухуровневую систему на�
 | **S3_SINGLE_USERS_BUCKET** | Режим единого бакета для пользователей           | `true`                                     | Файлы        |
 | **S3_EXTERNAL_ENDPOINT**   | Адрес S3 для ссылок, которые открывает браузер (если отличается от `S3_ENDPOINT`) | `https://s3.company.com` | Файлы (необязательно) |
 | **PLANTUML_SERVER**        | URL сервера PlantUML                             | `http://192.168.0.5:8090/`                 | Опционально  |
-| **GOTENBERG_URL**          | URL сервиса Gotenberg. Если не задан, действует публичный демо-сервис `https://demo.gotenberg.dev` — в production задайте свой | `http://192.168.0.5:3001` | PDF |
+| **GOTENBERG_URL**          | URL сервиса Gotenberg. Без него не работает выгрузка в PDF, а изображения схем формируются в упрощённом виде | `http://192.168.0.5:3001` | PDF |
 | **GOTENBERG_WAIT_FOR_EXPRESSION** | Выражение, которого Gotenberg ждёт на странице перед печатью в PDF (менять не нужно) | `window.overlayReady != undefined && window.overlayReady` | PDF (необязательно) |
 | **EMAIL_PROVIDER**         | Тип почтового провайдера                         | `listmonk` или `smtp`                      | ✅            |
 | **LISTMONK_BASE_URL**      | URL API ListMonk                                 | `http://localhost:9000/api`                | ✅            |

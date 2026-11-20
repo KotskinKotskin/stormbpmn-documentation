@@ -1,7 +1,7 @@
 ---
 title: Installation in Kubernetes (Helm)
 order: 3
-source_hash: b14727624f630b38
+source_hash: 6e23996c96dc82ed
 ---
 
 [[toc]]
@@ -28,7 +28,7 @@ for Docker installation: see [“Installation”](./README.md) and [“Productio
 | Helm | 3.8 or later |
 | PostgreSQL | Database in UTF8 with **pgvector** and **pg_trgm** extensions. The application will not start without pgvector; see the [“PostgreSQL Requirements”](./README.md#требования-к-postgresql-расширения-и-кодировка) section for details |
 | S3 | Any S3-compatible storage |
-| Gotenberg | A dedicated service is required. If its address is not specified, PDFs will be printed via the public demo.gotenberg.dev |
+| Gotenberg | A dedicated service is required: without it, PDF export does not work and diagram images are rendered in a simplified form |
 | Access to `registry.stormbpmn.com` | Robot account login and secret — available in the [Enterprise portal](./portal.md#доступ-к-образам), “Image Access” section. If you are not registered in the portal, register before installation |
 
 ## Installation {#установка}
@@ -135,7 +135,7 @@ For multiple replicas, use `examples/on-prem-ru.yaml` as a base and verify the f
 
   For a different controller, set similar limits. For Gateway API, see below.
 - **PDB and HPA** (`podDisruptionBudget.enabled`, `autoscaling.enabled`): node updates will not terminate all pods at once.
-- **Custom Gotenberg** in `storm.integrations.gotenbergUrl`; otherwise, documents printed to PDF are sent to a public service.
+- **Custom Gotenberg** in `storm.integrations.gotenbergUrl`; without it, PDF export does not work and diagram images are rendered in a simplified form.
 - **`storm.security.allowedOrigins`** — the application domain, not `*`.
 - **Metrics**: `metrics.serviceMonitor.enabled: true`, if the cluster has Prometheus Operator.
 - **Backups** of PostgreSQL and S3 on a schedule. The application pods do not contain data that needs to be persisted.

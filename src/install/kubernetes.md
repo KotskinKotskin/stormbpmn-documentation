@@ -27,7 +27,7 @@ Gotenberg, PlantUML и SMTP вы поднимаете сами или берёт
 | Helm | 3.8 или новее |
 | PostgreSQL | База в UTF8 с расширениями **pgvector** и **pg_trgm**. Без pgvector приложение не запустится, подробнее в разделе [«Требования к PostgreSQL»](./README.md#требования-к-postgresql-расширения-и-кодировка) |
 | S3 | Любое S3-совместимое хранилище |
-| Gotenberg | Нужен свой сервис. Если не указать его адрес, PDF будут печататься через публичный demo.gotenberg.dev |
+| Gotenberg | Нужен свой сервис: без него не работает выгрузка в PDF, а изображения схем формируются в упрощённом виде |
 | Доступ к `registry.stormbpmn.com` | Логин и секрет robot-аккаунта — в [портале Enterprise](./portal.md#доступ-к-образам), раздел «Доступ к образам». Не зарегистрированы в портале — зарегистрируйтесь до установки |
 
 ## Установка
@@ -140,8 +140,8 @@ helm test storm -n stormbpmn
   Для другого контроллера задайте аналогичные лимиты. Для Gateway API см. ниже.
 - **PDB и HPA** (`podDisruptionBudget.enabled`, `autoscaling.enabled`): обновление узлов не выключит все
   поды разом.
-- **Свой Gotenberg** в `storm.integrations.gotenbergUrl`, иначе документы при печати в PDF уходят на
-  публичный сервис.
+- **Свой Gotenberg** в `storm.integrations.gotenbergUrl`: без него не работает выгрузка в PDF, а изображения
+  схем формируются в упрощённом виде.
 - **`storm.security.allowedOrigins`** — домен приложения, а не `*`.
 - **Метрики**: `metrics.serviceMonitor.enabled: true`, если в кластере есть Prometheus Operator.
 - **Резервные копии** PostgreSQL и S3 по расписанию. В подах приложения нет данных, которые нужно сохранять.

@@ -1,7 +1,7 @@
 ---
 title: External Services
 order: 2
-source_hash: 66e190473679afe1
+source_hash: eaddc4dca7c77ee6
 ---
 
 [[toc]]
@@ -233,7 +233,7 @@ docker run -d \
 
 ## Document Conversion Service {#сервис-конвертации-документов}
 
-Provides conversion of HTML to PDF and other document formats.
+Gotenberg renders diagram images — previews in lists, the image of a saved version, the diagram in a regulation document — and exports documents to PDF.
 
 :::info
 If you used the [script](/en/install/quickstart/QUICKSTART_SCRIPT.md) for a quick start,
@@ -249,6 +249,8 @@ docker run -d \
   --name gotenberg \
   gotenberg/gotenberg:8
 ```
+
+We recommend Gotenberg 8.33 or later for sharper diagram images. If the `gotenberg/gotenberg:8` image was pulled long ago, pull it again (`docker pull`) and recreate the container.
 
 ::: tip You can use our Gotenberg image
 If external registries (Docker Hub) are prohibited in your organization, use the Gotenberg mirror in our private registry — this is the official image `gotenberg/gotenberg:8`, **signed with the same Cosign signature** as the main StormBPMN image, and available using the **same** login from the [Enterprise portal](/en/install/portal.md#доступ-к-образам):
@@ -270,8 +272,12 @@ The signature is verified in the same way as for the main image (see [Changelog 
 | **GOTENBERG_URL** | Conversion service URL | `http://192.168.0.5:3001` |
 | **GOTENBERG_WAIT_FOR_EXPRESSION** | Optional. JavaScript expression that Gotenberg waits for on the page before printing to PDF. Do not change: the default value is suitable for Storm pages | `window.overlayReady != undefined && window.overlayReady` |
 
-::: warning The default value is a public demo service
-If `GOTENBERG_URL` is not set, `https://demo.gotenberg.dev` is used — a **public demo service on the internet**. User diagrams and documents would be sent to a third-party service when exported to PDF, and it is generally inaccessible from a closed network. In production, deploy a **dedicated Gotenberg container** (see above) and make sure to set `GOTENBERG_URL`. [System Check](/en/operation/system-check.md) treats the demo address as an error.
+Gotenberg opens application pages at the address from the `baseUrl` setting in the administrative panel, so it must be set as well.
+
+::: warning If Gotenberg is not connected
+PDF export does not work, diagram images are rendered in a simplified form, and users see the notification “Gotenberg is not installed, contact your administrator” when saving a diagram. If `baseUrl` is not set, the same happens with the notification “The application address is not set, contact your administrator”.
+
+Once Gotenberg is connected, diagram images are updated the next time the diagram is saved. You can check the connection in the admin panel on the “System Status” tab — see [“System Check”](/en/operation/system-check.md).
 :::
 
 #### Additional configuration for complex network setups {#дополнительная-настроика-для-сложных-сетевых-конфигурации}

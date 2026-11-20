@@ -5,7 +5,7 @@ dir:
   order: 2
   link: true
 index: true
-source_hash: cf3b65e5f7e31651
+source_hash: 50842ca82e8f46f9
 ---
 
 [[toc]]
@@ -290,7 +290,6 @@ Internet access is only required if you enable one of the following features:
 | Feature | External Dependency | How to Operate Without Internet |
 | --- | --- | --- |
 | Image loading during installation and updates | Registry `registry.stormbpmn.com` | Download images on a machine with internet access and transfer them to the internal registry — see [Quick Start](/en/install/quickstart/QUICKSTART_MANUAL.md) and [Kubernetes → Closed Environment](./kubernetes.md#закрытыи-контур) |
-| PDF export | Public `demo.gotenberg.dev`, if `GOTENBERG_URL` is not specified | Deploy your own Gotenberg instance and specify its address |
 | AI module | External LLM provider | Connect a model deployed within the closed environment — see [AI Module](/en/ai/) |
 | Captcha on the login form | Yandex SmartCaptcha | Disabled by default; do not enable it in a closed environment — see [Configuration](/en/configure/README.md) |
 

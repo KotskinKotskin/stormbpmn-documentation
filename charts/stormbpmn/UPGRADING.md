@@ -37,8 +37,8 @@ kubectl -n stormbpmn create secret docker-registry regcred \n  --docker-server=r
 | `storm.flags.*` (в старом `airgap.yaml`) | удалить | Такого ключа в чарте не было |
 
 До запуска 9.x добавьте в PostgreSQL расширения **pgvector** и **pg_trgm**, иначе миграции
-упадут на старте (см. «Требования к PostgreSQL» в документации). Если `GOTENBERG_URL` не задан,
-приложение печатает PDF через публичный demo.gotenberg.dev, поэтому в проде укажите свой сервис.
+упадут на старте (см. «Требования к PostgreSQL» в документации). Укажите свой Gotenberg в `GOTENBERG_URL`:
+без него не работает выгрузка в PDF, а изображения схем формируются в упрощённом виде.
 
 ```bash
 helm get values storm -n stormbpmn > old-values.yaml

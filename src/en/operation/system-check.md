@@ -1,6 +1,6 @@
 ---
 title: System Check
-source_hash: 705a2874dfd5fb19
+source_hash: da49e24a2ed8478a
 ---
 
 [[toc]]
@@ -46,7 +46,7 @@ Each check includes a brief explanation of the cause, a hint on what to fix, a "
 | **Application Address** | Checks the `baseUrl` setting: links in emails are built based on it, and Gotenberg uses it to open the application | `baseUrl` is not set (**Error**). If the administrator page is opened via a different address than specified in `baseUrl`, it is a **Warning**: this can happen behind a proxy, but more often it is a typo |
 | **Email (SMTP)** | Connects to the SMTP server (and authenticates if authentication is enabled), but **does not send** an email. For providers other than SMTP (e.g., ListMonk), the check is not performed — they are verified in their own dashboard | `EMAIL_PROVIDER=smtp` or `SMTP_HOST`, `SMTP_PORT`, `SMTP_FROM` are not set; server is unavailable from the Stormbpmn container; incorrect `SMTP_USERNAME` and `SMTP_PASSWORD`; server requires a different port or encryption |
 | **File Storage (S3)** | Verifies writing, reading, and deleting a test file in the upload and import buckets (and in the common user bucket if `S3_SINGLE_USERS_BUCKET=true`). If a bucket is created for each user, it also checks the permission to create buckets. Then, access from the browser is verified (see below) | A placeholder address remains instead of `S3_ENDPOINT`; incorrect access keys; no permissions for the buckets; bucket does not exist; the S3 gateway returned data different from what was written |
-| **PDF Export (Gotenberg)** | Three steps: the address is not a public demo service; Gotenberg responds to the health check request; Gotenberg opens the application page and returns a PDF | A public demo service `demo.gotenberg.dev` is specified; the Gotenberg container is not running or `GOTENBERG_URL` is unavailable from the Stormbpmn container; Gotenberg is running but cannot see the application at address `baseUrl` or `gotenbergOverrideBaseUrl` (different Docker network, DNS, self-signed certificate) |
+| **PDF Export (Gotenberg)** | Three steps: the address is set and is not a public demo service; Gotenberg responds to the health check request; Gotenberg opens the application page and returns a PDF | `GOTENBERG_URL` is not set or a public demo service `demo.gotenberg.dev` is specified; the Gotenberg container is not running or `GOTENBERG_URL` is unavailable from the Stormbpmn container; Gotenberg is running but cannot see the application at address `baseUrl` or `gotenbergOverrideBaseUrl` (different Docker network, DNS, self-signed certificate) |
 | **PlantUML Diagrams** | Sends a test diagram to the server and waits for a response with an image in SVG format | A placeholder address remains instead of `PLANTUML_SERVER`; server is unavailable; server returned an error or returned non-SVG |
 | **Simulations (DES)** | Requests the service's limits from the DES service | `DES_BASE_URL` is not set if the module is present in the license; the DES container is not running or is unavailable from the Stormbpmn container |
 | **Voice Input (storm-media)** | Verifies that the speech recognition service responds | Address `stormMediaBaseUrl` is set, but token `stormMediaToken` is empty; service is unavailable from the Stormbpmn container (the address is specified as the service root, without `/v1`) |
