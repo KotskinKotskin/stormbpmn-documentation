@@ -1,7 +1,7 @@
 ---
 title: Org structure
 order: 3
-source_hash: d298251a0d648cd6
+source_hash: 564ae7f2f608bf7e
 ---
 
 [[toc]]
@@ -23,14 +23,16 @@ The org structure consists of several key entities:
 
 ::: tip Relationship with Roles
 
-Roles are an internal abstraction in Stormbpmn. OrgItems can be assigned to roles. In this case, they cannot be deleted via the API; you must perform reassignment through the UI.
+Roles are an internal abstraction in Stormbpmn. OrgItems can be assigned to roles. When an element is deleted via the API, its role bindings are removed automatically.
 
 :::
 
 **OrgItemEdge** - a link between org structure elements, representing subordination.
 
 -   For example: "Financial Control Department" is subordinate to "Chief Executive Officer"
--   Each OrgItem can have only one parent link (dual subordination is not allowed)
+-   Each OrgItem can have only one parent link: adding a second one returns the error `No multi reporting in orgchart`
+-   An element cannot be subordinate to itself
+-   To move an element, delete the old link and create a new one, or change the link with `PUT`
 
 **Person** - an organization employee
 
@@ -74,7 +76,7 @@ There is no "whole tree in one response" method. The structure is exported throu
 
 Lists are paginated: `page` is the page number starting from 0, `size` is the page size, 20 by default, **100 at most** (larger values are treated as 100). The response includes the total number of records and pages.
 
-Create methods accept an array, so each entity can be loaded in one request. The response contains `created` and `errors`: an error in one item does not cancel the others.
+Create methods accept an array, so each entity can be loaded in one request. The response contains `created` and `errors` — a list of strings with error texts for the records that were not created. An error in one record does not cancel the others, so check `errors` after each step.
 
 ---
 
@@ -292,19 +294,27 @@ The element type (`type`) cannot be changed after creation. To change the type, 
 {
     "deleted": true,
     "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    "externalId": "CEO_POSITION_001",
     "message": "OrgItem успешно удален"
+}
+```
+
+The delete response is always `200`: the result is in the `deleted` field. If `deleted` is `false`, the reason is in `message`, for example:
+
+```json
+{
+    "deleted": false,
+    "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    "externalId": "CEO_POSITION_001",
+    "message": "Элемент оргструктуры используется как владелец в 2 процессе(ах)"
 }
 ```
 
 **Deletion conditions:**
 
--   ✅ An element without connections can be deleted immediately
--   ⚠️ An element with child connections can only be deleted after all connections are removed
--   ⚠️ An element with assigned employees can only be deleted after all assignments are revoked
-
-::: danger Cascading deletion
-Cascading deletion is not supported.
-:::
+-   ✅ Together with the element, its subordination links, employee assignments and role bindings are removed automatically
+-   ⚠️ Subordinate elements are not deleted: they are left without a parent, so re-subordinate them
+-   ❌ The element is not deleted (`deleted: false`) if it is set as a process owner in the registry or selected in a custom process field: replace it there first
 
 #### Creating a Person {#создание-person}
 
@@ -472,18 +482,17 @@ Cascading deletion is not supported.
 {
     "deleted": true,
     "id": "c3d4e5f6-g7h8-9012-cdef-345678901234",
+    "externalId": "KOTOV_DG_001",
     "message": "Person успешно удален"
 }
 ```
 
+The response is always `200`: the result is in the `deleted` field, and if it is `false` the reason is in `message`.
+
 **Deletion conditions:**
 
--   ✅ An employee without assignments can be deleted immediately
--   ⚠️ An employee with active assignments can only be deleted after all assignments are revoked
-
-::: warning Important
-When deleting an employee, related `OrgItemPersonEdge` are not automatically deleted. You must first delete all assignments.
-:::
+-   ✅ An employee can be deleted at any time
+-   ✅ The employee's position assignments are removed together with them; there is no need to revoke them separately
 
 #### Creating an OrgItemEdge {#создание-orgitemedge}
 
@@ -513,6 +522,10 @@ When deleting an employee, related `OrgItemPersonEdge` are not automatically del
 
 ::: tip Creation logic
 You can use either internal IDs (`sourceId`, `targetId`) or external IDs (`externalSourceId`, `externalTargetId`). If both internal and external IDs are specified, internal IDs take precedence.
+:::
+
+::: warning Restrictions
+An element can have only one parent: a second link returns the error `No multi reporting in orgchart`. A link from an element to itself is forbidden.
 :::
 
 **Response structure:**
@@ -642,7 +655,7 @@ You can use either internal IDs (`sourceId`, `targetId`) or external IDs (`exter
 | **externalSourceId** | `string` | 📎           | External ID of the parent  |
 | **externalTargetId** | `string` | 📎           | External ID of the child      |
 
-**Response structure:**
+**Response structure** (always `200`; if `deleted` is `false`, the reason is in `message`):
 
 ```json
 {
@@ -842,7 +855,7 @@ An employee can be assigned ONLY to an element of type `POSITION` (position). As
 | **personId**         | `UUID`   | 📎           | Employee ID         |
 | **externalPersonId** | `string` | 📎           | External employee ID |
 
-**Response structure:**
+**Response structure** (always `200`; if `deleted` is `false`, the reason is in `message`):
 
 ```json
 {
@@ -884,8 +897,7 @@ Deleting an assignment does not delete the employee or the position. Only the li
 
 #### Deleting Structure Elements (OrgItem, Person) {#удаление-элементов-структуры-orgitem-person}
 
-1. **Delete all associated bindings**
-2. **Delete OrgItem/Person**
+There is no need to delete links and assignments beforehand: an OrgItem takes its subordination links, assignments and role bindings with it, and a Person takes their assignments. Exception: an OrgItem that is set as a process owner or selected in a custom field is not deleted (`deleted: false`) until you replace it there.
 
 #### Deleting Links (OrgItemEdges, OrgItemPersonEdge) {#удаление-связеи-orgitemedges-orgitempersonedge}
 

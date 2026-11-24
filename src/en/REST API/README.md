@@ -6,7 +6,7 @@ dir:
   collapsible: true
 index: true
 order: 7
-source_hash: b1563819dc5fd7fa
+source_hash: db6f9488c8b167bd
 ---
 
 [[toc]]
@@ -15,66 +15,84 @@ source_hash: b1563819dc5fd7fa
 
 The system provides a REST API for automating core tasks, such as retrieving and modifying diagrams, and managing architecture elements. The API operates over the HTTP protocol with JSON serialization.
 
-::: warning Cloud version limitations
-The cloud version enforces limitations on API usage regarding request rate and size.
+::: warning Limits by plan
+In the cloud at stormbpmn.com the API is available on the Team and Business plans and is rate limited. Enterprise (on your own servers) has no rate limits. See [Limits by plan](#ограничения-по-тарифам).
 :::
+
+Method addresses: all paths start with `/public-api/v1`.
+
+-   in the cloud: `https://stormbpmn.com/public-api/v1/...`
+-   in Enterprise: `https://<your Stormbpmn address>/public-api/v1/...`
 
 ---
 
-## Authentication {#авторизация}
+## Authorization {#авторизация}
 
-### Obtaining the API Key {#получение-ключа-api}
+### Getting an API key {#получение-ключа-api}
 
-To obtain the API key, follow these steps:
+The API key belongs to the team, not to an individual. Only a team administrator can create it.
 
-1. Navigate to the **"Team"** section
-2. Open the **"Team Settings"** tab
-3. Click **"Generate Key"**
+1. Open **"Team settings"** → **"General settings"**.
+2. In the **"API key"** card, click **"Generate"**.
+3. Copy the key and store it, for example in an environment variable of your integration.
 
-![API Key Generation](../../REST%20API/api-1.png)
+![API Key Generation](api-1.png)
+
+A team has one key. If you generate the key again, the old one stops working immediately: replace the key in all integrations. Do the same if the key has leaked.
+
+::: warning The API key and the MCP key are different keys
+The MCP key is created in your profile (**"MCP keys"**) and starts with `sk_storm_`. It does not work for the REST API.
+:::
 
 ### Using the key {#использование-ключа}
 
-| Parameter         | Value              | Description                                     |
-| ---------------- | --------------------- | -------------------------------------------- |
-| **Header**    | `X-Api-Key`           | Add to all API requests              |
-| **Permissions**        | Team administrator | Actions are performed on behalf of the administrator |
-| **Security** | Confidential       | Do not share the key with third parties            |
+| Parameter        | Value              | Description                                              |
+| ---------------- | ------------------ | -------------------------------------------------------- |
+| **Header**       | `X-Api-Key`        | Pass it in every request                                 |
+| **Permissions**  | Team administrator | Actions are performed on behalf of the team administrator |
+| **Security**     | Confidential       | Do not share the key with third parties                  |
+
+```bash
+curl -H "X-Api-Key: YOUR_KEY" "https://stormbpmn.com/public-api/v1/get-diagram-list?page=0"
+```
+
+Requests run on behalf of a team administrator: the team creator if they are still an administrator, otherwise always the same other administrator. The API shows the models that this administrator can access, and they appear as the author of changes in the version history.
 
 ---
 
-## Cloud Version Limitations {#ограничения-облачнои-версии}
+## Limits by plan {#ограничения-по-тарифам}
 
-### Default Limits {#лимиты-по-умолчанию}
+| Plan                           | API access | Request rate                    |
+| ------------------------------ | ---------- | ------------------------------- |
+| Personal                       | no         | —                               |
+| Trial period                   | no         | —                               |
+| Team                           | yes        | 1 request per second per team   |
+| Business                       | yes        | 5 requests per second per team  |
+| Enterprise (on your servers)   | yes        | unlimited                       |
 
-| Parameter               | Value          | Description                                      |
-| ---------------------- | ----------------- | --------------------------------------------- |
-| **Request rate**  | 5 requests/minute | Check the `X-Rate-Limit-Remaining` header |
-| **Request size**     | 10 MB             | Maximum size of a single request            |
-| **Diagrams per request** | 20           | For diagram loading methods                 |
+The rate is counted per team: all integrations using the team's key share one limit, counted per second. Other plan limits also apply to the API: for example, if the new models in a batch do not fit within the plan's model limit, the whole batch is not uploaded. The account is not blocked for exceeding the rate; just repeat the request.
 
-### Limit Exceeded {#превышение-лимитов}
+### Error responses {#ответы-с-ошибкои}
 
-**Upon reaching the quota:**
+| Code | When | What to do |
+| ---- | ---- | ---------- |
+| `400`, `Missing Header: X-Api-Key` | the request has no `X-Api-Key` header | add the header |
+| `400`, `"details": "Invalid team API key"` | the key is wrong or has been replaced by a new one | take the current key from the team settings |
+| `403`, `"code": "PLAN_LIMIT"` | Personal plan or trial period, or the plan limit is exhausted (models, architecture elements) | switch to a suitable plan or free up space |
+| `404` | the model or record is not found in the key's team, or there is no access | check the identifier |
+| `429 Too Many Requests` | the request rate is exceeded | wait as many seconds as the `Retry-After` header says, then repeat |
+
+Example of a `429` response:
 
 ```json
 {
-    "timestamp": "2022-06-28T12:03:03.438+00:00",
-    "status": 429,
-    "error": "Too Many Requests",
-    "message": "You have exhausted your API Request Quota",
-    "path": "/public-api/v1/upload-diagrams"
+    "time": "2026-11-24T10:15:03.438+00:00",
+    "message": "Too Many Requests",
+    "details": "Превышена частота запросов к API: не больше 1 в секунду на вашем тарифе. Повторите позже или перейдите на Business",
+    "code": "PLAN_LIMIT",
+    "meta": null
 }
 ```
-
-**Response headers:**
-
--   `X-Rate-Limit-Remaining` - remaining requests
--   `X-Rate-Limit-Retry-After-Seconds` - wait time until the next attempt
-
-::: danger Account Lockout
-If the limit is exceeded more than 3 times within 24 hours, the account will be locked. Contact support to unlock it.
-:::
 
 ---
 
@@ -92,30 +110,11 @@ Built-in architecture element types (except **Document** and **System**) are now
 
 ## Best Practices {#лучшие-практики}
 
-### Query Optimization {#оптимизация-запросов}
-
-| Recommendation           | Description                               |
-| ---------------------- | -------------------------------------- |
-| **Batch processing** | Send up to 20 diagrams at a time      |
-| **Compliance with limits** | Monitor rate limit headers        |
-| **Retry logic**       | Implement retries with backoff |
-| **Logging**        | Store request IDs for debugging     |
-
-### Security {#безопасность}
-
-| Aspect            | Recommendation                             |
-| ----------------- | ---------------------------------------- |
-| **API keys**     | Store them in environment variables           |
-| **HTTPS**         | Use only secure connections |
-| **Access rights** | Restrict API key permissions           |
-| **Rotation**       | Regularly update keys               |
-
-### Monitoring {#мониторинг}
-
--   **Track limits** via response headers
--   **Log errors** for problem analysis
--   **Monitor API response time**
--   **Analyze quota usage**
+-   **Key:** store it in an environment variable or a secrets vault, not in code or a public repository.
+-   **Batches:** send up to 20 models per request and pause at least a second between requests on the Team plan.
+-   **Retries:** on `429`, repeat the request after the pause from the `Retry-After` header; do not blindly retry other errors, check the response first.
+-   **Responses:** read only the fields you need and do not fail when a new field appears: responses are extended over time.
+-   **Rotation:** if the key leaks, generate a new one; the old one stops working.
 
 ::: tip CI/CD Integration
 Integrate the API into deployment pipelines to automatically update diagrams after code changes.
