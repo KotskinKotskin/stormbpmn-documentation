@@ -1,7 +1,7 @@
 ---
 title: Process Metrics
 order: 2
-source_hash: 2633e42179dacd4f
+source_hash: 4f77f26d175a730e
 ---
 
 [[toc]]
@@ -35,7 +35,7 @@ This method allows you to populate or update metric values for processes. The me
 
 | Field               | Type       | Required | Description                                                                                          |
 | ------------------- | ---------- | -------- | ---------------------------------------------------------------------------------------------------- |
-| **processId**       | `UUID`     | ✅       | Process identifier                                                                                   |
+| **processId**       | `UUID`     | ✅       | Identifier of the process card in the process registry (not of the model)                                                                                 |
 | **metricName**      | `string`   | ✅       | Metric API name: the "API Name" field in the custom field settings, not its display name             |
 | **metricValue**     | `number`   | 📄       | Actual metric value                                                                                  |
 | **metricPlanValue** | `number`   | 📄       | Planned metric value                                                                                 |
@@ -62,7 +62,7 @@ This method allows you to populate or update metric values for processes. The me
 
 | Field               | Type       | Description                                                                            |
 | ------------------- | ---------- | -------------------------------------------------------------------------------------- |
-| **processId**       | `UUID`     | Process identifier                                                                     |
+| **processId**       | `UUID`     | Identifier of the process card in the registry                                                                    |
 | **metricName**      | `string`   | Metric API name                                                                        |
 | **metricValue**     | `number`   | Actual metric value                                                                    |
 | **metricPlanValue** | `number`   | Planned metric value                                                                   |
