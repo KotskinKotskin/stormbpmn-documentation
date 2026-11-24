@@ -36,7 +36,7 @@ The API key belongs to the team, not to an individual. Only a team administrator
 2. In the **"API key"** card, click **"Generate"**.
 3. Copy the key and store it, for example in an environment variable of your integration.
 
-![API Key Generation](api-1.png)
+![API Key Generation](../../REST%20API/api-1.png)
 
 A team has one key. If you generate the key again, the old one stops working immediately: replace the key in all integrations. Do the same if the key has leaked.
 
