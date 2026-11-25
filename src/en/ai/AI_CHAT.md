@@ -165,6 +165,8 @@ Specify the **root** endpoint, **without** `/v1` and without `/chat/completions`
 | ProxyAPI — DeepSeek / OpenRouter   | `https://api.proxyapi.ru/openrouter`         |
 | ProxyAPI — Anthropic               | `https://api.proxyapi.ru/anthropic`          |
 | Self-hosted (OpenAI-compatible)   | `http://10.0.0.5:8000` (your service address)|
+| **Thinking Budget** | number (integer) | — | Maximum reasoning tokens per model call (vLLM `thinking_token_budget`). Sent only with `enable_thinking=true`; empty — no limit. |
+| Thinking Budget | `bpmnAiThinkingBudget` |
 
 ### Temperature {#температура}
 

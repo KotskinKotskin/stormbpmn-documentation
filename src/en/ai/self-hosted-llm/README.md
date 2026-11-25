@@ -122,6 +122,7 @@ Parameters are set in the application settings (AI section) and applied **withou
 | `bpmnAiCompletionModel` | Model name on the server, exactly `--served-model-name` | `qwen3.8-27b` |
 | `bpmnAiCompletionTemperature` | Temperature | `0.2` |
 | `bpmnAiChatThinking` | Reasoning | `enabled` (with streaming) |
+| `bpmnAiThinkingBudget` | Лимит токенов размышлений на один вызов модели (vLLM `thinking_token_budget`) | `8000` |
 
 ::: tip How to migrate from another model
 If you are already running a different model, deploy the new one alongside it and switch a subset of users or a test environment to it. After 1–2 weeks, compare the response quality ratings in the chat and the response time, then switch everyone over.

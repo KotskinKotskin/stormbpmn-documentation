@@ -258,6 +258,7 @@ In the AI assistant settings ([Enabling and connecting the model](../AI_CHAT.md)
 | Model | `qwen3.8-27b` (exactly `--served-model-name`) |
 | Token | empty if the server has no authorization; otherwise, the key that nginx validates |
 | Reasoning (`bpmnAiChatThinking`) | `enabled` if response streaming is enabled; otherwise `disabled` |
+| Thinking budget (`bpmnAiThinkingBudget`) | `8000` (default) | Maximum number of tokens for model reasoning per request. Sent to vLLM as `thinking_token_budget` only when reasoning is enabled. If left empty, no limit is applied. |
 
 Verification from the Stormbpmn server:
 
