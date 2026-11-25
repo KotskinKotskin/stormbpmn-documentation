@@ -1,7 +1,7 @@
 ---
 title: External Services
 order: 2
-source_hash: eaddc4dca7c77ee6
+source_hash: abf2a9502f3a0434
 ---
 
 [[toc]]
@@ -115,13 +115,14 @@ After changing the configuration, repeat the test-object write/read/delete check
 | **S3_ENDPOINT**            | Storage URL                          | `http://192.168.0.4:8333` |
 | **S3_ACCESS_KEY**          | Access key                           | `stormbpmn`               |
 | **S3_SECRET_KEY**          | Secret key                         | `<секрет>`                |
+| **S3_REGION**              | Storage region — set it if your storage has one | `ru-3`      |
 | **S3_BUCKET_UPLOADS**      | Default bucket                     | `storm-uploads`           |
 | **S3_BUCKET_USERS**        | Bucket for users                | `storm-users`             |
 | **S3_BUCKET_IMPORTS**      | Bucket for imports                     | `storm-imports`           |
 | **S3_SINGLE_USERS_BUCKET** | Single bucket mode for users | `true`                    |
 | **S3_EXTERNAL_ENDPOINT**   | Address at which the **browser** opens file links (optional) | `https://s3.company.com`  |
 
-Create the `S3_BUCKET_UPLOADS` bucket in advance: the application does not create it when uploading files. The application creates user and import buckets on the first write if the key has permission to create buckets.
+Create the `S3_BUCKET_UPLOADS` bucket in advance: the application does not create it when uploading files. The application creates user and import buckets on the first write if the key has permission to create buckets. If the storage does not let the application create a bucket, [System Check](/en/operation/system-check.md) shows what to fix.
 
 ::: tip S3_EXTERNAL_ENDPOINT
 The Storm server accesses the storage via `S3_ENDPOINT` (usually an internal address), while users are issued temporary (presigned) links to files that their browser opens. If the internal address is not accessible from user computers, specify the external address of the same storage in `S3_EXTERNAL_ENDPOINT`. If the variable is not set, links are constructed using `S3_ENDPOINT`. The [System Check](/en/operation/system-check.md#проверка-фаилового-хранилища-из-браузера) verifies the operation of this address from the browser. After changing `.env`, restart the container.
