@@ -175,6 +175,34 @@ Java продолжит доверять штатным публичным CA и
 
 ---
 
+## Запуск контейнера с ограниченными правами
+
+Образ (версии после 9.29.139) работает без root и без дополнительных привилегий:
+
+-   процесс — uid 999 с группой 0; подходит и произвольный uid с группой 0 (OpenShift restricted-v2), но не другая группа;
+-   capabilities не нужны: можно `cap_drop: [ALL]` и `no-new-privileges`;
+-   корневая ФС может быть только для чтения. На запись нужны `/tmp` и `/var/cache/storm/djl`, **без `noexec`**: оттуда загружаются нативные библиотеки поиска по базе знаний;
+-   в образе нет пакетного менеджера, curl и wget. Проверки здоровья — HTTP-пробы оркестратора или bash: `bash -c 'exec 3<>/dev/tcp/127.0.0.1/8082 && printf "GET /actuator/health/readiness HTTP/1.0\r\nHost: localhost\r\n\r\n" >&3 && cat <&3'`.
+
+Пример для docker compose:
+
+```yaml
+services:
+  stormbpmn:
+    image: registry.stormbpmn.com/stormbpmn-enterprise/stormbpmn_fullstack_enterprise:<версия>
+    read_only: true
+    tmpfs:
+      - /tmp:exec,size=1g
+      - /var/cache/storm/djl:exec,size=1g
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    stop_grace_period: 90s
+```
+
+В Kubernetes то же задаётся в values чарта: `securityContext.readOnlyRootFilesystem: true` и `emptyDir` на `/tmp` и `/var/cache/storm/djl` через `extraVolumes` / `extraVolumeMounts`.
+
+---
+
 ## Чек-лист безопасности
 
 ### Обязательные настройки
@@ -194,6 +222,8 @@ Java продолжит доверять штатным публичным CA и
 -   [ ] **Резервное копирование** - регулярные бэкапы базы данных
 -   [ ] **Мониторинг** - отслеживание подозрительной активности
 -   [ ] **Аудит-логирование** - [журнал действий](./audit-logging.md) включён
+-   [ ] **Ограниченные права контейнера** - корневая ФС только для чтения, `cap_drop: ALL` ([запуск контейнера с ограниченными правами](#запуск-контейнера-с-ограниченными-правами))
+-   [ ] **Подпись образа проверена** - команда `cosign verify` есть в описании каждой версии
 
 
 

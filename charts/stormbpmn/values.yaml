@@ -27,8 +27,9 @@ replicaCount: 1
 # =============================================================================
 # Container image
 # =============================================================================
-# Образ "fullstack" — внутри контейнера supervisord запускает nginx (на 8081)
-# и Spring Boot backend (на 8082). nginx раздаёт SPA и проксирует API к бэку.
+# Образ "fullstack" — entrypoint образа (PID 1 — tini) запускает nginx (на 8081)
+# и Spring Boot backend (на 8082) и перезапускает упавший процесс. nginx раздаёт SPA и
+# проксирует API к бэку. Роль контейнера — env CONTAINER_ROLE: FULLSTACK (по умолчанию), FRONT, BACK.
 image:
   # -- Хост private registry. Для air-gap перенесите образ в свой Harbor/JFrog
   #    и переопределите: --set image.registry=harbor.bank.local
@@ -92,8 +93,6 @@ securityContext:
 # -- Время на остановку пода. Java получает SIGTERM и до 80 с дожидается текущих запросов,
 #    затем мягко останавливается nginx. Меньше 90 с — Java убьют посреди мягкой остановки.
 terminationGracePeriodSeconds: 90
-  # runAsUser: 100
-  # runAsNonRoot: true
 
 priorityClassName: ""
 nodeSelector: {}
