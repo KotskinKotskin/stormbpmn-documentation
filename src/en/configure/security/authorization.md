@@ -104,7 +104,9 @@ On the first OIDC sign-in Storm stores the user's "issuer + `sub`" pair (table `
 Linking happens only at sign-in. The upgrade does not relink anything in bulk, and existing data is not changed. Moving to another provider (a different issuer) creates a new link by email address; the old one is kept.
 
 ::: warning When to turn off OAuthLinkByEmail
-Linking by email is safe only if the provider does not let users type in an arbitrary address. Corporate directories (Active Directory, Entra ID, Okta with email from an HR system) guarantee this. If the provider sends `email_verified = false` for the `email` claim, the sign-in is always rejected.
+Linking by email is safe only if the provider does not let users type in an arbitrary address. Corporate directories (Active Directory, Okta with email from an HR system) guarantee this. If the provider sends `email_verified = false` for the `email` claim in the ID Token or in UserInfo, the sign-in is always rejected.
+
+Microsoft Entra ID does not verify the `email` claim. If guests sign in to the application or the tenant has unverified domains, turn `OAuthLinkByEmail` off or take the address from `upn` (`OAuthEmailClaim = upn`).
 :::
 
 ##### Connection test {#проверка-подключения}
@@ -203,7 +205,7 @@ Existing users sign in to their own accounts after the switch: on the first sign
 
 The `PKCE` and `implicit_flow` modes remain for connections that already work and behave as before after the upgrade, with these security refinements:
 
-- the sign-in page always sends `state` and checks it on return. A sign-in that did not start on the Storm page (for example, from a tile on the provider's portal) is rejected: such a response cannot be told apart from a forged one;
+- the sign-in page always sends `state` and checks it on return. A sign-in that did not start on the Storm page (for example, from a tile on the provider's portal) is rejected: such a response cannot be told apart from a forged one. To keep the tile working, point it at the Storm sign-in page (in Okta, the **Initiate login URI** field): the sign-in then starts there;
 - in `PKCE` mode a sign-in without a `code_verifier` is rejected (`sso_request_incomplete`) instead of falling back to a weaker scheme;
 - in `implicit_flow` the token is accepted only from the URL fragment (`#access_token=…`), not from query parameters;
 - after sign-in the code and token are erased from the address bar and browser history and are not printed to the browser console;
