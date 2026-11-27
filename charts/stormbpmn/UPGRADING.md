@@ -1,3 +1,22 @@
+# Образ после 9.29.139: без пакетного менеджера и сетевых утилит
+
+В образе приложения больше нет apt, curl, wget, tar, perl, su/passwd и supervisord. Остались
+Java, nginx, bash, procps (`ps`) и tini как PID 1. Что проверить перед обновлением:
+
+- **Проверки здоровья.** Если ваш healthcheck или скрипт вызывал в контейнере `curl` или `wget`,
+  замените их запросом самого bash:
+  `bash -c 'exec 3<>/dev/tcp/127.0.0.1/8082 && printf "GET /actuator/health/readiness HTTP/1.0\r\nHost: localhost\r\n\r\n" >&3 && cat <&3'`.
+  Пробы чарта ходят по HTTP и не меняются.
+- **Пользователь.** Процесс работает под uid 999 с группой 0 (раньше — uid 100). Если вы задавали
+  `runAsUser: 100`, замените на 999 или уберите. Подходит и произвольный uid с группой 0.
+- **Остановка.** Java получает SIGTERM и до 80 с завершает текущие запросы. Время на остановку —
+  не меньше 90 с: `terminationGracePeriodSeconds: 90` (в чарте по умолчанию) или
+  `stop_grace_period: 90s` в docker compose.
+- **Корпоративный CA.** Сертификаты из /etc/ssl/certs образ не подхватывает: Java доверяет своему
+  хранилищу. Пример с хранилищем, в которое добавлен ваш CA, — в `examples/on-prem-ru.yaml`.
+- **Корневая ФС только для чтения** теперь поддерживается: нужны записываемые /tmp и
+  /var/cache/storm/djl (без noexec).
+
 # Миграция 3.x → 9.x (StormBPMN 6.6 → 9.x)
 
 С этой версии номер чарта совпадает с версией StormBPMN, а сам чарт публикуется в
@@ -158,7 +177,7 @@ storm:
 В 2.x: root, все ENV (включая публичные) в Secret через `data: + b64enc`.
 
 В 3.0.0:
-- `drop ALL capabilities` и `seccompProfile: RuntimeDefault` по умолчанию; образ работает под uid 100 — другой `runAsUser` ломает nginx внутри образа
+- `drop ALL capabilities` и `seccompProfile: RuntimeDefault` по умолчанию; образ работает под uid 999 (9.29.139 и раньше — под uid 100). Подходит и произвольный `runAsUser` с группой 0
 - Публичные ENV → ConfigMap, чувствительные → Secret (правильная семантика)
 - Поддержка `existingSecret` (для SealedSecrets / Vault / external-secrets)
 

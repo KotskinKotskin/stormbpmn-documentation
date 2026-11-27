@@ -65,21 +65,18 @@ serviceAccount:
 podAnnotations: {}
 podLabels: {}
 
-# -- Образ запускается под appuser (uid=100, gid=101) — задано через USER в Dockerfile.
+# -- После 9.29.139 образ запускается под uid 999 с группой 0 (USER 999:0 в Dockerfile, числом),
+#    поэтому kubelet сам проверяет `runAsNonRoot: true`. 9.29.139 и раньше работали под uid 100.
 #
-#    ⚠️  Нюанс: USER в Dockerfile задан ИМЕНЕМ (`appuser`), не числом. Из-за этого
-#    kubelet НЕ может верифицировать `runAsNonRoot: true` (требует числовой UID).
-#    Поэтому в дефолтах оставляем `runAsNonRoot` пустым.
+#    Файлы образа принадлежат root и только читаются. Писать нужно в /tmp, /var/cache/storm/djl
+#    и /home/appuser: они доступны на запись группе 0. Поэтому подходит и произвольный UID
+#    с группой 0 (OpenShift restricted-v2). Не задавайте runAsGroup, отличный от 0.
 #
-#    Для PSA-restricted namespace раскомментируйте `runAsUser: 100` + `runAsNonRoot: true`.
-#    Если вендор изменит UID — этот override надо обновить.
-#
-#    НЕ задавайте runAsUser отличный от 100 — chown в образе сделан на uid=100,
-#    любой другой UID → Permission denied на nginx-modules.
+#    Для PSA-restricted namespace раскомментируйте `runAsUser: 999` + `runAsNonRoot: true`.
 podSecurityContext:
   seccompProfile:
     type: RuntimeDefault
-  # runAsUser: 100
+  # runAsUser: 999
   # runAsNonRoot: true
 
 securityContext:
@@ -87,7 +84,14 @@ securityContext:
   capabilities:
     drop:
       - ALL
-  readOnlyRootFilesystem: false  # supervisord+nginx+Spring Boot пишут в /run, /tmp
+  # Корневую ФС можно сделать только для чтения: смонтируйте emptyDir на /tmp и на
+  # /var/cache/storm/djl (без noexec: нативы ONNX Runtime и токенайзера грузятся оттуда) через
+  # extraVolumes / extraVolumeMounts и поставьте true.
+  readOnlyRootFilesystem: false
+
+# -- Время на остановку пода. Java получает SIGTERM и до 80 с дожидается текущих запросов,
+#    затем мягко останавливается nginx. Меньше 90 с — Java убьют посреди мягкой остановки.
+terminationGracePeriodSeconds: 90
   # runAsUser: 100
   # runAsNonRoot: true
 

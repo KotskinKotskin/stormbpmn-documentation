@@ -131,10 +131,11 @@ services:
     ```
 
 2.  **Связность с приложением** — из контейнера основного приложения должен отвечать адрес из
-    `DES_BASE_URL`:
+    `DES_BASE_URL`. В образе приложения нет curl и wget, поэтому запрос делает сам bash:
 
     ```bash
-    docker exec <контейнер-приложения> wget -qO- http://storm-des:8081/actuator/health
+    docker exec <контейнер-приложения> bash -c 'exec 3<>/dev/tcp/storm-des/8081 && printf "GET /actuator/health HTTP/1.0\r\nHost: storm-des\r\n\r\n" >&3 && cat <&3'
+    # HTTP/1.1 200 ... {"status":"UP"}
     ```
 
 3.  **Сквозная проверка** — в приложении откройте раздел **«Симуляции»**, создайте симуляцию на
