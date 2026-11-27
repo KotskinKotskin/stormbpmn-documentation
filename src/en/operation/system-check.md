@@ -70,6 +70,17 @@ The storm-media service (voice input) is not separated as a distinct module in t
 
 Newer versions of the AWS SDK may automatically send CRC32 checksums when writing objects. Some S3-compatible gateways may not support this behavior. Check for checksum errors, `400`, `InvalidRequest`, and `SignatureDoesNotMatch` in the logs and storage responses. If the error is related to an additional checksum, you can try `AWS_REQUEST_CHECKSUM_CALCULATION=WHEN_REQUIRED` and `AWS_RESPONSE_CHECKSUM_VALIDATION=WHEN_REQUIRED` for an SDK that supports these parameters. This is not a universal fix: the variables do not affect an SDK that does not read them. For instructions and other checks, see [S3 configuration](/en/install/production/components.md#совместимость-новых-aws-sdk-с-s3-совместимыми-хранилищами-cloudru-obs).
 
+### S3 Region Mismatch {#несовпадение-региона-s3}
+
+If the S3 check fails with the error `InvalidLocationConstraint` or `IllegalLocationConstraintException`, the storage rejected the region specified in `S3_REGION` when creating a bucket. This typically happens when the region does not match the storage's zone group (e.g., Ceph) or is invalid for the specified endpoint (AWS).
+
+To fix this:
+
+1.  Determine the correct region for your S3-compatible storage.
+2.  Set the `S3_REGION` environment variable to this region in your `.env` file.
+3.  **Restart the Stormbpmn container** to apply the change.
+4.  Run the system check again.
+
 ### Verifying File Storage from the Browser {#проверка-фаилового-хранилища-из-браузера}
 
 The Stormbpmn server can operate with S3 using an internal address `S3_ENDPOINT`, while the user's browser opens files via the links you expose externally. If the external address is unavailable, the server functions correctly, but users cannot open attachments and images.

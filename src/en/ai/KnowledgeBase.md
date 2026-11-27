@@ -39,6 +39,10 @@ The vector engine (which also powers the platform's fast universal search) requi
 If a user requests to **perform** an action (“create role X”), the chat executes it via tools rather than restating the instructions. The knowledge base is used for **answering questions** (“how to create a role?”), not as a substitute for actions.
 :::
 
+::: warning Vector engine can be disabled
+In local environments or on memory-constrained test stands, the vector engine can be disabled via the **vector.enabled** flag. When the engine is disabled, all write operations to the knowledge base (upload, update, delete, API ingestion) are rejected with a **400 VECTOR_ENGINE_DISABLED** error before any changes are made. Search functionality remains available for existing indexed data.
+:::
+
 ## Parameters and Default Values {#параметры-и-значения-по-умолчанию}
 
 Parameters are configured in the admin panel and applied **without a restart**.

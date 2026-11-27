@@ -106,6 +106,8 @@ Example of a `429` response:
 Built-in architecture element types (except **Document** and **System**) are now classified as **Custom types**. This affects the format of API requests and data import rules.
 :::
 
+- **[Graph node versions](./graph-versions.md)** — object version history, state at a specific date, and diff between two points in time.
+
 ---
 
 ## Best Practices {#лучшие-практики}
