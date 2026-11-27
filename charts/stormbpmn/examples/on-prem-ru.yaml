@@ -145,15 +145,23 @@ storm:
       source: "stormbpmn"
       messageFormat: "RFC_5424"
 
-# Если в кластере используется корпоративный самоподписанный CA — добавьте
-# CA-бандл в trustStore контейнера.
+# Если в кластере используется корпоративный самоподписанный CA — Java должна ему доверять.
+# Java берёт доверенные CA из своего хранилища, а не из /etc/ssl/certs, и в образе нет
+# update-ca-certificates. Поэтому соберите хранилище со стандартными CA и вашим корпоративным:
+#
+#   docker run --rm --entrypoint cat <образ> /opt/java/openjdk/lib/security/cacerts > truststore.p12
+#   keytool -importcert -noprompt -alias corporate-ca -file ca.crt \
+#     -keystore truststore.p12 -storetype PKCS12 -storepass changeit
+#   kubectl create secret generic corporate-truststore --from-file=truststore.p12
+#
+# и подключите его — допишите в storm.general.javaOpts к настройкам памяти:
+#   -Djavax.net.ssl.trustStore=/etc/storm/truststore/truststore.p12 -Djavax.net.ssl.trustStorePassword=changeit
 extraVolumes:
-  - name: corporate-ca
+  - name: corporate-truststore
     secret:
-      secretName: corporate-ca-bundle
+      secretName: corporate-truststore
       optional: true
 extraVolumeMounts:
-  - name: corporate-ca
-    mountPath: /etc/ssl/certs/corporate-ca.crt
-    subPath: ca.crt
+  - name: corporate-truststore
+    mountPath: /etc/storm/truststore
     readOnly: true

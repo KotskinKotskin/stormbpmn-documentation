@@ -175,6 +175,34 @@ Java keeps trusting the original public CAs and additionally trusts the imported
 
 ---
 
+## Running the container with restricted privileges {#запуск-контейнера-с-ограниченными-правами}
+
+The image (versions after 9.29.139) runs without root and without extra privileges:
+
+-   the process runs as uid 999 with group 0; any uid with group 0 also works (OpenShift restricted-v2), another group does not;
+-   no capabilities are needed: `cap_drop: [ALL]` and `no-new-privileges` are fine;
+-   the root filesystem can be read-only. `/tmp` and `/var/cache/storm/djl` must be writable and **not `noexec`**: the knowledge base search loads its native libraries from there;
+-   the image has no package manager, curl or wget. Use orchestrator HTTP probes for health checks, or bash: `bash -c 'exec 3<>/dev/tcp/127.0.0.1/8082 && printf "GET /actuator/health/readiness HTTP/1.0\r\nHost: localhost\r\n\r\n" >&3 && cat <&3'`.
+
+Docker compose example:
+
+```yaml
+services:
+  stormbpmn:
+    image: registry.stormbpmn.com/stormbpmn-enterprise/stormbpmn_fullstack_enterprise:<version>
+    read_only: true
+    tmpfs:
+      - /tmp:exec,size=1g
+      - /var/cache/storm/djl:exec,size=1g
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    stop_grace_period: 90s
+```
+
+In Kubernetes, set the same in the chart values: `securityContext.readOnlyRootFilesystem: true` and an `emptyDir` on `/tmp` and `/var/cache/storm/djl` via `extraVolumes` / `extraVolumeMounts`.
+
+---
+
 ## Security checklist {#чек-лист-безопасности}
 
 ### Mandatory settings {#обязательные-настроики}
@@ -194,6 +222,8 @@ Java keeps trusting the original public CAs and additionally trusts the imported
 -   [ ] **Backup** - regular database backups
 -   [ ] **Monitoring** - tracking of suspicious activity
 -   [ ] **Audit logging** - [action log](./audit-logging.md) is enabled
+-   [ ] **Restricted container privileges** - read-only root filesystem, `cap_drop: ALL` ([running the container with restricted privileges](#запуск-контейнера-с-ограниченными-правами))
+-   [ ] **Image signature verified** - the `cosign verify` command is in the notes of every version
 
 ---
 

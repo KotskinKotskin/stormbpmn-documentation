@@ -126,10 +126,12 @@ The actual **run** of a simulation via `DES_BASE_URL` does not occur directly �
     ```
 
 2.  **Connectivity to the application** — the address from
-    `DES_BASE_URL` must respond from the main application container:
+    `DES_BASE_URL` must respond from the main application container. The application image has
+    no curl or wget, so bash sends the request itself:
 
     ```bash
-    docker exec <контейнер-приложения> wget -qO- http://storm-des:8081/actuator/health
+    docker exec <app-container> bash -c 'exec 3<>/dev/tcp/storm-des/8081 && printf "GET /actuator/health HTTP/1.0\r\nHost: storm-des\r\n\r\n" >&3 && cat <&3'
+    # HTTP/1.1 200 ... {"status":"UP"}
     ```
 
 3.  **End-to-end check** — in the application, open the **"Simulations"** section, create a simulation on

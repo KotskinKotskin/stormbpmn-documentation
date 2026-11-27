@@ -236,6 +236,8 @@ services:
     image: $REGISTRY_HOST/stormbpmn-enterprise/stormbpmn_fullstack_enterprise:$STORMBPMN_VERSION
     container_name: stormbpmn
     restart: always
+    # Java получает SIGTERM и до 80 с завершает текущие запросы, затем мягко останавливается nginx
+    stop_grace_period: 90s
     depends_on:
       postgres:
         condition: service_healthy

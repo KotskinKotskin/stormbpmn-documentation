@@ -64,7 +64,8 @@ Pass the ENV variable CONTAINER_ROLE (possible values: FRONT, BACK, FULLSTACK).
 
 -   FRONT: nginx with static content will start.
 -   BACK: java will start as an API server.
--   FULLSTACK: supervisord will start, which will launch nginx and java
+-   FULLSTACK (default): the image entrypoint starts nginx and java and restarts a process that exits.
+    On shutdown java first stops gracefully for up to 80 s, then nginx, so allow at least 90 s to stop.
 
 ::: tip "What's New" feed
 In the on-prem version, the "What's New" feed is baked into the image at build time. It displays static content without links to the blog and with the build date; no access to the CMS is required.
