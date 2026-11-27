@@ -207,7 +207,7 @@ The `PKCE` and `implicit_flow` modes remain for connections that already work an
 
 - the sign-in page always sends `state` and checks it on return. A sign-in that did not start on the Storm page (for example, from a tile on the provider's portal) is rejected: such a response cannot be told apart from a forged one. To keep the tile working, point it at the Storm sign-in page (in Okta, the **Initiate login URI** field): the sign-in then starts there;
 - in `PKCE` mode a sign-in without a `code_verifier` is rejected (`sso_request_incomplete`) instead of falling back to a weaker scheme;
-- in `implicit_flow` the token is accepted only from the URL fragment (`#access_token=…`), not from query parameters;
+- in `implicit_flow` the token is expected in the URL fragment (`#access_token=…`). If the provider returns it in query parameters (`?access_token=…`), sign-in still works as before, but only when `state` matches. Such a URL ends up in proxy logs: the stock nginx in the Storm image replaces the query part of a URL with a token with `***` in its log, and on an external proxy or load balancer you have to set this up yourself. It is better to switch the provider to the fragment or to `OIDC` mode;
 - after sign-in the code and token are erased from the address bar and browser history and are not printed to the browser console;
 - the claim check understands arrays (see [Claims Validation](#проверка-claims)).
 
