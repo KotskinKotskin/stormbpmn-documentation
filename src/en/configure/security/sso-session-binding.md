@@ -18,8 +18,10 @@ The **OAuthUseRefreshTokens** setting switches StormBPMN to this mode.
 | Renewal | Not required | Via `grant_type=refresh_token` with the provider |
 | Session revocation at the provider | No impact on StormBPMN until token expiration | User is logged out at the next renewal |
 
-::: warning PKCE mode only
-Binding works only with `OAuthFlowMode = PKCE`. In legacy mode `implicit_flow`, the application does not receive a `refresh_token` from the provider, so there is nothing to renew — the setting does not apply there.
+::: warning OIDC and PKCE modes
+Binding works with `OAuthFlowMode = OIDC` and `OAuthFlowMode = PKCE`. In legacy mode `implicit_flow`, the application does not receive a `refresh_token` from the provider, so there is nothing to renew — the setting does not apply there.
+
+In OIDC mode, on every renewal Storm validates the new ID Token (if the provider issued one) the same way as at sign-in and compares `iss` and `sub` with the original ones. If the provider returns another user's ID Token, the renewal is rejected and the user is signed out.
 :::
 
 ## Enabling {#включение}
@@ -118,6 +120,6 @@ The `OAuthUseRefreshTokens` setting does not affect this: when binding is enable
 | Symptom | Probable cause |
 | --- | --- |
 | SSO login rejected with a mention of `refresh_token` | The client in the provider does not issue `refresh_token` (in Keycloak — **Use Refresh Tokens**) or the response does not contain no `expires_in` |
-| The setting is enabled, but sessions are still long | `implicit_flow` mode is set — binding works only with `PKCE` |
+| The setting is enabled, but sessions are still long | `implicit_flow` mode is set — binding works only with `OIDC` and `PKCE` |
 | Users are logged out shortly after login | The provider revokes the session upon renewal. Check the client's restrictions on refresh token reuse and the SSO session duration in the realm |
 | The application does not start after an update | `SESSION_EXPIRATION` is specified in milliseconds — see the section above |
