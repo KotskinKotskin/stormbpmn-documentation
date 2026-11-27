@@ -16,6 +16,11 @@ Java, nginx, bash, procps (`ps`) и tini как PID 1. Что проверить
   хранилищу. Пример с хранилищем, в которое добавлен ваш CA, — в `examples/on-prem-ru.yaml`.
 - **Корневая ФС только для чтения** теперь поддерживается: нужны записываемые /tmp и
   /var/cache/storm/djl (без noexec).
+- **Свои конфиги и команды запуска.** Пути внутри образа поменялись: приложение — `/app`
+  (было `/app.jar`), pid nginx — `/tmp/nginx/nginx.pid` (было `/run/nginx`), `/etc/supervisord.conf`
+  нет. Если вы монтировали свой `nginx.conf` или переопределяли `command`, сверьте их с
+  `/etc/nginx/nginx.conf` из нового образа и запускайте через штатный entrypoint
+  (`CONTAINER_ROLE=FULLSTACK|BACK|FRONT`).
 
 # Миграция 3.x → 9.x (StormBPMN 6.6 → 9.x)
 
@@ -31,7 +36,9 @@ Java, nginx, bash, procps (`ps`) и tini как PID 1. Что проверить
 
 ```bash
 kubectl -n stormbpmn delete secret regcred
-kubectl -n stormbpmn create secret docker-registry regcred \n  --docker-server=registry.stormbpmn.com \n  --docker-username='<логин из портала>' --docker-password='<секрет из портала>'
+kubectl -n stormbpmn create secret docker-registry regcred \
+  --docker-server=registry.stormbpmn.com \
+  --docker-username='<логин из портала>' --docker-password='<секрет из портала>'
 ```
 
 Если в ваших values явно задан `image.registry: cr.selcloud.ru`, замените его на
